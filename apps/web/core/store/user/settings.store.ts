@@ -38,12 +38,10 @@ export class UserSettingsStore implements IUserSettingsStore {
     id: undefined,
     email: undefined,
     workspace: {
-      last_workspace_id: undefined,
-      last_workspace_slug: undefined,
-      last_workspace_name: undefined,
-      last_workspace_logo: undefined,
-      fallback_workspace_id: undefined,
-      fallback_workspace_slug: undefined,
+      id: undefined,
+      slug: undefined,
+      name: undefined,
+      logo: undefined,
       invites: undefined,
     },
   };

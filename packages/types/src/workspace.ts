@@ -4,10 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { TPaginationInfo } from "./common";
 import type { ICycle } from "./cycle";
 import type { TUserPermissions } from "./enums";
-import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
 import type { TLoginMediums } from "./instance";
 import type { IWorkspaceViewProps } from "./view-props";
@@ -42,21 +40,24 @@ export interface IWorkspaceLite {
   slug: string;
 }
 
-export interface IWorkspaceMemberInvitation {
+export interface IWorkspaceMemberInvitationPublic {
   accepted: boolean;
   email: string;
   id: string;
-  message: string;
-  responded_at: Date;
+  message: string | null;
+  responded_at: string | null;
   role: TUserPermissions;
-  token: string;
-  invite_link: string;
   workspace: {
     id: string;
-    logo_url: string;
+    logo_url: string | null;
     name: string;
     slug: string;
   };
+}
+
+export interface IWorkspaceMemberInvitation extends IWorkspaceMemberInvitationPublic {
+  token: string;
+  invite_link: string;
 }
 
 export interface IWorkspaceBulkInviteFormData {
@@ -107,11 +108,6 @@ export interface IWorkspaceMemberMe {
   view_props: IWorkspaceViewProps;
   workspace: string;
   draft_issue_count: number;
-}
-
-export interface ILastActiveWorkspaceDetails {
-  workspace_details: IWorkspace;
-  project_details?: TProjectMembership[];
 }
 
 export interface IWorkspaceDefaultSearchResult {
@@ -238,10 +234,6 @@ export interface IWorkspaceAnalyticsResponse {
   completion_chart: Record<string, unknown>;
 }
 
-export type TWorkspacePaginationInfo = TPaginationInfo & {
-  results: IWorkspace[];
-};
-
 export interface IWorkspaceSidebarNavigationItem {
   key?: string;
   is_pinned: boolean;
@@ -256,13 +248,7 @@ export enum EOnboardingSteps {
   PROFILE_SETUP = "PROFILE_SETUP",
   ROLE_SETUP = "ROLE_SETUP",
   USE_CASE_SETUP = "USE_CASE_SETUP",
-  WORKSPACE_CREATE_OR_JOIN = "WORKSPACE_CREATE_OR_JOIN",
-  INVITE_MEMBERS = "INVITE_MEMBERS",
+  WORKSPACE_JOIN = "WORKSPACE_JOIN",
 }
 
 export type TOnboardingStep = EOnboardingSteps;
-
-export enum ECreateOrJoinWorkspaceViews {
-  WORKSPACE_CREATE = "WORKSPACE_CREATE",
-  WORKSPACE_JOIN = "WORKSPACE_JOIN",
-}

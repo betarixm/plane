@@ -1133,8 +1133,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
     selfHostedOnly: true,
     features: [
       {
-        title: "God Mode",
-        description: "Manage your self-hosted Plane instance better with\nan instance admin interface.",
+        title: "Administration",
+        description: "Manage your self-hosted Plane workspace and instance\nfrom one administration interface.",
         cloud: {
           free: true,
           one: true,

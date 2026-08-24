@@ -36,7 +36,7 @@ export const getPasswordStrength = (password: string): E_PASSWORD_STRENGTH => {
   const hasUpperCase = /[A-Z]/.test(password);
   const hasLowerCase = /[a-z]/.test(password);
   const hasDigit = /[0-9]/.test(password);
-  const hasSpecialChar = /[!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*()\-_+=[\]{}|;:'",.<>?/]/.test(password);
 
   if (hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar) {
     return E_PASSWORD_STRENGTH.STRENGTH_VALID;
@@ -78,7 +78,7 @@ export const getPasswordCriteria = (password: string): PasswordCriteria[] => [
   {
     key: "special",
     label: "Min 1 special character",
-    isValid: /[!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/]/.test(password),
+    isValid: /[!@#$%^&*()\-_+=[\]{}|;:'",.<>?/]/.test(password),
   },
 ];
 
@@ -255,39 +255,6 @@ const errorCodeMessages: {
     title: `Password already set`,
     message: () => `Password already set. Please try again.`,
   },
-  // admin
-  [EAuthErrorCodes.ADMIN_ALREADY_EXIST]: {
-    title: `Admin already exists`,
-    message: () => `Admin already exists. Please try again.`,
-  },
-  [EAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME]: {
-    title: `Email, password and first name required`,
-    message: () => `Email, password and first name required. Please try again.`,
-  },
-  [EAuthErrorCodes.INVALID_ADMIN_EMAIL]: {
-    title: `Invalid admin email`,
-    message: () => `Invalid admin email. Please try again.`,
-  },
-  [EAuthErrorCodes.INVALID_ADMIN_PASSWORD]: {
-    title: `Invalid admin password`,
-    message: () => `Invalid admin password. Please try again.`,
-  },
-  [EAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD]: {
-    title: `Email and password required`,
-    message: () => `Email and password required. Please try again.`,
-  },
-  [EAuthErrorCodes.ADMIN_AUTHENTICATION_FAILED]: {
-    title: `Authentication failed`,
-    message: () => `Authentication failed. Please try again.`,
-  },
-  [EAuthErrorCodes.ADMIN_USER_ALREADY_EXIST]: {
-    title: `Admin user already exists`,
-    message: () => `Admin user already exists. Sign in now.`,
-  },
-  [EAuthErrorCodes.ADMIN_USER_DOES_NOT_EXIST]: {
-    title: `Admin user does not exist`,
-    message: () => `Admin user does not exist. Sign in now.`,
-  },
   [EAuthErrorCodes.MAGIC_LINK_LOGIN_DISABLED]: {
     title: `Magic link login disabled`,
     message: () => `Magic link login is disabled. Please use password to login.`,
@@ -295,10 +262,6 @@ const errorCodeMessages: {
   [EAuthErrorCodes.PASSWORD_LOGIN_DISABLED]: {
     title: `Password login disabled`,
     message: () => `Password login is disabled. Please use magic link to login.`,
-  },
-  [EAuthErrorCodes.ADMIN_USER_DEACTIVATED]: {
-    title: `Admin user deactivated`,
-    message: () => `Admin user account has been deactivated. Please contact administrator.`,
   },
   [EAuthErrorCodes.RATE_LIMIT_EXCEEDED]: {
     title: `Rate limit exceeded`,
@@ -345,14 +308,6 @@ export const authErrorHandler = (errorCode: EAuthErrorCodes, email?: string): TA
     EAuthErrorCodes.INCORRECT_OLD_PASSWORD,
     EAuthErrorCodes.INVALID_NEW_PASSWORD,
     EAuthErrorCodes.PASSWORD_ALREADY_SET,
-    EAuthErrorCodes.ADMIN_ALREADY_EXIST,
-    EAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,
-    EAuthErrorCodes.INVALID_ADMIN_EMAIL,
-    EAuthErrorCodes.INVALID_ADMIN_PASSWORD,
-    EAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD,
-    EAuthErrorCodes.ADMIN_AUTHENTICATION_FAILED,
-    EAuthErrorCodes.ADMIN_USER_ALREADY_EXIST,
-    EAuthErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAuthErrorCodes.BOT_USER_LOGIN_FORBIDDEN,
     EAuthErrorCodes.USER_ACCOUNT_DEACTIVATED,
   ];

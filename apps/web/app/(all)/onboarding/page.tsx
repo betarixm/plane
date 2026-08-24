@@ -11,7 +11,7 @@ import useSWR from "swr";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { OnboardingRoot } from "@/components/onboarding";
 // constants
-import { USER_WORKSPACES_LIST } from "@plane/constants";
+import { USER_WORKSPACE } from "@plane/constants";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -27,30 +27,27 @@ const workspaceService = new WorkspaceService();
 function OnboardingPage() {
   // store hooks
   const { data: user } = useUser();
-  const { fetchWorkspaces } = useWorkspace();
+  const { fetchWorkspace } = useWorkspace();
 
   // fetching workspaces list
-  useSWR(USER_WORKSPACES_LIST, () => {
+  useSWR(USER_WORKSPACE, () => {
     if (user?.id) {
-      fetchWorkspaces();
+      fetchWorkspace();
     }
   });
 
-  // fetching user workspace invitations
-  const { isLoading: invitationsLoader, data: invitations } = useSWR(
-    `USER_WORKSPACE_INVITATIONS_LIST_${user?.id}`,
-    () => {
-      if (user?.id) return workspaceService.userWorkspaceInvitations();
-    }
-  );
+  // fetching the user's invitation to the singleton workspace
+  const { isLoading: invitationLoader, data: invitation } = useSWR(`USER_WORKSPACE_INVITATION_${user?.id}`, () => {
+    if (user?.id) return workspaceService.userWorkspaceInvitation();
+  });
 
   return (
     <AuthenticationWrapper pageType={EPageTypes.ONBOARDING}>
       <div className="relative flex size-full overflow-hidden rounded-lg bg-canvas transition-all duration-300 ease-in-out">
         <div className="size-full flex-grow overflow-hidden p-2 transition-all duration-300 ease-in-out">
           <div className="shadow-md relative flex h-full w-full flex-col overflow-hidden rounded-lg border border-subtle bg-surface-1">
-            {user && !invitationsLoader ? (
-              <OnboardingRoot invitations={invitations ?? []} />
+            {user && !invitationLoader ? (
+              <OnboardingRoot invitation={invitation} />
             ) : (
               <div className="grid h-full w-full place-items-center">
                 <LogoSpinner />

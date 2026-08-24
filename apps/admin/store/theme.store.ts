@@ -11,30 +11,25 @@ import type { RootStore } from "./root.store";
 type TTheme = "dark" | "light";
 export interface IThemeStore {
   // observables
-  isNewUserPopup: boolean;
   theme: string | undefined;
   isSidebarCollapsed: boolean | undefined;
   // actions
   hydrate: (data: any) => void;
-  toggleNewUserPopup: () => void;
   toggleSidebar: (collapsed: boolean) => void;
   setTheme: (currentTheme: TTheme) => void;
 }
 
 export class ThemeStore implements IThemeStore {
   // observables
-  isNewUserPopup: boolean = false;
   isSidebarCollapsed: boolean | undefined = undefined;
   theme: string | undefined = undefined;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
-      isNewUserPopup: observable.ref,
       isSidebarCollapsed: observable.ref,
       theme: observable.ref,
       // action
-      toggleNewUserPopup: action,
       toggleSidebar: action,
       setTheme: action,
     });
@@ -43,11 +38,6 @@ export class ThemeStore implements IThemeStore {
   hydrate = (data: any) => {
     if (data) this.theme = data;
   };
-
-  /**
-   * @description Toggle the new user popup modal
-   */
-  toggleNewUserPopup = () => (this.isNewUserPopup = !this.isNewUserPopup);
 
   /**
    * @description Toggle the sidebar collapsed state

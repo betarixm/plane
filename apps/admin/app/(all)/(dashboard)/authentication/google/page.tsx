@@ -57,6 +57,7 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
     await updateConfigPromise
       .then(() => {
         setIsSubmitting(false);
+        return undefined;
       })
       .catch((err) => {
         console.error(err);
@@ -105,6 +106,6 @@ const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthent
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "Google Authentication - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Google Authentication - Administration" }];
 
 export default InstanceGoogleAuthenticationPage;

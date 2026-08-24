@@ -9,8 +9,6 @@ export type TUserProfile = {
 
   user: string | undefined;
   role: string | undefined;
-  last_workspace_id: string | undefined;
-
   theme: {
     theme: string | undefined;
   };
@@ -18,8 +16,6 @@ export type TUserProfile = {
   onboarding_step: {
     workspace_join: boolean;
     profile_complete: boolean;
-    workspace_create: boolean;
-    workspace_invite: boolean;
   };
   is_onboarded: boolean;
   is_tour_completed: boolean;

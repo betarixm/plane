@@ -42,7 +42,6 @@ export class ProfileStore implements IUserProfileStore {
     id: undefined,
     user: undefined,
     role: undefined,
-    last_workspace_id: undefined,
     theme: {
       theme: undefined,
       primary: undefined,
@@ -52,8 +51,6 @@ export class ProfileStore implements IUserProfileStore {
     onboarding_step: {
       workspace_join: false,
       profile_complete: false,
-      workspace_create: false,
-      workspace_invite: false,
     },
     is_onboarded: false,
     is_tour_completed: false,
@@ -162,15 +159,11 @@ export class ProfileStore implements IUserProfileStore {
    */
   finishUserOnboarding = async (): Promise<void> => {
     try {
-      const firstWorkspace = Object.values(this.store.workspaceRoot.workspaces ?? {})?.[0];
       const dataToUpdate: Partial<TUserProfile> = {
         onboarding_step: {
           profile_complete: true,
           workspace_join: true,
-          workspace_create: true,
-          workspace_invite: true,
         },
-        last_workspace_id: firstWorkspace?.id,
       };
 
       // update user onboarding steps

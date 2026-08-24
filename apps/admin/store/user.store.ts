@@ -63,9 +63,11 @@ export class UserStore implements IUserStore {
   fetchCurrentUser = async () => {
     try {
       if (this.currentUser === undefined) this.isLoading = true;
-      const currentUser = await this.userService.adminDetails();
-      if (currentUser) {
-        await this.store.instance.fetchInstanceAdmins();
+      const [currentUser, adminStatus] = await Promise.all([
+        this.userService.me(),
+        this.userService.workspaceAdminStatus(),
+      ]);
+      if (currentUser && adminStatus.is_workspace_admin) {
         runInAction(() => {
           this.isUserLoggedIn = true;
           this.currentUser = currentUser;
@@ -82,7 +84,7 @@ export class UserStore implements IUserStore {
     } catch (error: any) {
       this.isLoading = false;
       this.isUserLoggedIn = false;
-      if (error.status === 403)
+      if (error?.status === 403 || error?.response?.status === 403)
         this.userStatus = {
           status: EUserStatus.AUTHENTICATION_NOT_DONE,
           message: error?.message || "",

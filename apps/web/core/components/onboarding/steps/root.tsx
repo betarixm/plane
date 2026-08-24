@@ -6,22 +6,21 @@
 
 import { useEffect, useRef } from "react";
 // plane imports
-import type { IWorkspaceMemberInvitation } from "@plane/types";
+import type { IWorkspaceMemberInvitationPublic } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 // local components
 import { ProfileSetupStep } from "./profile";
 import { RoleSetupStep } from "./role";
-import { InviteTeamStep } from "./team";
 import { UseCaseSetupStep } from "./usecase";
 import { WorkspaceSetupStep } from "./workspace";
 
 type Props = {
   currentStep: EOnboardingSteps;
-  invitations: IWorkspaceMemberInvitation[];
+  invitation?: IWorkspaceMemberInvitationPublic;
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
 };
 
-function OnboardingStepContent({ currentStep, invitations, handleStepChange }: Props) {
+function OnboardingStepContent({ currentStep, invitation, handleStepChange }: Props) {
   switch (currentStep) {
     case EOnboardingSteps.PROFILE_SETUP:
       return <ProfileSetupStep handleStepChange={handleStepChange} />;
@@ -29,10 +28,8 @@ function OnboardingStepContent({ currentStep, invitations, handleStepChange }: P
       return <RoleSetupStep handleStepChange={handleStepChange} />;
     case EOnboardingSteps.USE_CASE_SETUP:
       return <UseCaseSetupStep handleStepChange={handleStepChange} />;
-    case EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN:
-      return <WorkspaceSetupStep invitations={invitations ?? []} handleStepChange={handleStepChange} />;
-    case EOnboardingSteps.INVITE_MEMBERS:
-      return <InviteTeamStep handleStepChange={handleStepChange} />;
+    case EOnboardingSteps.WORKSPACE_JOIN:
+      return <WorkspaceSetupStep invitation={invitation} handleStepChange={handleStepChange} />;
     default:
       return null;
   }

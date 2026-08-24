@@ -4,13 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import type { IUserLite } from "../users";
 import type {
   TInstanceAIConfigurationKeys,
   TInstanceEmailConfigurationKeys,
   TInstanceImageConfigurationKeys,
   TInstanceAuthenticationKeys,
-  TInstanceWorkspaceConfigurationKeys,
   TCoreLoginMediums,
 } from "./";
 import type { TExtendedLoginMediums } from "./auth-ee";
@@ -36,17 +34,14 @@ export interface IInstance {
   is_support_required: boolean;
   is_activated: boolean;
   is_setup_done: boolean;
-  is_signup_screen_visited: boolean;
   user_count: number | undefined;
   is_verified: boolean;
   created_by: string | undefined;
   updated_by: string | undefined;
-  workspaces_exist: boolean;
 }
 
 export interface IInstanceConfig {
   enable_signup: boolean;
-  is_workspace_creation_disabled: boolean;
   is_google_enabled: boolean;
   is_github_enabled: boolean;
   is_gitlab_enabled: boolean;
@@ -68,24 +63,11 @@ export interface IInstanceConfig {
   instance_changelog_url?: string;
 }
 
-export interface IInstanceAdmin {
-  created_at: string;
-  created_by: string;
-  id: string;
-  instance: string;
-  role: string;
-  updated_at: string;
-  updated_by: string;
-  user: string;
-  user_detail: IUserLite;
-}
-
 export type TInstanceConfigurationKeys =
   | TInstanceAIConfigurationKeys
   | TInstanceEmailConfigurationKeys
   | TInstanceImageConfigurationKeys
-  | TInstanceAuthenticationKeys
-  | TInstanceWorkspaceConfigurationKeys;
+  | TInstanceAuthenticationKeys;
 
 export interface IInstanceConfiguration {
   id: string;

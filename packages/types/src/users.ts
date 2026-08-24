@@ -45,7 +45,6 @@ export interface IUser extends IUserLite {
   is_password_autoset: boolean;
   is_tour_completed: boolean;
   mobile_number: string | null;
-  last_workspace_id: string;
   user_timezone: string;
   username: string;
   last_login_medium: TLoginMediums;
@@ -63,7 +62,6 @@ export type TUserProfile = {
   id: string | undefined;
   user: string | undefined;
   role: string | undefined;
-  last_workspace_id: string | undefined;
   theme: {
     theme: string | undefined;
     primary: string | undefined;
@@ -84,20 +82,18 @@ export type TUserProfile = {
   start_of_the_week: EStartOfTheWeek;
 };
 
-export interface IInstanceAdminStatus {
-  is_instance_admin: boolean;
+export interface IWorkspaceAdminStatus {
+  is_workspace_admin: boolean;
 }
 
 export interface IUserSettings {
   id: string | undefined;
   email: string | undefined;
   workspace: {
-    last_workspace_id: string | undefined;
-    last_workspace_slug: string | undefined;
-    last_workspace_name: string | undefined;
-    last_workspace_logo: string | undefined;
-    fallback_workspace_id: string | undefined;
-    fallback_workspace_slug: string | undefined;
+    id: string | undefined;
+    slug: string | undefined;
+    name: string | undefined;
+    logo: string | undefined;
     invites: number | undefined;
   };
 }
@@ -148,8 +144,6 @@ export type UserAuth = {
 
 export type TOnboardingSteps = {
   profile_complete: boolean;
-  workspace_create: boolean;
-  workspace_invite: boolean;
   workspace_join: boolean;
 };
 

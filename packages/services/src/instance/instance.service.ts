@@ -9,7 +9,6 @@ import { API_BASE_URL } from "@plane/constants";
 import type {
   IFormattedInstanceConfiguration,
   IInstance,
-  IInstanceAdmin,
   IInstanceConfiguration,
   IInstanceInfo,
   TPage,
@@ -52,20 +51,6 @@ export class InstanceService extends APIService {
    */
   async changelog(): Promise<TPage> {
     return this.get("/api/instances/changelog/")
-      .then((response) => response.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  /**
-   * Fetches the list of instance admins
-   * @returns {Promise<IInstanceAdmin[]>} Promise resolving to an array of instance admins
-   * @throws {Error} If the API request fails
-   * @remarks This method uses the validateStatus: null option to bypass interceptors for unauthorized errors.
-   */
-  async admins(): Promise<IInstanceAdmin[]> {
-    return this.get("/api/instances/admins/", { validateStatus: null })
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

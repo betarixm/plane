@@ -120,7 +120,7 @@ export class UserStore implements IUserStore {
         await Promise.all([
           this.userProfile.fetchUserProfile(),
           this.userSettings.fetchCurrentUserSettings(),
-          this.store.workspaceRoot.fetchWorkspaces(),
+          this.store.workspaceRoot.fetchWorkspace(),
         ]);
         runInAction(() => {
           this.data = user;

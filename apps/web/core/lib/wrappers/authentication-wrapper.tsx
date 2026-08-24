@@ -14,7 +14,7 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser, useUserProfile, useUserSettings } from "@/hooks/store/user";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type TPageType = EPageTypes;
@@ -24,10 +24,7 @@ type TAuthenticationWrapper = {
   pageType?: TPageType;
 };
 
-const isValidURL = (url: string): boolean => {
-  const disallowedSchemes = /^(https?|ftp):\/\//i;
-  return !disallowedSchemes.test(url);
-};
+const isSafeAppPath = (path: string): boolean => /^\/(?![\\/])/.test(path) && !path.includes("\\");
 
 export const AuthenticationWrapper = observer(function AuthenticationWrapper(props: TAuthenticationWrapper) {
   const pathname = usePathname();
@@ -39,8 +36,7 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
   // hooks
   const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
   const { data: currentUserProfile } = useUserProfile();
-  const { data: currentUserSettings } = useUserSettings();
-  const { loader: workspacesLoader, workspaces } = useWorkspace();
+  const { loader: workspaceLoader, workspace } = useWorkspace();
 
   const { isLoading: isUserSWRLoading } = useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
     revalidateOnFocus: false,
@@ -49,36 +45,21 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
 
   const isUserOnboard =
     currentUserProfile?.is_onboarded ||
-    (currentUserProfile?.onboarding_step?.profile_complete &&
-      currentUserProfile?.onboarding_step?.workspace_create &&
-      currentUserProfile?.onboarding_step?.workspace_invite &&
-      currentUserProfile?.onboarding_step?.workspace_join) ||
+    (currentUserProfile?.onboarding_step?.profile_complete && currentUserProfile?.onboarding_step?.workspace_join) ||
     false;
 
   const getWorkspaceRedirectionUrl = (): string => {
-    let redirectionRoute = "/create-workspace";
-
     // validating the nextPath from the router query
-    if (nextPath && isValidURL(nextPath.toString())) {
-      redirectionRoute = nextPath.toString();
-      return redirectionRoute;
+    if (nextPath && isSafeAppPath(nextPath.toString())) {
+      return nextPath.toString();
     }
 
-    // validate the last and fallback workspace_slug
-    const currentWorkspaceSlug =
-      currentUserSettings?.workspace?.last_workspace_slug || currentUserSettings?.workspace?.fallback_workspace_slug;
+    if (!workspace) return "/invitations";
 
-    // validate the current workspace_slug is available in the user's workspace list
-    const isCurrentWorkspaceValid = Object.values(workspaces || {}).findIndex(
-      (workspace) => workspace.slug === currentWorkspaceSlug
-    );
-
-    if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
-
-    return redirectionRoute;
+    return `/${workspace.slug}`;
   };
 
-  if ((isUserSWRLoading || isUserLoading || workspacesLoader) && !currentUser?.id)
+  if ((isUserSWRLoading || isUserLoading || workspaceLoader) && !currentUser?.id)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
         <LogoSpinner />

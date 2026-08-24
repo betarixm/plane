@@ -6,10 +6,9 @@
 
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
 import { LogOut, Settings, Settings2 } from "lucide-react";
 // plane imports
-import { GOD_MODE_URL } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar, CustomMenu } from "@plane/ui";
@@ -20,20 +19,19 @@ import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUser } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 export const UserMenuRoot = observer(function UserMenuRoot() {
   // states
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  // router
-  const router = useRouter();
   // store hooks
   const { toggleAnySidebarDropdown } = useAppTheme();
   const { data: currentUser } = useUser();
   const { signOut } = useUser();
+  const { allowPermissions } = useUserPermissions();
   const { toggleProfileSettingsModal } = useCommandPalette();
   // derived values
-  const isUserInstanceAdmin = false;
+  const isAdministrator = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   // translation
   const { t } = useTranslation();
 
@@ -137,12 +135,12 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
         <LogOut className="size-3.5 shrink-0" />
         {t("sign_out")}
       </CustomMenu.MenuItem>
-      {isUserInstanceAdmin && (
+      {isAdministrator && (
         <CustomMenu.MenuItem
-          onClick={() => router.push(GOD_MODE_URL)}
+          onClick={() => window.location.assign(GOD_MODE_URL)}
           className="bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 hover:text-accent-secondary"
         >
-          {t("enter_god_mode")}
+          Administration
         </CustomMenu.MenuItem>
       )}
     </CustomMenu>

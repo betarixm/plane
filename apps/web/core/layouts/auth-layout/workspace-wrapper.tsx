@@ -57,7 +57,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const { workspaces, fetchSidebarNavigationPreferences, fetchProjectNavigationPreferences } = useWorkspace();
+  const { workspace, fetchSidebarNavigationPreferences, fetchProjectNavigationPreferences } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
@@ -67,9 +67,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
-  const currentWorkspace =
-    (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
+  const currentWorkspace = workspace?.slug === workspaceSlug ? workspace : undefined;
   const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
 
   // fetching user workspace information
@@ -137,8 +135,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     );
   };
 
-  // if list of workspaces are not there then we have to render the spinner
-  if (isParentLoading || allWorkspaces === undefined || loader) {
+  if (isParentLoading || loader) {
     return (
       <div className="grid h-full place-items-center rounded-lg border border-subtle p-4">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -148,7 +145,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     );
   }
 
-  // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces
+  // The URL may name a workspace other than the singleton attached to this instance.
   if (currentWorkspace === undefined && !currentWorkspaceInfo) {
     return (
       <div className="relative flex h-full w-full flex-col items-center justify-center bg-surface-2">
@@ -159,14 +156,16 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-13 font-medium">{currentUser?.email}</div>
-              <div
+              <button
+                type="button"
+                aria-label="Sign out"
                 className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
               >
                 <Tooltip tooltipContent={"Sign out"} position="top" className="ml-2" isMobile={isMobile}>
                   <LogOut size={14} />
                 </Tooltip>
-              </div>
+              </button>
             </div>
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
@@ -178,19 +177,19 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
               No workspace found with the URL. It may not exist or you lack authorization to view it.
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
-              {allWorkspaces && allWorkspaces.length > 0 && (
+              {workspace && (
                 <Link href="/" className={cn(getButtonStyling("primary", "base"))}>
                   Go Home
                 </Link>
               )}
-              {allWorkspaces?.length > 0 && (
+              {workspace && (
                 <Link href="/settings/profile/general/" className={cn(getButtonStyling("secondary", "base"))}>
                   Visit Profile
                 </Link>
               )}
-              {allWorkspaces && allWorkspaces.length === 0 && (
-                <Link href="/create-workspace/" className={cn(getButtonStyling("secondary", "base"))}>
-                  Create new workspace
+              {!workspace && (
+                <Link href="/invitations/" className={cn(getButtonStyling("secondary", "base"))}>
+                  Check pending invites
                 </Link>
               )}
             </div>
@@ -211,19 +210,14 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             <div className="space-y-2">
               <h3 className="text-16 font-semibold">Not Authorized!</h3>
               <p className="mx-auto w-1/2 text-13 text-secondary">
-                You{"'"}re not a member of this workspace. Please contact the workspace admin to get an invitation or
-                check your pending invitations.
+                You{"'"}re not a member of this workspace. Please contact an administrator for an invitation or check
+                your pending invitations.
               </p>
             </div>
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <span>
                   <Button variant="secondary">Check pending invites</Button>
-                </span>
-              </Link>
-              <Link href="/create-workspace">
-                <span>
-                  <Button variant="primary">Create new workspace</Button>
                 </span>
               </Link>
             </div>

@@ -38,7 +38,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
     workspace: { removeMemberFromWorkspace },
   } = useMember();
   const { leaveWorkspace } = useUserPermissions();
-  const { getWorkspaceRedirectionUrl } = useWorkspace();
+  const { fetchWorkspace, getWorkspaceRedirectionUrl } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { t } = useTranslation();
   // derived values
@@ -48,7 +48,7 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
 
     try {
       await leaveWorkspace(workspaceSlug.toString());
-      await fetchCurrentUserSettings();
+      await Promise.all([fetchCurrentUserSettings(), fetchWorkspace()]);
       router.push(getWorkspaceRedirectionUrl());
     } catch (err: unknown) {
       const error = err as { error?: string };

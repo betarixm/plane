@@ -28,11 +28,9 @@ import { WebhookStore } from "./webhook.store";
 
 export interface IWorkspaceRootStore {
   loader: boolean;
-  // observables
-  workspaces: Record<string, IWorkspace>;
+  workspace: IWorkspace | undefined;
   // computed
   currentWorkspace: IWorkspace | null;
-  workspacesCreatedByCurrentUser: IWorkspace[] | null;
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation>;
   projectNavigationPreferencesMap: Record<string, IWorkspaceUserPropertiesResponse>;
   getWorkspaceRedirectionUrl: () => string;
@@ -40,12 +38,10 @@ export interface IWorkspaceRootStore {
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
   // fetch actions
-  fetchWorkspaces: () => Promise<IWorkspace[]>;
-  // crud actions
-  createWorkspace: (data: Partial<IWorkspace>) => Promise<IWorkspace>;
+  fetchWorkspace: () => Promise<IWorkspace | undefined>;
+  // update actions
   updateWorkspace: (workspaceSlug: string, data: Partial<IWorkspace>) => Promise<IWorkspace>;
   updateWorkspaceLogo: (workspaceSlug: string, logoURL: string) => void;
-  deleteWorkspace: (workspaceSlug: string) => Promise<void>;
   fetchSidebarNavigationPreferences: (workspaceSlug: string) => Promise<void>;
   updateSidebarPreference: (
     workspaceSlug: string,
@@ -72,15 +68,13 @@ export interface IWorkspaceRootStore {
 
 export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
   loader: boolean = false;
-  // observables
-  workspaces: Record<string, IWorkspace> = {};
+  workspace: IWorkspace | undefined = undefined;
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation> = {};
   projectNavigationPreferencesMap: Record<string, IWorkspaceUserPropertiesResponse> = {};
   // services
   workspaceService;
   // root store
   router;
-  user;
   home;
   // sub-stores
   webhook: IWebhookStore;
@@ -90,21 +84,18 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
     makeObservable(this, {
       loader: observable.ref,
       // observables
-      workspaces: observable,
+      workspace: observable,
       navigationPreferencesMap: observable,
       projectNavigationPreferencesMap: observable,
       // computed
       currentWorkspace: computed,
-      workspacesCreatedByCurrentUser: computed,
       // computed actions
       getWorkspaceBySlug: action,
       getWorkspaceById: action,
       // actions
-      fetchWorkspaces: action,
-      createWorkspace: action,
+      fetchWorkspace: action,
       updateWorkspace: action,
       updateWorkspaceLogo: action,
-      deleteWorkspace: action,
       fetchSidebarNavigationPreferences: action,
       updateSidebarPreference: action,
       updateBulkSidebarPreferences: action,
@@ -116,30 +107,15 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
     this.workspaceService = new WorkspaceService();
     // root store
     this.router = _rootStore.router;
-    this.user = _rootStore.user;
     this.home = new HomeStore();
     // sub-stores
     this.webhook = new WebhookStore(_rootStore);
     this.apiToken = new ApiTokenStore(_rootStore);
   }
 
-  /**
-   * get the workspace redirection url based on the last and fallback workspace_slug
-   */
+  /** Get the deterministic route for the instance workspace. */
   getWorkspaceRedirectionUrl = () => {
-    let redirectionRoute = "/create-workspace";
-    // validate the last and fallback workspace_slug
-    const currentWorkspaceSlug =
-      this.user.userSettings?.data?.workspace?.last_workspace_slug ||
-      this.user.userSettings?.data?.workspace?.fallback_workspace_slug;
-
-    // validate the current workspace_slug is available in the user's workspace list
-    const isCurrentWorkspaceValid = Object.values(this.workspaces || {}).findIndex(
-      (workspace) => workspace.slug === currentWorkspaceSlug
-    );
-
-    if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
-    return redirectionRoute;
+    return this.workspace ? `/${this.workspace.slug}` : "/invitations";
   };
 
   /**
@@ -148,63 +124,36 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
   get currentWorkspace() {
     const workspaceSlug = this.router.workspaceSlug;
     if (!workspaceSlug) return null;
-    const workspaceDetails = Object.values(this.workspaces ?? {})?.find((w) => w.slug === workspaceSlug);
-    return workspaceDetails || null;
+    return this.workspace?.slug === workspaceSlug ? this.workspace : null;
   }
 
   /**
-   * computed value of all the workspaces created by the current logged in user
-   */
-  get workspacesCreatedByCurrentUser() {
-    if (!this.workspaces) return null;
-    const user = this.user.data;
-    if (!user) return null;
-    const userWorkspaces = Object.values(this.workspaces ?? {})?.filter((w) => w.created_by === user?.id);
-    return userWorkspaces || null;
-  }
-
-  /**
-   * get workspace info from the array of workspaces in the store using workspace slug
+   * get the singleton workspace when its slug matches
    * @param workspaceSlug
    */
-  getWorkspaceBySlug = (workspaceSlug: string) =>
-    Object.values(this.workspaces ?? {})?.find((w) => w.slug == workspaceSlug) || null;
+  getWorkspaceBySlug = (workspaceSlug: string) => (this.workspace?.slug === workspaceSlug ? this.workspace : null);
 
   /**
-   * get workspace info from the array of workspaces in the store using workspace id
+   * get the singleton workspace when its id matches
    * @param workspaceId
    */
-  getWorkspaceById = (workspaceId: string) => this.workspaces?.[workspaceId] || null; // TODO: use undefined instead of null
+  getWorkspaceById = (workspaceId: string) => (this.workspace?.id === workspaceId ? this.workspace : null);
 
   /**
-   * fetch user workspaces from API
+   * fetch the user's singleton workspace from the API
    */
-  fetchWorkspaces = async () => {
+  fetchWorkspace = async () => {
     this.loader = true;
     try {
-      const workspaceResponse = await this.workspaceService.userWorkspaces();
+      const workspace = await this.workspaceService.userWorkspace();
       runInAction(() => {
-        workspaceResponse.forEach((workspace) => {
-          set(this.workspaces, [workspace.id], workspace);
-        });
+        this.workspace = workspace;
       });
-      return workspaceResponse;
+      return workspace;
     } finally {
       this.loader = false;
     }
   };
-
-  /**
-   * create workspace using the workspace data
-   * @param data
-   */
-  createWorkspace = async (data: Partial<IWorkspace>) =>
-    await this.workspaceService.createWorkspace(data).then((response) => {
-      runInAction(() => {
-        this.workspaces = set(this.workspaces, response.id, response);
-      });
-      return response;
-    });
 
   /**
    * update workspace using the workspace slug and new workspace data
@@ -215,9 +164,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
     await this.workspaceService.updateWorkspace(workspaceSlug, data).then((res) => {
       if (res && res.id) {
         runInAction(() => {
-          Object.keys(data).forEach((key) => {
-            set(this.workspaces, [res.id, key], data[key as keyof IWorkspace]);
-          });
+          this.workspace = res;
         });
       }
       return res;
@@ -229,31 +176,13 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
    * @param {string} logoURL
    */
   updateWorkspaceLogo = (workspaceSlug: string, logoURL: string) => {
-    const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
-    if (!workspaceId) {
+    const workspace = this.workspace;
+    if (workspace?.slug !== workspaceSlug) {
       throw new Error("Workspace not found");
     }
     runInAction(() => {
-      set(this.workspaces[workspaceId], ["logo_url"], logoURL);
+      set(workspace, ["logo_url"], logoURL);
     });
-  };
-
-  /**
-   * delete workspace using the workspace slug
-   * @param workspaceSlug
-   */
-  deleteWorkspace = async (workspaceSlug: string) => {
-    try {
-      await this.workspaceService.deleteWorkspace(workspaceSlug);
-      const updatedWorkspacesList = this.workspaces;
-      const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
-      delete updatedWorkspacesList[`${workspaceId}`];
-      runInAction(() => {
-        this.workspaces = updatedWorkspacesList;
-      });
-    } catch (error) {
-      console.error("Failed to delete workspace:", error);
-    }
   };
 
   fetchSidebarNavigationPreferences = async (workspaceSlug: string) => {

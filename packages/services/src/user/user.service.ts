@@ -6,7 +6,7 @@
 
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import type { IUser, TUserProfile } from "@plane/types";
+import type { IUser, IWorkspaceAdminStatus, TUserProfile } from "@plane/types";
 // api service
 import { APIService } from "../api.service";
 
@@ -77,16 +77,11 @@ export class UserService extends APIService {
       });
   }
 
-  /**
-   * Retrieves the current instance admin details
-   * @returns {Promise<IUser>} Promise resolving to the current instance admin details
-   * @throws {Error} If the API request fails
-   */
-  async adminDetails(): Promise<IUser> {
-    return this.get("/api/instances/admins/me/")
+  async workspaceAdminStatus(): Promise<IWorkspaceAdminStatus> {
+    return this.get("/api/users/me/workspace-admin/")
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error;
       });
   }
 }

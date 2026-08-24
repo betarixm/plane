@@ -1,6 +1,6 @@
 {
-  "name": "Plane God Mode",
-  "short_name": "Plane God Mode",
+  "name": "Plane Administration",
+  "short_name": "Administration",
   "description": "Plane helps you plan your issues, cycles, and product modules.",
   "start_url": ".",
   "display": "standalone",

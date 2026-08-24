@@ -83,26 +83,6 @@ export type TAuthErrorInfo = {
   message: string | React.ReactNode;
 };
 
-export enum EAdminAuthErrorCodes {
-  // Admin
-  ADMIN_ALREADY_EXIST = "5150",
-  REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME = "5155",
-  INVALID_ADMIN_EMAIL = "5160",
-  INVALID_ADMIN_PASSWORD = "5165",
-  REQUIRED_ADMIN_EMAIL_PASSWORD = "5170",
-  ADMIN_AUTHENTICATION_FAILED = "5175",
-  ADMIN_USER_ALREADY_EXIST = "5180",
-  ADMIN_USER_DOES_NOT_EXIST = "5185",
-  ADMIN_USER_DEACTIVATED = "5190",
-}
-
-export type TAdminAuthErrorInfo = {
-  type: EErrorAlertType;
-  code: EAdminAuthErrorCodes;
-  title: string;
-  message: string | React.ReactNode;
-};
-
 export enum EAuthErrorCodes {
   // Global
   INSTANCE_NOT_CONFIGURED = "5000",
@@ -155,16 +135,6 @@ export enum EAuthErrorCodes {
   INVALID_NEW_PASSWORD = "5140",
   // set password
   PASSWORD_ALREADY_SET = "5145",
-  // Admin
-  ADMIN_ALREADY_EXIST = "5150",
-  REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME = "5155",
-  INVALID_ADMIN_EMAIL = "5160",
-  INVALID_ADMIN_PASSWORD = "5165",
-  REQUIRED_ADMIN_EMAIL_PASSWORD = "5170",
-  ADMIN_AUTHENTICATION_FAILED = "5175",
-  ADMIN_USER_ALREADY_EXIST = "5180",
-  ADMIN_USER_DOES_NOT_EXIST = "5185",
-  ADMIN_USER_DEACTIVATED = "5190",
   // Rate limit
   RATE_LIMIT_EXCEEDED = "5900",
 }

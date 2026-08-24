@@ -12,9 +12,6 @@ export type TPowerKModalPageDetails = {
 };
 
 export const POWER_K_MODAL_PAGE_DETAILS: Record<TPowerKPageType, TPowerKModalPageDetails> = {
-  "open-workspace": {
-    i18n_placeholder: "power_k.page_placeholders.open_workspace",
-  },
   "open-project": {
     i18n_placeholder: "power_k.page_placeholders.open_project",
   },

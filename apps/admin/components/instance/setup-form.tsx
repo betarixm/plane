@@ -25,12 +25,23 @@ const authService = new AuthService();
 // error codes
 enum EErrorCodes {
   INSTANCE_NOT_CONFIGURED = "INSTANCE_NOT_CONFIGURED",
-  ADMIN_ALREADY_EXIST = "ADMIN_ALREADY_EXIST",
-  REQUIRED_EMAIL_PASSWORD_FIRST_NAME = "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
+  INSTANCE_ALREADY_SETUP = "INSTANCE_ALREADY_SETUP",
+  REQUIRED_SETUP_FIELDS = "REQUIRED_SETUP_FIELDS",
+  INVALID_WORKSPACE_NAME = "INVALID_WORKSPACE_NAME",
   INVALID_EMAIL = "INVALID_EMAIL",
-  INVALID_PASSWORD = "INVALID_PASSWORD",
-  USER_ALREADY_EXISTS = "USER_ALREADY_EXISTS",
+  PASSWORD_TOO_WEAK = "PASSWORD_TOO_WEAK",
+  USER_ALREADY_EXIST = "USER_ALREADY_EXIST",
 }
+
+const ERROR_MESSAGES: Record<EErrorCodes, string> = {
+  [EErrorCodes.INSTANCE_NOT_CONFIGURED]: "This Plane instance has not been configured.",
+  [EErrorCodes.INSTANCE_ALREADY_SETUP]: "This Plane instance has already been set up.",
+  [EErrorCodes.REQUIRED_SETUP_FIELDS]: "Complete all required fields to continue.",
+  [EErrorCodes.INVALID_WORKSPACE_NAME]: "Enter a valid company name.",
+  [EErrorCodes.INVALID_EMAIL]: "Enter a valid email address.",
+  [EErrorCodes.PASSWORD_TOO_WEAK]: "Choose a stronger password.",
+  [EErrorCodes.USER_ALREADY_EXIST]: "A user with this email address already exists.",
+};
 
 type TError = {
   type: EErrorCodes | undefined;
@@ -62,10 +73,10 @@ export function InstanceSetupForm() {
   const searchParams = useSearchParams();
   const firstNameParam = searchParams?.get("first_name") || undefined;
   const lastNameParam = searchParams?.get("last_name") || undefined;
-  const companyParam = searchParams?.get("company") || undefined;
+  const companyParam = searchParams?.get("company_name") || undefined;
   const emailParam = searchParams?.get("email") || undefined;
-  const isTelemetryEnabledParam = (searchParams?.get("is_telemetry_enabled") === "True" ? true : false) || true;
-  const errorCode = searchParams?.get("error_code") || undefined;
+  const telemetryParam = searchParams?.get("is_telemetry_enabled");
+  const isTelemetryEnabledParam = telemetryParam === null || !["false", "0"].includes(telemetryParam.toLowerCase());
   const errorMessage = searchParams?.get("error_message") || undefined;
   // state
   const [showPassword, setShowPassword] = useState({
@@ -94,42 +105,37 @@ export function InstanceSetupForm() {
     if (lastNameParam) setFormData((prev) => ({ ...prev, last_name: lastNameParam }));
     if (companyParam) setFormData((prev) => ({ ...prev, company_name: companyParam }));
     if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
-    if (isTelemetryEnabledParam) setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
+    setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
   }, [firstNameParam, lastNameParam, companyParam, emailParam, isTelemetryEnabledParam]);
 
   // derived values
   const errorData: TError = useMemo(() => {
-    if (errorCode && errorMessage) {
-      switch (errorCode) {
-        case EErrorCodes.INSTANCE_NOT_CONFIGURED:
-          return { type: EErrorCodes.INSTANCE_NOT_CONFIGURED, message: errorMessage };
-        case EErrorCodes.ADMIN_ALREADY_EXIST:
-          return { type: EErrorCodes.ADMIN_ALREADY_EXIST, message: errorMessage };
-        case EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME:
-          return { type: EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME, message: errorMessage };
-        case EErrorCodes.INVALID_EMAIL:
-          return { type: EErrorCodes.INVALID_EMAIL, message: errorMessage };
-        case EErrorCodes.INVALID_PASSWORD:
-          return { type: EErrorCodes.INVALID_PASSWORD, message: errorMessage };
-        case EErrorCodes.USER_ALREADY_EXISTS:
-          return { type: EErrorCodes.USER_ALREADY_EXISTS, message: errorMessage };
-        default:
-          return { type: undefined, message: undefined };
-      }
-    } else return { type: undefined, message: undefined };
-  }, [errorCode, errorMessage]);
+    if (!errorMessage || !Object.values(EErrorCodes).includes(errorMessage as EErrorCodes))
+      return { type: undefined, message: undefined };
+
+    const type = errorMessage as EErrorCodes;
+    return { type, message: ERROR_MESSAGES[type] };
+  }, [errorMessage]);
 
   const isButtonDisabled = useMemo(
     () =>
-      !isSubmitting &&
-      formData.first_name &&
-      formData.email &&
-      formData.password &&
-      getPasswordStrength(formData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-      formData.password === formData.confirm_password
-        ? false
-        : true,
-    [formData.confirm_password, formData.email, formData.first_name, formData.password, isSubmitting]
+      !csrfToken ||
+      isSubmitting ||
+      !formData.first_name ||
+      !formData.email ||
+      !formData.company_name ||
+      !formData.password ||
+      getPasswordStrength(formData.password) !== E_PASSWORD_STRENGTH.STRENGTH_VALID ||
+      formData.password !== formData.confirm_password,
+    [
+      csrfToken,
+      formData.company_name,
+      formData.confirm_password,
+      formData.email,
+      formData.first_name,
+      formData.password,
+      isSubmitting,
+    ]
   );
 
   const password = formData?.password ?? "";
@@ -147,13 +153,13 @@ export function InstanceSetupForm() {
           />
           {errorData.type &&
             errorData?.message &&
-            ![EErrorCodes.INVALID_EMAIL, EErrorCodes.INVALID_PASSWORD].includes(errorData.type) && (
+            ![EErrorCodes.INVALID_EMAIL, EErrorCodes.PASSWORD_TOO_WEAK].includes(errorData.type) && (
               <Banner type="error" message={errorData?.message} />
             )}
           <form
             className="space-y-4"
             method="POST"
-            action={`${API_BASE_URL}/api/instances/admins/sign-up/`}
+            action={`${API_BASE_URL}/api/instances/setup/`}
             onSubmit={() => setIsSubmitting(true)}
             onError={() => setIsSubmitting(false)}
           >
@@ -180,13 +186,12 @@ export function InstanceSetupForm() {
                     }
                   }}
                   autoComplete="off"
-                  autoFocus
                   maxLength={50}
                 />
               </div>
               <div className="w-full space-y-1">
                 <label className="text-13 font-medium text-tertiary" htmlFor="last_name">
-                  Last name <span className="text-danger-primary">*</span>
+                  Last name <span className="font-normal text-placeholder">(optional)</span>
                 </label>
                 <Input
                   className="w-full border border-subtle !bg-surface-1 placeholder:text-placeholder"
@@ -221,7 +226,7 @@ export function InstanceSetupForm() {
                 placeholder="name@company.com"
                 value={formData.email}
                 onChange={(e) => handleFormChange("email", e.target.value)}
-                hasError={errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL ? true : false}
+                hasError={errorData.type === EErrorCodes.INVALID_EMAIL}
                 autoComplete="off"
               />
               {errorData.type && errorData.type === EErrorCodes.INVALID_EMAIL && errorData.message && (
@@ -265,7 +270,7 @@ export function InstanceSetupForm() {
                   placeholder="New password"
                   value={formData.password}
                   onChange={(e) => handleFormChange("password", e.target.value)}
-                  hasError={errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD ? true : false}
+                  hasError={errorData.type === EErrorCodes.PASSWORD_TOO_WEAK}
                   onFocus={() => setIsPasswordInputFocused(true)}
                   onBlur={() => setIsPasswordInputFocused(false)}
                   autoComplete="new-password"
@@ -290,7 +295,7 @@ export function InstanceSetupForm() {
                   </button>
                 )}
               </div>
-              {errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD && errorData.message && (
+              {errorData.type && errorData.type === EErrorCodes.PASSWORD_TOO_WEAK && errorData.message && (
                 <p className="px-1 text-11 text-danger-primary">{errorData.message}</p>
               )}
               <PasswordStrengthIndicator password={formData.password} isFocused={isPasswordInputFocused} />

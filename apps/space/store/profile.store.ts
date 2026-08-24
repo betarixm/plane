@@ -35,7 +35,6 @@ export class ProfileStore implements IProfileStore {
     id: undefined,
     user: undefined,
     role: undefined,
-    last_workspace_id: undefined,
     theme: {
       theme: undefined,
       primary: undefined,
@@ -45,8 +44,6 @@ export class ProfileStore implements IProfileStore {
     onboarding_step: {
       workspace_join: false,
       profile_complete: false,
-      workspace_create: false,
-      workspace_invite: false,
     },
     is_onboarded: false,
     is_tour_completed: false,

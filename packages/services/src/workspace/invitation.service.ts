@@ -19,19 +19,6 @@ export class WorkspaceInvitationService extends APIService {
   }
 
   /**
-   * Retrieves all workspace invitations for the current user
-   * @returns {Promise<IWorkspaceMemberInvitation[]>} Promise resolving to array of workspace invitations
-   * @throws {Error} If the API request fails
-   */
-  async userInvitations(): Promise<IWorkspaceMemberInvitation[]> {
-    return this.get("/api/users/me/workspaces/invitations/")
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  /**
    * Retrieves all invitations for a specific workspace
    * @param {string} workspaceSlug - The unique slug identifier for the workspace
    * @returns {Promise<IWorkspaceMemberInvitation[]>} Promise resolving to array of workspace invitations
@@ -101,20 +88,6 @@ export class WorkspaceInvitationService extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/join/`, data, {
       headers: {},
     })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  /**
-   * Accepts multiple workspace invitations at once
-   * @param {any} data - Data containing information about invitations to accept
-   * @returns {Promise<any>} Promise resolving to the bulk join response
-   * @throws {Error} If the API request fails
-   */
-  async joinMany(data: any): Promise<any> {
-    return this.post("/api/users/me/workspaces/invitations/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

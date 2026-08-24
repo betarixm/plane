@@ -10,7 +10,7 @@ import type {
   IWorkspaceMemberMe,
   IWorkspaceMember,
   IWorkspaceMemberInvitation,
-  ILastActiveWorkspaceDetails,
+  IWorkspaceMemberInvitationPublic,
   IWorkspaceSearchResults,
   IProductUpdateResponse,
   IWorkspaceBulkInviteFormData,
@@ -35,10 +35,11 @@ export class WorkspaceService extends APIService {
     super(API_BASE_URL);
   }
 
-  async userWorkspaces(): Promise<IWorkspace[]> {
-    return this.get("/api/users/me/workspaces/")
+  async userWorkspace(): Promise<IWorkspace | undefined> {
+    return this.get("/api/users/me/workspace/")
       .then((response) => response?.data)
       .catch((error) => {
+        if (error?.response?.status === 404) return undefined;
         throw error?.response?.data;
       });
   }
@@ -51,24 +52,8 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async createWorkspace(data: Partial<IWorkspace>): Promise<IWorkspace> {
-    return this.post("/api/workspaces/", data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async updateWorkspace(workspaceSlug: string, data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteWorkspace(workspaceSlug: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -93,26 +78,19 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async joinWorkspaces(data: any): Promise<any> {
-    return this.post("/api/users/me/workspaces/invitations/", data)
+  async acceptWorkspaceInvitation(): Promise<void> {
+    return this.post("/api/users/me/workspace/invitation/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getLastActiveWorkspaceAndProjects(): Promise<ILastActiveWorkspaceDetails> {
-    return this.get("/api/users/last-visited-workspace/")
+  async userWorkspaceInvitation(): Promise<IWorkspaceMemberInvitationPublic | undefined> {
+    return this.get("/api/users/me/workspace/invitation/")
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async userWorkspaceInvitations(): Promise<IWorkspaceMemberInvitation[]> {
-    return this.get("/api/users/me/workspaces/invitations/")
-      .then((response) => response?.data)
-      .catch((error) => {
+        if (error?.response?.status === 404) return undefined;
         throw error?.response?.data;
       });
   }
@@ -169,7 +147,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getWorkspaceInvitation(workspaceSlug: string, invitationId: string): Promise<IWorkspaceMemberInvitation> {
+  async getWorkspaceInvitation(workspaceSlug: string, invitationId: string): Promise<IWorkspaceMemberInvitationPublic> {
     return this.get(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/join/`, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
@@ -191,14 +169,6 @@ export class WorkspaceService extends APIService {
 
   async deleteWorkspaceInvitations(workspaceSlug: string, invitationId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async workspaceSlugCheck(slug: string): Promise<any> {
-    return this.get(`/api/workspace-slug-check/?slug=${slug}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

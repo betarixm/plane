@@ -60,7 +60,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
         </Menu.Item>
       </div>
       <div className="py-2">
-        <form method="POST" action={`${API_BASE_URL}/api/instances/admins/sign-out/`} onSubmit={handleSignOut}>
+        <form method="POST" action={`${API_BASE_URL}/auth/sign-out/`} onSubmit={handleSignOut}>
           <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
           <Menu.Item
             as="button"
@@ -115,7 +115,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-body-md-medium text-primary">Instance admin</h4>
+              <h4 className="grow truncate text-body-md-medium text-primary">Administration</h4>
             </div>
           )}
         </div>

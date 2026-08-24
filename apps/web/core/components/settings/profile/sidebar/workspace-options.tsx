@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { CirclePlus, Mails } from "lucide-react";
+import { Mails } from "lucide-react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -16,7 +16,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 
 export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileSettingsSidebarWorkspaceOptions() {
   // store hooks
-  const { workspaces } = useWorkspace();
+  const { workspace } = useWorkspace();
   // translation
   const { t } = useTranslation();
 
@@ -24,7 +24,7 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
     <div className="shrink-0">
       <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t("common.workspace")}</div>
       <div className="flex flex-col">
-        {Object.values(workspaces).map((workspace) => (
+        {workspace && (
           <SettingsSidebarItem
             key={workspace.id}
             as="link"
@@ -33,15 +33,8 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
             label={workspace.name}
             isActive={false}
           />
-        ))}
+        )}
         <div className="mt-1.5">
-          <SettingsSidebarItem
-            as="link"
-            href="/create-workspace/"
-            icon={CirclePlus}
-            label={t("create_workspace")}
-            isActive={false}
-          />
           <SettingsSidebarItem
             as="link"
             href="/invitations/"

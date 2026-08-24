@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IWorkspaceMemberInvitation, TOnboardingStep, TOnboardingSteps, TUserProfile } from "@plane/types";
+import type { IWorkspaceMemberInvitationPublic, TOnboardingStep, TOnboardingSteps, TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
@@ -19,22 +19,18 @@ import { OnboardingHeader } from "./header";
 import { OnboardingStepRoot } from "./steps";
 
 type Props = {
-  invitations?: IWorkspaceMemberInvitation[];
+  invitation?: IWorkspaceMemberInvitationPublic;
 };
 
-export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [] }: Props) {
+export const OnboardingRoot = observer(function OnboardingRoot({ invitation }: Props) {
   const [currentStep, setCurrentStep] = useState<TOnboardingStep>(EOnboardingSteps.PROFILE_SETUP);
   // store hooks
   const { data: user } = useUser();
   const { data: userProfile, updateUserProfile, finishUserOnboarding } = useUserProfile();
-  const { workspaces } = useWorkspace();
+  const { workspace } = useWorkspace();
   const { config: instanceConfig } = useInstance();
 
-  const workspacesList = Object.values(workspaces ?? {});
   const isSelfManaged = instanceConfig?.is_self_managed;
-
-  // Calculate total steps based on whether invitations are available
-  const hasInvitations = invitations.length > 0;
 
   // complete onboarding
   const finishOnboarding = useCallback(async () => {
@@ -68,14 +64,14 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
   );
 
   const handleStepChange = useCallback(
-    (step: EOnboardingSteps, skipInvites?: boolean) => {
+    (step: EOnboardingSteps) => {
       switch (step) {
         case EOnboardingSteps.PROFILE_SETUP:
           if (isSelfManaged) {
             // Skip role & use case steps for self-hosted
             stepChange({ profile_complete: true });
-            if (workspacesList.length > 0) finishOnboarding();
-            else setCurrentStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
+            if (workspace) finishOnboarding();
+            else setCurrentStep(EOnboardingSteps.WORKSPACE_JOIN);
           } else {
             setCurrentStep(EOnboardingSteps.ROLE_SETUP);
           }
@@ -85,42 +81,23 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
           break;
         case EOnboardingSteps.USE_CASE_SETUP:
           stepChange({ profile_complete: true });
-          if (workspacesList.length > 0) finishOnboarding();
-          else setCurrentStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
+          if (workspace) finishOnboarding();
+          else setCurrentStep(EOnboardingSteps.WORKSPACE_JOIN);
           break;
-        case EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN:
-          if (skipInvites) finishOnboarding();
-          else {
-            setCurrentStep(EOnboardingSteps.INVITE_MEMBERS);
-            stepChange({ workspace_create: true });
-          }
-          break;
-        case EOnboardingSteps.INVITE_MEMBERS:
-          stepChange({ workspace_invite: true });
+        case EOnboardingSteps.WORKSPACE_JOIN:
           finishOnboarding();
           break;
       }
     },
-    [stepChange, finishOnboarding, workspacesList, isSelfManaged]
+    [stepChange, finishOnboarding, workspace, isSelfManaged]
   );
 
   const updateCurrentStep = (step: EOnboardingSteps) => setCurrentStep(step);
 
   useEffect(() => {
     const handleInitialStep = () => {
-      if (
-        userProfile?.onboarding_step?.profile_complete &&
-        !userProfile?.onboarding_step?.workspace_create &&
-        !userProfile?.onboarding_step?.workspace_join
-      ) {
-        setCurrentStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
-      }
-      if (
-        userProfile?.onboarding_step?.profile_complete &&
-        userProfile?.onboarding_step?.workspace_create &&
-        !userProfile?.onboarding_step?.workspace_invite
-      ) {
-        setCurrentStep(EOnboardingSteps.INVITE_MEMBERS);
+      if (userProfile?.onboarding_step?.profile_complete && !userProfile?.onboarding_step?.workspace_join) {
+        setCurrentStep(EOnboardingSteps.WORKSPACE_JOIN);
       }
     };
 
@@ -131,14 +108,10 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
   return (
     <div className="flex h-full flex-col">
       {/* Header with progress */}
-      <OnboardingHeader
-        currentStep={currentStep}
-        updateCurrentStep={updateCurrentStep}
-        hasInvitations={hasInvitations}
-      />
+      <OnboardingHeader currentStep={currentStep} updateCurrentStep={updateCurrentStep} />
 
       {/* Main content area */}
-      <OnboardingStepRoot currentStep={currentStep} invitations={invitations} handleStepChange={handleStepChange} />
+      <OnboardingStepRoot currentStep={currentStep} invitation={invitation} handleStepChange={handleStepChange} />
     </div>
   );
 });

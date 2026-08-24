@@ -27,7 +27,7 @@ export class RootStore {
     this.theme = new ThemeStore(this);
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
-    this.workspace = new WorkspaceStore(this);
+    this.workspace = new WorkspaceStore();
   }
 
   hydrate(initialData: any) {
@@ -42,6 +42,6 @@ export class RootStore {
     this.instance = new InstanceStore(this);
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
-    this.workspace = new WorkspaceStore(this);
+    this.workspace = new WorkspaceStore();
   }
 }

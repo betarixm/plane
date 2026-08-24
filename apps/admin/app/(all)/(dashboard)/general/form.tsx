@@ -10,7 +10,7 @@ import { Telescope } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IInstance, IInstanceAdmin } from "@plane/types";
+import type { IInstance } from "@plane/types";
 import { Input, ToggleSwitch } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
@@ -19,11 +19,10 @@ import { useInstance } from "@/hooks/store";
 
 export interface IGeneralConfigurationForm {
   instance: IInstance;
-  instanceAdmins: IInstanceAdmin[];
 }
 
 export const GeneralConfigurationForm = observer(function GeneralConfigurationForm(props: IGeneralConfigurationForm) {
-  const { instance, instanceAdmins } = props;
+  const { instance } = props;
   // hooks
   const { updateInstanceInfo } = useInstance();
 
@@ -68,20 +67,6 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
             error={Boolean(errors.instance_name)}
             required
           />
-
-          <div className="flex flex-col gap-1">
-            <h4 className="text-13 text-tertiary">Email</h4>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={instanceAdmins[0]?.user_detail?.email ?? ""}
-              placeholder="Admin email"
-              className="w-full cursor-not-allowed !text-placeholder"
-              autoComplete="on"
-              disabled
-            />
-          </div>
 
           <div className="flex flex-col gap-1">
             <h4 className="text-13 text-tertiary">Instance ID</h4>

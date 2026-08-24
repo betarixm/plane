@@ -53,7 +53,7 @@ const paramsToKey = (params: any) => {
   return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };
 
-export const USER_WORKSPACES_LIST = "USER_WORKSPACES_LIST";
+export const USER_WORKSPACE = "USER_WORKSPACE";
 
 export const WORKSPACE_PARTIAL_PROJECTS = (workspaceSlug: string) =>
   `WORKSPACE_PARTIAL_PROJECTS_${workspaceSlug.toUpperCase()}`;

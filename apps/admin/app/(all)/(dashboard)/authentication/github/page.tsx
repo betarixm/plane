@@ -63,6 +63,7 @@ const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthent
     await updateConfigPromise
       .then(() => {
         setIsSubmitting(false);
+        return undefined;
       })
       .catch((err) => {
         console.error(err);
@@ -116,6 +117,6 @@ const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthent
   );
 });
 
-export const meta: Route.MetaFunction = () => [{ title: "GitHub Authentication - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "GitHub Authentication - Administration" }];
 
 export default InstanceGithubAuthenticationPage;

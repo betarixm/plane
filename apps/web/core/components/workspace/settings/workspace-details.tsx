@@ -23,7 +23,6 @@ import { TimezoneSelect } from "@/components/global/timezone-select";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { DeleteWorkspaceSection } from "@/components/workspace/delete-workspace-section";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -296,11 +295,6 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
           </div>
         )}
       </div>
-      {isAdmin && (
-        <div className="mt-10">
-          <DeleteWorkspaceSection workspace={currentWorkspace} />
-        </div>
-      )}
     </>
   );
 });

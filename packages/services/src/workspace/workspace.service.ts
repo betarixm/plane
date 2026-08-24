@@ -5,12 +5,12 @@
  */
 
 import { API_BASE_URL } from "@plane/constants";
-import type { IWorkspace, ILastActiveWorkspaceDetails, IWorkspaceSearchResults } from "@plane/types";
+import type { IWorkspace, IWorkspaceSearchResults } from "@plane/types";
 import { APIService } from "../api.service";
 
 /**
  * Service class for managing workspace operations
- * Handles CRUD operations and various workspace-related functionalities
+ * Handles singleton workspace reads, updates, and related functionality
  * @extends {APIService}
  */
 export class WorkspaceService extends APIService {
@@ -21,19 +21,6 @@ export class WorkspaceService extends APIService {
   constructor(BASE_URL?: string) {
     super(BASE_URL || API_BASE_URL);
   }
-  /**
-   * Retrieves all workspaces for the current user
-   * @returns {Promise<IWorkspace[]>} Promise resolving to an array of workspaces
-   * @throws {Error} If the API request fails
-   */
-  async list(): Promise<IWorkspace[]> {
-    return this.get("/api/users/me/workspaces/")
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   /**
    * Retrieves details of a specific workspace
    * @param {string} workspaceSlug - The unique slug identifier for the workspace
@@ -49,20 +36,6 @@ export class WorkspaceService extends APIService {
   }
 
   /**
-   * Creates a new workspace
-   * @param {Partial<IWorkspace>} data - Workspace data for creation
-   * @returns {Promise<IWorkspace>} Promise resolving to the created workspace
-   * @throws {Error} If the API request fails
-   */
-  async create(data: Partial<IWorkspace>): Promise<IWorkspace> {
-    return this.post("/api/workspaces/", data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  /**
    * Updates an existing workspace
    * @param {string} workspaceSlug - The unique slug identifier for the workspace
    * @param {Partial<IWorkspace>} data - Updated workspace data
@@ -71,47 +44,6 @@ export class WorkspaceService extends APIService {
    */
   async update(workspaceSlug: string, data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  /**
-   * Deletes a workspace
-   * @param {string} workspaceSlug - The unique slug identifier for the workspace
-   * @returns {Promise<any>} Promise resolving to the deletion response
-   * @throws {Error} If the API request fails
-   */
-  async destroy(workspaceSlug: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  /**
-   * Retrieves information about the user's last visited workspace
-   * @returns {Promise<ILastActiveWorkspaceDetails>} Promise resolving to last active workspace details
-   * @throws {Error} If the API request fails
-   */
-  async lastVisited(): Promise<ILastActiveWorkspaceDetails> {
-    return this.get("/api/users/last-visited-workspace/")
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  /**
-   * Checks if a workspace slug is available
-   * @param {string} slug - The workspace slug to check
-   * @returns {Promise<any>} Promise resolving to slug availability status
-   * @throws {Error} If the API request fails
-   */
-  async slugCheck(slug: string): Promise<any> {
-    return this.get(`/api/workspace-slug-check/?slug=${slug}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -13,7 +13,7 @@ import { InstanceSetupForm } from "@/components/instance/setup-form";
 import { useInstance } from "@/hooks/store";
 // components
 import type { Route } from "./+types/page";
-import { InstanceSignInForm } from "./sign-in-form";
+import { AdministrationEntry } from "./administration-entry";
 
 function HomePage() {
   // store hooks
@@ -38,13 +38,12 @@ function HomePage() {
     return <InstanceSetupForm />;
   }
 
-  // if instance is fetched and setup is done, show sign in form
-  return <InstanceSignInForm />;
+  return <AdministrationEntry />;
 }
 
 export default observer(HomePage);
 
 export const meta: Route.MetaFunction = () => [
-  { title: "Admin – Instance Setup & Sign-In" },
-  { name: "description", content: "Configure your Plane instance or sign in to the admin portal." },
+  { title: "Plane Administration" },
+  { name: "description", content: "Configure your Plane instance as a workspace administrator." },
 ];

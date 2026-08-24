@@ -15,21 +15,20 @@ import { GeneralConfigurationForm } from "./form";
 import type { Route } from "./+types/page";
 
 function GeneralPage() {
-  const { instance, instanceAdmins } = useInstance();
+  const { instance } = useInstance();
 
   return (
     <PageWrapper
       header={{
         title: "General settings",
-        description:
-          "Change the name of your instance and instance admin e-mail addresses. Enable or disable telemetry in your instance.",
+        description: "Change the name of your instance and enable or disable telemetry.",
       }}
     >
-      {instance && instanceAdmins && <GeneralConfigurationForm instance={instance} instanceAdmins={instanceAdmins} />}
+      {instance && <GeneralConfigurationForm instance={instance} />}
     </PageWrapper>
   );
 }
 
-export const meta: Route.MetaFunction = () => [{ title: "General Settings - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "General Settings - Administration" }];
 
 export default observer(GeneralPage);

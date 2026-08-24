@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Boxes, Share2, Star, User2 } from "lucide-react";
 import { CheckIcon, CloseIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
@@ -17,7 +18,8 @@ import { WORKSPACE_INVITATION } from "@plane/constants";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
@@ -37,6 +39,8 @@ function WorkspaceInvitationPage() {
   const token = searchParams.get("token");
   // store hooks
   const { data: currentUser } = useUser();
+  const { fetchWorkspace } = useWorkspace();
+  const { fetchCurrentUserSettings } = useUserSettings();
 
   const { data: invitationDetail, error } = useSWR(
     invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),
@@ -45,34 +49,65 @@ function WorkspaceInvitationPage() {
       : null
   );
 
-  const handleAccept = () => {
-    if (!invitationDetail) return;
-    workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
-        accepted: true,
-        token: token,
-      })
-      .then(() => {
-        if (invitationDetail.email === currentUser?.email) {
-          router.push(`/${invitationDetail.workspace.slug}`);
-        } else {
-          router.push("/");
-        }
-      })
-      .catch((err: unknown) => console.error(err));
+  const redirectToSignIn = () => {
+    const invitationPath = `/workspace-invitations/?${searchParams.toString()}`;
+    router.push(`/?next_path=${encodeURIComponent(invitationPath)}`);
   };
 
-  const handleReject = () => {
+  const showInvitationError = (message: string) =>
+    setToast({
+      type: TOAST_TYPE.ERROR,
+      title: "Unable to respond to invitation",
+      message,
+    });
+
+  const handleAccept = async () => {
     if (!invitationDetail || !token) return;
-    void workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+
+    if (!currentUser) {
+      redirectToSignIn();
+      return;
+    }
+    if (currentUser.email.toLowerCase() !== invitationDetail.email.toLowerCase()) {
+      showInvitationError(`Sign in as ${invitationDetail.email} to accept this invitation.`);
+      return;
+    }
+
+    try {
+      await workspaceService.joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+        accepted: true,
+        token: token,
+      });
+      await Promise.all([fetchWorkspace(), fetchCurrentUserSettings()]);
+      router.push(`/${invitationDetail.workspace.slug}`);
+    } catch (err: unknown) {
+      const joinError = err as { error?: string };
+      showInvitationError(joinError.error ?? "Please try again.");
+    }
+  };
+
+  const handleReject = async () => {
+    if (!invitationDetail || !token) return;
+
+    if (!currentUser) {
+      redirectToSignIn();
+      return;
+    }
+    if (currentUser.email.toLowerCase() !== invitationDetail.email.toLowerCase()) {
+      showInvitationError(`Sign in as ${invitationDetail.email} to respond to this invitation.`);
+      return;
+    }
+
+    try {
+      await workspaceService.joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
         accepted: false,
         token: token,
-      })
-      .then(() => {
-        router.push("/");
-      })
-      .catch((err: unknown) => console.error(err));
+      });
+      router.push("/");
+    } catch (err: unknown) {
+      const joinError = err as { error?: string };
+      showInvitationError(joinError.error ?? "Please try again.");
+    }
   };
 
   return (

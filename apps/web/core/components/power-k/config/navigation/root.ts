@@ -21,7 +21,6 @@ export const usePowerKNavigationCommands = (): TPowerKCommandConfig[] => {
     optionsList["open_project_setting"],
     optionsList["open_project"],
     optionsList["open_workspace_setting"],
-    optionsList["open_workspace"],
     // User-Level Navigation
     optionsList["nav_home"],
     optionsList["nav_inbox"],

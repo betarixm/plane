@@ -28,7 +28,6 @@ export type TPowerKContext = {
 
 export type TPowerKPageType =
   // open entity based actions
-  | "open-workspace"
   | "open-project"
   | "open-workspace-setting"
   | "open-project-cycle"

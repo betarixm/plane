@@ -55,6 +55,7 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
     await updateConfigPromise
       .then(() => {
         setIsSubmitting(false);
+        return undefined;
       })
       .catch((err) => {
         console.error(err);
@@ -100,6 +101,6 @@ const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthentic
     </PageWrapper>
   );
 });
-export const meta: Route.MetaFunction = () => [{ title: "Gitea Authentication - God Mode" }];
+export const meta: Route.MetaFunction = () => [{ title: "Gitea Authentication - Administration" }];
 
 export default InstanceGiteaAuthenticationPage;
