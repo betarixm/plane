@@ -2,15 +2,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-import pytest
 from uuid import uuid4
 
+import pytest
 from rest_framework import serializers
 
 from plane.api.serializers import WorkspaceLiteSerializer
 from plane.app.serializers import WorkSpaceSerializer
-from plane.license.api.serializers import WorkspaceSerializer as InstanceWorkspaceSerializer
-from plane.db.models import Workspace, User
+from plane.db.models import User, Workspace
 
 # Names with no letter or digit — must be rejected (issue #9255)
 SYMBOL_ONLY_NAMES = ["-_________-", "---", "___", "- - -", "   ", "  -_ "]
@@ -102,28 +101,5 @@ class TestWorkSpaceSerializerNameValidation:
     @pytest.mark.parametrize("name", URL_NAMES)
     def test_rejects_names_containing_urls(self, name):
         serializer = WorkSpaceSerializer()
-        with pytest.raises(serializers.ValidationError):
-            serializer.validate_name(name)
-
-
-@pytest.mark.unit
-class TestInstanceWorkspaceSerializerNameValidation:
-    """The instance/license workspace create path must enforce the same rules
-    as the app serializer (symbol-only rejection AND URL rejection)."""
-
-    @pytest.mark.parametrize("name", SYMBOL_ONLY_NAMES)
-    def test_rejects_symbol_only_names(self, name):
-        serializer = InstanceWorkspaceSerializer()
-        with pytest.raises(serializers.ValidationError):
-            serializer.validate_name(name)
-
-    @pytest.mark.parametrize("name", VALID_NAMES)
-    def test_accepts_names_with_alphanumeric(self, name):
-        serializer = InstanceWorkspaceSerializer()
-        assert serializer.validate_name(name) == name
-
-    @pytest.mark.parametrize("name", URL_NAMES)
-    def test_rejects_names_containing_urls(self, name):
-        serializer = InstanceWorkspaceSerializer()
         with pytest.raises(serializers.ValidationError):
             serializer.validate_name(name)

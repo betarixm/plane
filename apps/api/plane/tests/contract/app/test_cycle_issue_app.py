@@ -5,10 +5,9 @@
 """Regression test for GHSA-4w5x-wc9w-f47x.
 
 CycleIssueViewSet.create reassigned any CycleIssue row matched by issue_id to
-the caller's cycle without scoping the lookup to the caller's
-workspace/project. An ADMIN/MEMBER of their own project could therefore pass a
-work-item UUID from a *different* tenant and silently evict the victim's work
-item from the victim's cycle (cross-tenant write / BOLA).
+the caller's cycle without scoping the lookup to the caller's project. A
+project ADMIN/MEMBER could therefore pass a work-item UUID from another
+project and silently evict it from its cycle (cross-project write / BOLA).
 """
 
 from uuid import uuid4
@@ -24,7 +23,6 @@ from plane.db.models import (
     ProjectMember,
     State,
     User,
-    Workspace,
     WorkspaceMember,
 )
 
@@ -53,9 +51,8 @@ def attacker_cycle(db, workspace, attacker_project, create_user):
 
 
 @pytest.fixture
-def victim_tenant(db):
-    """A completely separate workspace/project/cycle owning a work item that is
-    already assigned to the victim's own cycle."""
+def victim_project_scope(db, workspace):
+    """Another project in the singleton workspace owning a cycled work item."""
     uid = uuid4().hex[:8]
     victim_user = User.objects.create(
         email=f"victim-{uid}@plane.so",
@@ -63,33 +60,32 @@ def victim_tenant(db):
         first_name="Victim",
         last_name="User",
     )
-    victim_ws = Workspace.objects.create(name="Victim WS", owner=victim_user, slug=f"victim-{uid}")
-    WorkspaceMember.objects.create(workspace=victim_ws, member=victim_user, role=20)
+    WorkspaceMember.objects.create(workspace=workspace, member=victim_user, role=15)
     victim_project = Project.objects.create(
         name="Victim Project",
         identifier="VIC",
-        workspace=victim_ws,
+        workspace=workspace,
         created_by=victim_user,
     )
     ProjectMember.objects.create(project=victim_project, member=victim_user, role=20, is_active=True)
     state = State.objects.create(
-        name="Todo", project=victim_project, workspace=victim_ws, group="backlog", default=True
+        name="Todo", project=victim_project, workspace=workspace, group="backlog", default=True
     )
     victim_issue = Issue.objects.create(
         name="Victim Issue",
-        workspace=victim_ws,
+        workspace=workspace,
         project=victim_project,
         state=state,
         created_by=victim_user,
     )
     victim_cycle = Cycle.objects.create(
-        name="Victim Cycle", project=victim_project, workspace=victim_ws, owned_by=victim_user
+        name="Victim Cycle", project=victim_project, workspace=workspace, owned_by=victim_user
     )
     cycle_issue = CycleIssue.objects.create(
         issue=victim_issue,
         cycle=victim_cycle,
         project=victim_project,
-        workspace=victim_ws,
+        workspace=workspace,
         created_by=victim_user,
     )
     return {
@@ -105,18 +101,23 @@ class TestCycleIssueCrossTenantBOLA:
         return f"/api/workspaces/{workspace_slug}/projects/{project_id}/cycles/{cycle_id}/cycle-issues/"
 
     @pytest.mark.django_db
-    def test_foreign_tenant_cycle_issue_not_reassigned(
-        self, session_client, workspace, attacker_project, attacker_cycle, victim_tenant
+    def test_foreign_project_cycle_issue_not_reassigned(
+        self,
+        session_client,
+        workspace,
+        attacker_project,
+        attacker_cycle,
+        victim_project_scope,
     ):
-        """The attacker adds a foreign-tenant work-item UUID to their own cycle.
+        """The caller adds another project's work-item UUID to its own cycle.
 
         Before the fix the victim's CycleIssue row was reassigned to the
-        attacker's cycle (cycle_id flipped). After the fix the foreign row is
+        caller's cycle (cycle_id flipped). After the fix the foreign row is
         excluded from the lookup, so it stays in the victim's cycle.
         """
-        victim_issue = victim_tenant["issue"]
-        victim_cycle = victim_tenant["cycle"]
-        victim_cycle_issue = victim_tenant["cycle_issue"]
+        victim_issue = victim_project_scope["issue"]
+        victim_cycle = victim_project_scope["cycle"]
+        victim_cycle_issue = victim_project_scope["cycle_issue"]
 
         url = self.get_url(workspace.slug, attacker_project.id, attacker_cycle.id)
         response = session_client.post(url, {"issues": [str(victim_issue.id)]}, format="json")
@@ -129,15 +130,13 @@ class TestCycleIssueCrossTenantBOLA:
 
         victim_cycle_issue.refresh_from_db()
         assert victim_cycle_issue.cycle_id == victim_cycle.id, (
-            "Cross-tenant reassignment: victim's CycleIssue was moved to the attacker's cycle"
+            "Cross-project reassignment: victim's CycleIssue was moved to the caller's cycle"
         )
         # No CycleIssue for the victim's issue should exist under the attacker's cycle.
-        assert not CycleIssue.objects.filter(
-            cycle_id=attacker_cycle.id, issue_id=victim_issue.id
-        ).exists()
+        assert not CycleIssue.objects.filter(cycle_id=attacker_cycle.id, issue_id=victim_issue.id).exists()
 
     @pytest.mark.django_db
-    def test_same_tenant_reassignment_still_works(
+    def test_same_project_reassignment_still_works(
         self, session_client, workspace, attacker_project, attacker_cycle, create_user
     ):
         """A legitimate reassignment within the caller's own project must still
