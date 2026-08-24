@@ -3,12 +3,12 @@
 # See the LICENSE file for details.
 
 # Django imports
-from django.utils.http import url_has_allowed_host_and_scheme
-from django.conf import settings
-
 # Python imports
 import os
 from urllib.parse import urlparse
+
+from django.conf import settings
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 def sanitize_filename(filename):
@@ -159,7 +159,7 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
 
     # Add the next path to the parameters
     if validated_path:
-        query_parts.append(f"next_path={validated_path}")
+        query_parts.append(urlencode({"next_path": validated_path}))
 
     # Add additional parameters
     if params:

@@ -2,8 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Django imports
+from django.db import transaction
 from django.utils import timezone
+
+from plane.bgtasks.event_tracking_task import track_event
 
 # Module imports
 from plane.db.models import (
@@ -12,80 +14,100 @@ from plane.db.models import (
     WorkspaceMember,
     WorkspaceMemberInvite,
 )
-from plane.utils.cache import invalidate_cache_directly
-from plane.bgtasks.event_tracking_task import track_event
 from plane.utils.analytics_events import USER_JOINED_WORKSPACE
+from plane.utils.cache import invalidate_cache_directly
+from plane.utils.workspace_admin import (
+    activate_invited_workspace_member,
+    workspace_admin_guard,
+)
+
+
+def _notify_workspace_join(*, user_id, workspace_id, workspace_slug, role):
+    invalidate_cache_directly(
+        path=f"/api/workspaces/{workspace_slug}/members/",
+        url_params=False,
+        user=False,
+        multiple=True,
+    )
+    track_event.delay(
+        user_id=user_id,
+        event_name=USER_JOINED_WORKSPACE,
+        slug=workspace_slug,
+        event_properties={
+            "user_id": user_id,
+            "workspace_id": workspace_id,
+            "workspace_slug": workspace_slug,
+            "role": role,
+            "joined_at": str(timezone.now().isoformat()),
+        },
+    )
 
 
 def process_workspace_project_invitations(user):
-    """This function takes in User and adds him to all workspace and projects that the user has accepted invited of"""
+    """Apply accepted invitations using the workspace admin lock protocol."""
 
-    # Check if user has any accepted invites for workspace and add them to workspace
-    workspace_member_invites = WorkspaceMemberInvite.objects.filter(email=user.email, accepted=True)
-
-    WorkspaceMember.objects.bulk_create(
-        [
-            WorkspaceMember(
-                workspace_id=workspace_member_invite.workspace_id,
-                member=user,
-                role=workspace_member_invite.role,
-            )
-            for workspace_member_invite in workspace_member_invites
-        ],
-        ignore_conflicts=True,
+    workspace_invites = list(
+        WorkspaceMemberInvite.objects.filter(email=user.email, accepted=True)
+        .select_related("workspace")
+        .order_by("created_at")
     )
-
-    for workspace_member_invite in workspace_member_invites:
-        invalidate_cache_directly(
-            path=f"/api/workspaces/{str(workspace_member_invite.workspace.slug)}/members/",
-            url_params=False,
-            user=False,
-            multiple=True,
-        )
-        track_event.delay(
-            user_id=user.id,
-            event_name=USER_JOINED_WORKSPACE,
-            slug=workspace_member_invite.workspace.slug,
-            event_properties={
-                "user_id": user.id,
-                "workspace_id": workspace_member_invite.workspace.id,
-                "workspace_slug": workspace_member_invite.workspace.slug,
-                "role": workspace_member_invite.role,
-                "joined_at": str(timezone.now().isoformat()),
-            },
-        )
-
-    # Check if user has any project invites
-    project_member_invites = ProjectMemberInvite.objects.filter(email=user.email, accepted=True)
-
-    # Add user to workspace
-    WorkspaceMember.objects.bulk_create(
-        [
-            WorkspaceMember(
-                workspace_id=project_member_invite.workspace_id,
-                role=(project_member_invite.role if project_member_invite.role in [5, 15] else 15),
-                member=user,
-                created_by_id=project_member_invite.created_by_id,
+    for invitation in workspace_invites:
+        with workspace_admin_guard(workspace_id=invitation.workspace_id) as workspace:
+            locked_invitation = WorkspaceMemberInvite.objects.select_for_update().get(
+                pk=invitation.pk,
+                workspace=workspace,
             )
-            for project_member_invite in project_member_invites
-        ],
-        ignore_conflicts=True,
-    )
-
-    # Now add the users to project
-    ProjectMember.objects.bulk_create(
-        [
-            ProjectMember(
-                workspace_id=project_member_invite.workspace_id,
-                role=(project_member_invite.role if project_member_invite.role in [5, 15] else 15),
-                member=user,
-                created_by_id=project_member_invite.created_by_id,
+            workspace_member = activate_invited_workspace_member(
+                workspace=workspace,
+                user=user,
+                role=locked_invitation.role,
             )
-            for project_member_invite in project_member_invites
-        ],
-        ignore_conflicts=True,
-    )
+            locked_invitation.delete()
+            transaction.on_commit(
+                lambda user_id=user.id,
+                workspace_id=workspace.id,
+                workspace_slug=workspace.slug,
+                role=workspace_member.role: _notify_workspace_join(
+                    user_id=user_id,
+                    workspace_id=workspace_id,
+                    workspace_slug=workspace_slug,
+                    role=role,
+                )
+            )
 
-    # Delete all the invites
-    workspace_member_invites.delete()
-    project_member_invites.delete()
+    project_invites = list(
+        ProjectMemberInvite.objects.filter(email=user.email, accepted=True)
+        .select_related("workspace", "project")
+        .order_by("created_at")
+    )
+    for invitation in project_invites:
+        with workspace_admin_guard(workspace_id=invitation.workspace_id) as workspace:
+            locked_invitation = ProjectMemberInvite.objects.select_for_update().get(
+                pk=invitation.pk,
+                workspace=workspace,
+            )
+            workspace_role = locked_invitation.role if locked_invitation.role in [5, 15] else 15
+            workspace_member = (
+                WorkspaceMember.objects.select_for_update().filter(workspace=workspace, member=user).first()
+            )
+            if workspace_member is None:
+                WorkspaceMember.objects.create(
+                    workspace=workspace,
+                    role=workspace_role,
+                    member=user,
+                    created_by_id=locked_invitation.created_by_id,
+                )
+            elif not workspace_member.is_active:
+                workspace_member.is_active = True
+                workspace_member.save(update_fields=["is_active", "updated_at"])
+
+            ProjectMember.objects.get_or_create(
+                workspace=workspace,
+                project_id=locked_invitation.project_id,
+                member=user,
+                defaults={
+                    "role": workspace_role,
+                    "created_by_id": locked_invitation.created_by_id,
+                },
+            )
+            locked_invitation.delete()

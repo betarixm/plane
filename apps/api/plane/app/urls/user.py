@@ -14,11 +14,12 @@ from plane.app.views import (
     ## User
     UserEndpoint,
     UserIssueCompletedGraphEndpoint,
-    UserWorkspaceDashboardEndpoint,
     UserSessionEndpoint,
+    UserWorkspaceAdminEndpoint,
+    UserWorkspaceDashboardEndpoint,
     ## End User
     ## Workspaces
-    UserWorkSpacesEndpoint,
+    UserWorkspaceEndpoint,
 )
 
 urlpatterns = [
@@ -52,8 +53,8 @@ urlpatterns = [
     path("users/me/accounts/<uuid:pk>/", AccountEndpoint.as_view(), name="accounts"),
     ## End Accounts
     path(
-        "users/me/instance-admin/",
-        UserEndpoint.as_view({"get": "retrieve_instance_admin"}),
+        "users/me/workspace-admin/",
+        UserWorkspaceAdminEndpoint.as_view(),
         name="users",
     ),
     path("users/me/onboard/", UpdateUserOnBoardedEndpoint.as_view(), name="user-onboard"),
@@ -63,8 +64,8 @@ urlpatterns = [
         name="user-tour",
     ),
     path("users/me/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
-    # user workspaces
-    path("users/me/workspaces/", UserWorkSpacesEndpoint.as_view(), name="user-workspace"),
+    # singleton workspace membership
+    path("users/me/workspace/", UserWorkspaceEndpoint.as_view(), name="user-workspace"),
     # User Graphs
     path(
         "users/me/workspaces/<str:slug>/activity-graph/",

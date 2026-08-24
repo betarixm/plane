@@ -5,53 +5,54 @@
 # Python imports
 import json
 
-# Django import
-from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F, Prefetch, Subquery
-from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Value, UUIDField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Count, F, Func, OuterRef, Prefetch, Q, Subquery, UUIDField, Value
 from django.db.models.functions import Coalesce
+
+# Django import
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
-from ..base import BaseViewSet
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import ROLE, allow_permission
+from plane.app.serializers import (
+    IntakeIssueDetailSerializer,
+    IntakeIssueSerializer,
+    IntakeSerializer,
+    IssueCreateSerializer,
+    IssueDescriptionVersionDetailSerializer,
+    IssueDetailSerializer,
+)
+from plane.app.views.base import BaseAPIView
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.db.models import (
+    CycleIssue,
+    FileAsset,
     Intake,
     IntakeIssue,
     Issue,
-    State,
-    StateGroup,
+    IssueDescriptionVersion,
     IssueLink,
-    FileAsset,
     Project,
     ProjectMember,
-    CycleIssue,
-    IssueDescriptionVersion,
-    WorkspaceMember,
+    State,
+    StateGroup,
 )
-from plane.app.serializers import (
-    IssueCreateSerializer,
-    IssueDetailSerializer,
-    IntakeSerializer,
-    IntakeIssueSerializer,
-    IntakeIssueDetailSerializer,
-    IssueDescriptionVersionDetailSerializer,
-)
-from plane.utils.issue_filters import issue_filters
-from plane.utils.order_queryset import INTAKE_ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
-from plane.bgtasks.issue_activities_task import issue_activity
-from plane.bgtasks.issue_description_version_task import issue_description_version_task
-from plane.app.views.base import BaseAPIView
-from plane.utils.timezone_converter import user_timezone_converter
+from plane.db.models.intake import SourceType
 from plane.utils.global_paginator import paginate
 from plane.utils.host import base_host
-from plane.db.models.intake import SourceType
+from plane.utils.issue_filters import issue_filters
+from plane.utils.order_queryset import INTAKE_ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.timezone_converter import user_timezone_converter
+from plane.utils.workspace_admin import active_human_workspace_admins
+
+# Module imports
+from ..base import BaseViewSet
 
 
 class IntakeViewSet(BaseViewSet):
@@ -351,12 +352,14 @@ class IntakeIssueViewSet(BaseViewSet):
             is_active=True,
         ).first()
 
-        is_workspace_admin = WorkspaceMember.objects.filter(
-            workspace__slug=slug,
-            is_active=True,
-            member=request.user,
-            role=ROLE.ADMIN.value,
-        ).exists()
+        is_workspace_admin = (
+            active_human_workspace_admins()
+            .filter(
+                workspace__slug=slug,
+                member=request.user,
+            )
+            .exists()
+        )
 
         if not project_member and not is_workspace_admin:
             return Response(

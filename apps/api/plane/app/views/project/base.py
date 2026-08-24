@@ -5,10 +5,9 @@
 # Python imports
 import json
 
-
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery, Count
+from django.db.models import Count, Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.utils import timezone
 
 # Third Party imports
@@ -26,7 +25,7 @@ from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
-    UserFavorite,
+    DEFAULT_STATES,
     DeployBoard,
     Intake,
     Project,
@@ -35,13 +34,14 @@ from plane.db.models import (
     ProjectNetwork,
     ProjectUserProperty,
     State,
-    DEFAULT_STATES,
+    UserFavorite,
     Workspace,
     WorkspaceMember,
 )
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
 from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.workspace_admin import active_human_workspace_admins
 
 
 class ProjectViewSet(BaseViewSet):
@@ -313,12 +313,14 @@ class ProjectViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, pk=None):
         # try:
-        is_workspace_admin = WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.ADMIN.value,
-        ).exists()
+        is_workspace_admin = (
+            active_human_workspace_admins()
+            .filter(
+                member=request.user,
+                workspace__slug=slug,
+            )
+            .exists()
+        )
 
         is_project_admin = ProjectMember.objects.filter(
             member=request.user,
@@ -381,12 +383,12 @@ class ProjectViewSet(BaseViewSet):
 
     def destroy(self, request, slug, pk):
         if (
-            WorkspaceMember.objects.filter(
+            active_human_workspace_admins()
+            .filter(
                 member=request.user,
                 workspace__slug=slug,
-                is_active=True,
-                role=ROLE.ADMIN.value,
-            ).exists()
+            )
+            .exists()
             or ProjectMember.objects.filter(
                 member=request.user,
                 workspace__slug=slug,

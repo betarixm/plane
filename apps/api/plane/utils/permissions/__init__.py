@@ -2,20 +2,20 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from .workspace import (
-    WorkSpaceBasePermission,
-    WorkspaceOwnerPermission,
-    WorkSpaceAdminPermission,
-    WorkspaceEntityPermission,
-    WorkspaceViewerPermission,
-    WorkspaceUserPermission,
-)
+from .base import ROLE, allow_permission
+from .page import ProjectPagePermission
 from .project import (
+    ProjectAdminPermission,
     ProjectBasePermission,
     ProjectEntityPermission,
-    ProjectMemberPermission,
     ProjectLitePermission,
-    ProjectAdminPermission,
+    ProjectMemberPermission,
 )
-from .base import allow_permission, ROLE
-from .page import ProjectPagePermission
+from .workspace import (
+    WorkSpaceAdminPermission,
+    WorkspaceAdminPermission,
+    WorkSpaceBasePermission,
+    WorkspaceEntityPermission,
+    WorkspaceUserPermission,
+    WorkspaceViewerPermission,
+)

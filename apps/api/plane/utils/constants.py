@@ -6,7 +6,6 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "404",
     "accounts",
     "api",
-    "create-workspace",
     "god-mode",
     "installations",
     "invitations",

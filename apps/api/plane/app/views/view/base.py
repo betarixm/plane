@@ -4,49 +4,51 @@
 
 import copy
 
+from django.db import transaction
+
 # Django imports
 from django.db.models import (
     Exists,
     F,
     Func,
     OuterRef,
+    Prefetch,
     Q,
     Subquery,
-    Prefetch,
 )
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
-from django.db import transaction
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import ROLE, allow_permission
 from plane.app.serializers import IssueViewSerializer, ViewIssueListSerializer
+from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.db.models import (
-    Issue,
-    FileAsset,
-    IssueLink,
-    IssueView,
-    Workspace,
-    WorkspaceMember,
-    ProjectMember,
-    Project,
     CycleIssue,
-    UserRecentVisit,
+    FileAsset,
+    Issue,
     IssueAssignee,
     IssueLabel,
+    IssueLink,
+    IssueView,
     ModuleIssue,
+    Project,
+    ProjectMember,
+    UserFavorite,
+    UserRecentVisit,
+    Workspace,
+    WorkspaceMember,
 )
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import VIEW_ORDER_BY_ALLOWLIST, order_issue_queryset, sanitize_order_by
-from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.workspace_admin import active_human_workspace_admins
+
 from .. import BaseViewSet
-from plane.db.models import UserFavorite
-from plane.utils.filters import ComplexFilterBackend
-from plane.utils.filters import IssueFilterSet
 
 
 class WorkspaceViewViewSet(BaseViewSet):
@@ -121,9 +123,7 @@ class WorkspaceViewViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)
 
-        workspace_member = WorkspaceMember.objects.filter(
-            workspace__slug=slug, member=request.user, role=20, is_active=True
-        )
+        workspace_member = active_human_workspace_admins().filter(workspace__slug=slug, member=request.user)
         if workspace_member.exists() or workspace_view.owned_by == request.user:
             workspace_view.delete()
             # Delete the user favorite view

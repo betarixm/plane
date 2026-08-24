@@ -5,17 +5,12 @@
 # Python imports
 import csv
 import io
-import os
 from datetime import date
-import uuid
 
 from dateutil.relativedelta import relativedelta
-from django.db import IntegrityError
 from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
-
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractDay, ExtractWeek
-
 
 # Django imports
 from django.http import HttpResponse
@@ -26,9 +21,11 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.app.permissions import (
+    ROLE,
     WorkSpaceAdminPermission,
     WorkSpaceBasePermission,
     WorkspaceEntityPermission,
+    allow_permission,
 )
 
 # Module imports
@@ -40,15 +37,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     WorkspaceTheme,
-    Profile,
 )
-from plane.app.permissions import ROLE, allow_permission
-from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
-from plane.license.utils.instance_value import get_configuration_value
-from plane.bgtasks.workspace_seed_task import workspace_seed
-from plane.bgtasks.event_tracking_task import track_event
-from plane.utils.url import contains_url
-from plane.utils.analytics_events import WORKSPACE_CREATED, WORKSPACE_DELETED
 from plane.utils.csv_utils import sanitize_csv_row
 
 
@@ -66,7 +55,8 @@ class WorkSpaceViewSet(BaseViewSet):
         member_count = (
             WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
             .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
+            .values("workspace_id")
+            .annotate(count=Count("id"))
             .values("count")
         )
 
@@ -80,138 +70,22 @@ class WorkSpaceViewSet(BaseViewSet):
             .annotate(total_members=member_count)
         )
 
-    def create(self, request):
-        try:
-            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
-                [
-                    {
-                        "key": "DISABLE_WORKSPACE_CREATION",
-                        "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
-                    }
-                ]
-            )
-
-            if DISABLE_WORKSPACE_CREATION == "1":
-                return Response(
-                    {"error": "Workspace creation is not allowed"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
-            serializer = WorkSpaceSerializer(data=request.data)
-
-            slug = request.data.get("slug", False)
-            name = request.data.get("name", False)
-
-            if not name or not slug:
-                return Response(
-                    {"error": "Both name and slug are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if len(name) > 80 or len(slug) > 48:
-                return Response(
-                    {"error": "The maximum length for name is 80 and for slug is 48"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if contains_url(name):
-                return Response(
-                    {"error": "Name cannot contain a URL"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(owner=request.user)
-                # Create Workspace member
-                _ = WorkspaceMember.objects.create(
-                    workspace_id=serializer.data["id"],
-                    member=request.user,
-                    role=20,
-                    company_role=request.data.get("company_role", ""),
-                )
-
-                # Get total members and role
-                total_members = WorkspaceMember.objects.filter(workspace_id=serializer.data["id"]).count()
-                data = serializer.data
-                data["total_members"] = total_members
-                data["role"] = 20
-
-                workspace_seed.delay(serializer.data["id"])
-
-                track_event.delay(
-                    user_id=request.user.id,
-                    event_name=WORKSPACE_CREATED,
-                    slug=data["slug"],
-                    event_properties={
-                        "user_id": request.user.id,
-                        "workspace_id": data["id"],
-                        "workspace_slug": data["slug"],
-                        "role": "owner",
-                        "workspace_name": data["name"],
-                        "created_at": data["created_at"],
-                    },
-                )
-
-                return Response(data, status=status.HTTP_201_CREATED)
-            return Response(
-                [serializer.errors[error][0] for error in serializer.errors],
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        except IntegrityError as e:
-            if "already exists" in str(e):
-                return Response(
-                    {"slug": "The workspace with the slug already exists"},
-                    status=status.HTTP_409_CONFLICT,
-                )
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    def remove_last_workspace_ids_from_user_settings(self, id: uuid.UUID) -> None:
-        """
-        Remove the last workspace id from the user settings
-        """
-        Profile.objects.filter(last_workspace_id=id).update(last_workspace_id=None)
-        return
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
-    def destroy(self, request, *args, **kwargs):
-        # Get the workspace
-        workspace = self.get_object()
-        self.remove_last_workspace_ids_from_user_settings(workspace.id)
-        track_event.delay(
-            user_id=request.user.id,
-            event_name=WORKSPACE_DELETED,
-            slug=workspace.slug,
-            event_properties={
-                "user_id": request.user.id,
-                "workspace_id": workspace.id,
-                "workspace_slug": workspace.slug,
-                "role": "owner",
-                "workspace_name": workspace.name,
-                "deleted_at": str(timezone.now().isoformat()),
-            },
-        )
-        return super().destroy(request, *args, **kwargs)
-
-
-class UserWorkSpacesEndpoint(BaseAPIView):
-    search_fields = ["name"]
-    filterset_fields = ["owner"]
-    use_read_replica = True
+class UserWorkspaceEndpoint(BaseAPIView):
+    # Membership identity must be read-your-writes after setup, invite
+    # acceptance, and leave operations.
+    use_read_replica = False
 
     def get(self, request):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
             WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
             .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
+            .values("workspace_id")
+            .annotate(count=Count("id"))
             .values("count")
         )
 
@@ -229,29 +103,16 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .annotate(role=role, total_members=member_count)
             .filter(workspace_member__member=request.user, workspace_member__is_active=True)
             .distinct()
+            .first()
         )
 
-        workspaces = WorkSpaceSerializer(
-            self.filter_queryset(workspace),
-            fields=fields if fields else None,
-            many=True,
-        ).data
-
-        return Response(workspaces, status=status.HTTP_200_OK)
-
-
-class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
-    def get(self, request):
-        slug = request.GET.get("slug", False)
-
-        if not slug or slug == "":
+        if workspace is None:
             return Response(
-                {"error": "Workspace Slug is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Workspace membership not found"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
-        workspace = Workspace.objects.filter(slug=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
-        return Response({"status": not workspace}, status=status.HTTP_200_OK)
+        return Response(WorkSpaceSerializer(workspace).data, status=status.HTTP_200_OK)
 
 
 class WeekInMonth(Func):

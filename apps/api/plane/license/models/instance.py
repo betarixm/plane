@@ -7,12 +7,9 @@ from enum import Enum
 
 # Django imports
 from django.db import models
-from django.conf import settings
 
 # Module imports
 from plane.db.models import BaseModel
-
-ROLE_CHOICES = ((20, "Admin"),)
 
 
 class InstanceEdition(Enum):
@@ -37,7 +34,6 @@ class Instance(BaseModel):
     # is setup done
     is_setup_done = models.BooleanField(default=False)
     # signup screen
-    is_signup_screen_visited = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     is_test = models.BooleanField(default=False)
     # field for validating if the current version is deprecated
@@ -47,25 +43,6 @@ class Instance(BaseModel):
         verbose_name = "Instance"
         verbose_name_plural = "Instances"
         db_table = "instances"
-        ordering = ("-created_at",)
-
-
-class InstanceAdmin(BaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="instance_owner",
-    )
-    instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
-    role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=20)
-    is_verified = models.BooleanField(default=False)
-
-    class Meta:
-        unique_together = ["instance", "user"]
-        verbose_name = "Instance Admin"
-        verbose_name_plural = "Instance Admins"
-        db_table = "instance_admins"
         ordering = ("-created_at",)
 
 

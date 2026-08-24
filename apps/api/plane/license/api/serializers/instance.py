@@ -3,14 +3,11 @@
 # See the LICENSE file for details.
 
 # Module imports
-from plane.license.models import Instance
 from plane.app.serializers import BaseSerializer
-from plane.app.serializers import UserAdminLiteSerializer
+from plane.license.models import Instance
 
 
 class InstanceSerializer(BaseSerializer):
-    primary_owner_details = UserAdminLiteSerializer(source="primary_owner", read_only=True)
-
     class Meta:
         model = Instance
         fields = "__all__"

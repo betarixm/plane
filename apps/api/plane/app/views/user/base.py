@@ -3,25 +3,26 @@
 # See the LICENSE file for details.
 
 # Python imports
-import uuid
 import json
 import logging
 import secrets
+import uuid
+
+from django.contrib.auth import logout
+from django.core.cache import cache
+from django.core.validators import validate_email
 
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
-from django.contrib.auth import logout
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
-from django.core.validators import validate_email
-from django.core.cache import cache
 
 # Third party imports
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 # Module imports
 from plane.app.serializers import (
@@ -33,25 +34,25 @@ from plane.app.serializers import (
     UserSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.authentication.rate_limit import EmailVerificationThrottle
+from plane.authentication.utils.host import user_ip
+from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
+from plane.bgtasks.user_email_update_task import send_email_update_confirmation, send_email_update_magic_code
 from plane.db.models import (
     Account,
     IssueActivity,
     Profile,
     ProjectMember,
+    Session,
     User,
+    Workspace,
     WorkspaceMember,
     WorkspaceMemberInvite,
-    Session,
 )
-from plane.license.models import Instance, InstanceAdmin
-from plane.utils.paginator import BasePaginator
-from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, sanitize_order_by
-from plane.authentication.utils.host import user_ip
-from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 from plane.utils.host import base_host
-from plane.bgtasks.user_email_update_task import send_email_update_magic_code, send_email_update_confirmation
-from plane.authentication.rate_limit import EmailVerificationThrottle
-
+from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.paginator import BasePaginator
+from plane.utils.workspace_admin import LastWorkspaceAdminError, is_workspace_admin, workspace_admin_guard
 
 logger = logging.getLogger("plane")
 
@@ -83,11 +84,6 @@ class UserEndpoint(BaseViewSet):
     def retrieve_user_settings(self, request):
         serialized_data = UserMeSettingsSerializer(request.user).data
         return Response(serialized_data, status=status.HTTP_200_OK)
-
-    def retrieve_instance_admin(self, request):
-        instance = Instance.objects.first()
-        is_admin = InstanceAdmin.objects.filter(instance=instance, user=request.user).exists()
-        return Response({"is_instance_admin": is_admin}, status=status.HTTP_200_OK)
 
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
@@ -250,16 +246,24 @@ class UserEndpoint(BaseViewSet):
         return Response(serialized_data, status=status.HTTP_200_OK)
 
     def deactivate(self, request):
-        # Check all workspace user is active
         user = self.get_object()
+        workspace = Workspace.objects.first()
+        if workspace is None:
+            return self._deactivate_user(request, user)
 
-        # Instance admin check
-        if InstanceAdmin.objects.filter(user=user).exists():
-            return Response(
-                {"error": "You cannot deactivate your account since you are an instance admin"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        try:
+            with workspace_admin_guard(workspace_id=workspace.id):
+                user = User.objects.select_for_update().get(pk=user.pk)
+                if is_workspace_admin(user):
+                    return Response(
+                        {"error": "You cannot deactivate your account while you are an administrator"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                return self._deactivate_user(request, user)
+        except LastWorkspaceAdminError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
+    def _deactivate_user(self, request, user):
         projects_to_deactivate = []
         workspaces_to_deactivate = []
 
@@ -319,14 +323,11 @@ class UserEndpoint(BaseViewSet):
         profile = Profile.objects.get(user=user)
 
         # Reset onboarding
-        profile.last_workspace_id = None
         profile.is_tour_completed = False
         profile.is_onboarded = False
         profile.onboarding_step = {
             "workspace_join": False,
             "profile_complete": False,
-            "workspace_create": False,
-            "workspace_invite": False,
         }
         profile.save()
 
@@ -346,6 +347,18 @@ class UserEndpoint(BaseViewSet):
         # Logout the user
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserWorkspaceAdminEndpoint(BaseAPIView):
+    """Return unified workspace/instance authority from the primary database."""
+
+    use_read_replica = False
+
+    def get(self, request):
+        return Response(
+            {"is_workspace_admin": is_workspace_admin(request.user)},
+            status=status.HTTP_200_OK,
+        )
 
 
 class UserSessionEndpoint(BaseAPIView):

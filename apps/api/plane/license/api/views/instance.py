@@ -7,6 +7,8 @@ import os
 
 # Django imports
 from django.conf import settings
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
 
 # Third party imports
 from rest_framework import status
@@ -15,20 +17,17 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views import BaseAPIView
-from plane.db.models import Workspace
-from plane.license.api.permissions import InstanceAdminPermission
+from plane.license.api.permissions import WorkspaceAdminPermission
 from plane.license.api.serializers import InstanceSerializer
 from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.cache import cache_response, invalidate_cache
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
 
 
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
         if self.request.method == "PATCH":
-            return [InstanceAdminPermission()]
+            return [WorkspaceAdminPermission()]
         return [AllowAny()]
 
     @cache_response(60 * 60 * 2, user=False)
@@ -49,7 +48,6 @@ class InstanceEndpoint(BaseAPIView):
         # Get all the configuration
         (
             ENABLE_SIGNUP,
-            DISABLE_WORKSPACE_CREATION,
             IS_GOOGLE_ENABLED,
             IS_GITHUB_ENABLED,
             GITHUB_APP_NAME,
@@ -68,10 +66,6 @@ class InstanceEndpoint(BaseAPIView):
                 {
                     "key": "ENABLE_SIGNUP",
                     "default": os.environ.get("ENABLE_SIGNUP", "0"),
-                },
-                {
-                    "key": "DISABLE_WORKSPACE_CREATION",
-                    "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
                 },
                 {
                     "key": "IS_GOOGLE_ENABLED",
@@ -128,7 +122,6 @@ class InstanceEndpoint(BaseAPIView):
         data = {}
         # Authentication
         data["enable_signup"] = ENABLE_SIGNUP == "1"
-        data["is_workspace_creation_disabled"] = DISABLE_WORKSPACE_CREATION == "1"
         data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
         data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
         data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
@@ -166,10 +159,7 @@ class InstanceEndpoint(BaseAPIView):
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
         data["is_self_managed"] = settings.IS_SELF_MANAGED
 
-        instance_data = serializer.data
-        instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
-
-        response_data = {"config": data, "instance": instance_data}
+        response_data = {"config": data, "instance": serializer.data}
         return Response(response_data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/instances/", user=False)
@@ -181,19 +171,3 @@ class InstanceEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SignUpScreenVisitedEndpoint(BaseAPIView):
-    permission_classes = [AllowAny]
-
-    @invalidate_cache(path="/api/instances/", user=False)
-    def post(self, request):
-        instance = Instance.objects.first()
-        if instance is None:
-            return Response(
-                {"error": "Instance is not configured"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        instance.is_signup_screen_visited = True
-        instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)

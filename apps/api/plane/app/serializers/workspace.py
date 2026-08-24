@@ -3,41 +3,40 @@
 # See the LICENSE file for details.
 
 # Third party imports
+import re
+
+from django.core.exceptions import ValidationError
+
+# Django imports
+from django.core.validators import URLValidator
 from rest_framework import serializers
 
-# Module imports
-from .base import BaseSerializer, DynamicBaseSerializer
-from .user import UserLiteSerializer, UserAdminLiteSerializer
-
-
 from plane.db.models import (
-    Workspace,
-    WorkspaceMember,
-    WorkspaceMemberInvite,
-    WorkspaceTheme,
-    WorkspaceUserProperties,
-    WorkspaceUserLink,
-    UserRecentVisit,
     Issue,
     Page,
     Project,
     ProjectMember,
-    WorkspaceHomePreference,
     Sticky,
+    UserRecentVisit,
+    Workspace,
+    WorkspaceHomePreference,
+    WorkspaceMember,
+    WorkspaceMemberInvite,
+    WorkspaceTheme,
+    WorkspaceUserLink,
     WorkspaceUserPreference,
+    WorkspaceUserProperties,
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
-from plane.utils.url import contains_url
 from plane.utils.content_validator import (
-    validate_html_content,
     validate_binary_data,
-    has_alphanumeric,
+    validate_html_content,
 )
+from plane.utils.workspace_name import validate_workspace_name
 
-# Django imports
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
-import re
+# Module imports
+from .base import BaseSerializer, DynamicBaseSerializer
+from .user import UserAdminLiteSerializer, UserLiteSerializer
 
 
 class WorkSpaceSerializer(DynamicBaseSerializer):
@@ -46,17 +45,10 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
     role = serializers.IntegerField(read_only=True)
 
     def validate_name(self, value):
-        # Check if the name contains a URL
-        if contains_url(value):
-            raise serializers.ValidationError("Name must not contain URLs")
-        # Reject symbol-only names like "-_________-" that have no letter or
-        # digit. Mirrors the frontend HAS_ALPHANUMERIC_REGEX check so the rule
-        # cannot be bypassed via a direct API call.
-        if not has_alphanumeric(value):
-            raise serializers.ValidationError(
-                "Name must contain at least one letter or number"
-            )
-        return value
+        try:
+            return validate_workspace_name(value)
+        except ValidationError as exc:
+            raise serializers.ValidationError(exc.messages[0]) from exc
 
     def validate_slug(self, value):
         # Check if the slug is restricted
@@ -80,6 +72,8 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
             "updated_at",
             "owner",
             "logo_url",
+            "singleton_key",
+            "deleted_at",
         ]
 
 

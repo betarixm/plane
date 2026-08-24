@@ -3,25 +3,25 @@
 # See the LICENSE file for details.
 
 # Third Party imports
-from rest_framework.response import Response
-from rest_framework import status
 from django.db.models import Min
-
-# Module imports
-from .base import BaseViewSet, BaseAPIView
-from plane.app.serializers import (
-    ProjectMemberSerializer,
-    ProjectMemberAdminSerializer,
-    ProjectMemberRoleSerializer,
-    ProjectMemberPreferenceSerializer,
-)
+from rest_framework import status
+from rest_framework.response import Response
 
 from plane.app.permissions import WorkspaceUserPermission
-
-from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
+from plane.app.permissions.base import ROLE, allow_permission
+from plane.app.serializers import (
+    ProjectMemberAdminSerializer,
+    ProjectMemberPreferenceSerializer,
+    ProjectMemberRoleSerializer,
+    ProjectMemberSerializer,
+)
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
+from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
 from plane.utils.host import base_host
-from plane.app.permissions.base import allow_permission, ROLE
+from plane.utils.workspace_admin import active_human_workspace_admins
+
+# Module imports
+from .base import BaseAPIView, BaseViewSet
 
 
 class ProjectMemberViewSet(BaseViewSet):
@@ -211,10 +211,7 @@ class ProjectMemberViewSet(BaseViewSet):
             workspace__slug=slug, member=project_member.member, is_active=True
         ).role
         # Fetch the requester's workspace role to decide if they may bypass project-role checks
-        requester_workspace_role = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user, is_active=True
-        ).role
-        is_workspace_admin = requester_workspace_role == ROLE.ADMIN.value
+        is_workspace_admin = active_human_workspace_admins().filter(workspace__slug=slug, member=request.user).exists()
 
         # Check if the user is not editing their own role if they are not an admin
         if request.user.id == project_member.member_id and not is_workspace_admin:

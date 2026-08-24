@@ -4,17 +4,17 @@
 
 # Python imports
 import pytz
-from typing import Optional, Any
 
 # Django imports
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from plane.utils.color import get_random_color
+from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+
 # Module imports
 from .base import BaseModel
-from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
-from plane.utils.color import get_random_color
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
@@ -116,9 +116,29 @@ def slug_validator(value):
         raise ValidationError("Slug is not valid")
 
 
+class SingletonWorkspaceQuerySet(models.QuerySet):
+    def delete(self, *args, **kwargs):
+        raise ValidationError("The singleton workspace cannot be deleted")
+
+
+class ActiveWorkspaceManager(models.Manager.from_queryset(SingletonWorkspaceQuerySet)):
+    def get_queryset(self):
+        return super().get_queryset().filter(deleted_at__isnull=True)
+
+
+class AllWorkspaceManager(models.Manager.from_queryset(SingletonWorkspaceQuerySet)):
+    pass
+
+
 class Workspace(BaseModel):
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
 
+    # A Plane deployment has exactly one workspace. Every row carries the same
+    # key, and the database-level unique constraint prevents a second row even
+    # when the first workspace was soft-deleted.
+    singleton_key = models.BooleanField(default=True, editable=False)
+    objects = ActiveWorkspaceManager()
+    all_objects = AllWorkspaceManager()
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.TextField(verbose_name="Logo", blank=True, null=True)
     logo_asset = models.ForeignKey(
@@ -130,7 +150,7 @@ class Workspace(BaseModel):
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="owner_workspace",
     )
     slug = models.SlugField(max_length=48, db_index=True, unique=True, validators=[slug_validator])
@@ -153,29 +173,24 @@ class Workspace(BaseModel):
             return self.logo
         return None
 
-    def delete(self, using: Optional[str] = None, soft: bool = True, *args: Any, **kwargs: Any):
-        """
-        Override the delete method to append epoch timestamp to the slug when soft deleting.
-
-        Args:
-            using: The database alias to use for the deletion.
-            soft: Whether to perform a soft delete (True) or hard delete (False).
-            *args: Additional positional arguments.
-            **kwargs: Additional keyword arguments.
-        """
-        # Call the parent class's delete method first
-        result = super().delete(using=using, soft=soft, *args, **kwargs)
-
-        # If it's a soft delete and the model still exists (not hard deleted)
-        if soft and hasattr(self, "deleted_at") and self.deleted_at:
-            # Use the deleted_at timestamp to update the slug
-            deletion_timestamp: int = int(self.deleted_at.timestamp())
-            self.slug = f"{self.slug}__{deletion_timestamp}"
-            self.save(update_fields=["slug"])
-
-        return result
+    def delete(self, *args, **kwargs):
+        raise ValidationError("The singleton workspace cannot be deleted")
 
     class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(singleton_key=True),
+                name="workspace_singleton_key_must_be_true",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_cannot_be_soft_deleted",
+            ),
+            models.UniqueConstraint(
+                fields=["singleton_key"],
+                name="workspace_only_one",
+            ),
+        ]
         verbose_name = "Workspace"
         verbose_name_plural = "Workspaces"
         db_table = "workspaces"

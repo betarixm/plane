@@ -7,25 +7,27 @@ import uuid
 
 # Django imports
 from django.conf import settings
-from django.http import HttpResponseRedirect
-from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from plane.app.permissions import ROLE, allow_permission
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.db.models import FileAsset, Project, ProjectMember, User, Workspace
+from plane.settings.storage import S3Storage
+from plane.throttles.asset import AssetRateThrottle
+from plane.utils.cache import invalidate_cache_directly
+from plane.utils.path_validator import sanitize_filename
+from plane.utils.workspace_admin import active_human_workspace_admins
 
 # Module imports
 from ..base import BaseAPIView
-from plane.db.models import FileAsset, Workspace, Project, User, WorkspaceMember, ProjectMember
-from plane.settings.storage import S3Storage
-from plane.app.permissions import allow_permission, ROLE
-from plane.utils.cache import invalidate_cache_directly
-from plane.utils.path_validator import sanitize_filename
-from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.throttles.asset import AssetRateThrottle
 
 
 class UserAssetsV2Endpoint(BaseAPIView):
@@ -259,9 +261,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace.logo = ""
             workspace.logo_asset_id = asset_id
             workspace.save()
-            invalidate_cache_directly(path="/api/workspaces/", url_params=False, user=False, request=request)
             invalidate_cache_directly(
-                path="/api/users/me/workspaces/",
+                path="/api/users/me/workspace/",
                 url_params=False,
                 user=True,
                 request=request,
@@ -293,9 +294,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 return
             workspace.logo_asset_id = None
             workspace.save()
-            invalidate_cache_directly(path="/api/workspaces/", url_params=False, user=False, request=request)
             invalidate_cache_directly(
-                path="/api/users/me/workspaces/",
+                path="/api/users/me/workspace/",
                 url_params=False,
                 user=True,
                 request=request,
@@ -354,10 +354,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
 
         # WORKSPACE_LOGO may only be uploaded by workspace admins
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
-            workspace_member = WorkspaceMember.objects.filter(
-                workspace__slug=slug, member=request.user, is_active=True
-            ).first()
-            if not workspace_member or workspace_member.role != ROLE.ADMIN.value:
+            if not active_human_workspace_admins().filter(workspace__slug=slug, member=request.user).exists():
                 return Response(
                     {"error": "Only workspace admins can upload a workspace logo."},
                     status=status.HTTP_403_FORBIDDEN,
@@ -521,9 +518,7 @@ class StaticFileAssetEndpoint(BaseAPIView):
         # same-origin XSS when assets are served on the application's origin.
         storage = S3Storage(request=request)
         asset_mime_type = (asset.attributes.get("type") or "").split(";")[0].strip().lower()
-        disposition = (
-            "attachment" if asset_mime_type in settings.SCRIPT_CAPABLE_MIME_TYPES else "inline"
-        )
+        disposition = "attachment" if asset_mime_type in settings.SCRIPT_CAPABLE_MIME_TYPES else "inline"
         # Generate a presigned URL to share an S3 object
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,

@@ -3,15 +3,15 @@
 # See the LICENSE file for details.
 
 # Django imports
-from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
-from django.utils import timezone
+from django.db.models import Count, IntegerField, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import WorkspaceEntityPermission, allow_permission, ROLE
+from plane.app.permissions import ROLE, WorkspaceEntityPermission, allow_permission
 
 # Module imports
 from plane.app.serializers import (
@@ -21,8 +21,9 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue
+from plane.db.models import DraftIssue, Project, ProjectMember, WorkspaceMember
 from plane.utils.cache import invalidate_cache
+from plane.utils.workspace_admin import LastWorkspaceAdminError, workspace_admin_guard
 
 from .. import BaseViewSet
 
@@ -75,79 +76,103 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
-        workspace_member = WorkspaceMember.objects.get(
-            pk=pk, workspace__slug=slug, member__is_bot=False, is_active=True
-        )
-        if request.user.id == workspace_member.member_id:
-            return Response(
-                {"error": "You cannot update your own role"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        try:
+            with workspace_admin_guard(slug=slug) as workspace:
+                workspace_member = WorkspaceMember.objects.select_for_update().get(
+                    pk=pk,
+                    workspace=workspace,
+                    member__is_bot=False,
+                    is_active=True,
+                )
+                if request.user.id == workspace_member.member_id:
+                    return Response(
+                        {"error": "You cannot update your own role"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        # If a user is moved to a guest role he can't have any other role in projects
-        if "role" in request.data and int(request.data.get("role")) == 5:
-            ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).update(role=5)
+                serializer = WorkSpaceMemberSerializer(
+                    workspace_member,
+                    data=request.data,
+                    partial=True,
+                )
+                if not serializer.is_valid():
+                    return Response(
+                        serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
+                # Guests cannot retain a higher role in individual projects.
+                if serializer.validated_data.get("role") == 5:
+                    ProjectMember.objects.filter(
+                        workspace=workspace,
+                        member_id=workspace_member.member_id,
+                    ).update(role=5)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except LastWorkspaceAdminError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, slug, pk):
-        # Check the user role who is deleting the user
-        workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, pk=pk, member__is_bot=False, is_active=True
-        )
+        try:
+            with workspace_admin_guard(slug=slug) as workspace:
+                workspace_member = WorkspaceMember.objects.select_for_update().get(
+                    workspace=workspace,
+                    pk=pk,
+                    member__is_bot=False,
+                    is_active=True,
+                )
+                requesting_workspace_member = WorkspaceMember.objects.get(
+                    workspace=workspace,
+                    member=request.user,
+                    is_active=True,
+                )
 
-        # check requesting user role
-        requesting_workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user, is_active=True
-        )
+                if str(workspace_member.id) == str(requesting_workspace_member.id):
+                    return Response(
+                        {"error": "You cannot remove yourself from the workspace. Please use leave workspace"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        if str(workspace_member.id) == str(requesting_workspace_member.id):
-            return Response(
-                {"error": "You cannot remove yourself from the workspace. Please use leave workspace"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                if requesting_workspace_member.role < workspace_member.role:
+                    return Response(
+                        {"error": "You cannot remove a user having role higher than you"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        if requesting_workspace_member.role < workspace_member.role:
-            return Response(
-                {"error": "You cannot remove a user having role higher than you"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                if (
+                    Project.objects.annotate(
+                        total_members=Count("project_projectmember"),
+                        member_with_role=Count(
+                            "project_projectmember",
+                            filter=Q(
+                                project_projectmember__member_id=workspace_member.member_id,
+                                project_projectmember__role=20,
+                            ),
+                        ),
+                    )
+                    .filter(total_members=1, member_with_role=1, workspace=workspace)
+                    .exists()
+                ):
+                    return Response(
+                        {
+                            "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."  # noqa: E501
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        if (
-            Project.objects.annotate(
-                total_members=Count("project_projectmember"),
-                member_with_role=Count(
-                    "project_projectmember",
-                    filter=Q(
-                        project_projectmember__member_id=workspace_member.id,
-                        project_projectmember__role=20,
-                    ),
-                ),
-            )
-            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
-            .exists()
-        ):
-            return Response(
-                {
-                    "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."  # noqa: E501
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                ProjectMember.objects.filter(
+                    workspace=workspace,
+                    member_id=workspace_member.member_id,
+                    is_active=True,
+                ).update(is_active=False, updated_at=timezone.now())
 
-        # Deactivate the users from the projects where the user is part of
-        _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False, updated_at=timezone.now())
-
-        workspace_member.is_active = False
-        workspace_member.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+                workspace_member.is_active = False
+                workspace_member.save(update_fields=["is_active", "updated_at"])
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        except LastWorkspaceAdminError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
     @invalidate_cache(
         path="/api/workspaces/:slug/members/",
@@ -156,53 +181,49 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         multiple=True,
     )
     @invalidate_cache(path="/api/users/me/settings/")
-    @invalidate_cache(path="api/users/me/workspaces/", user=False, multiple=True)
+    @invalidate_cache(path="/api/users/me/workspace/", user=False, multiple=True)
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def leave(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
+        try:
+            with workspace_admin_guard(slug=slug) as workspace:
+                workspace_member = WorkspaceMember.objects.select_for_update().get(
+                    workspace=workspace,
+                    member=request.user,
+                    is_active=True,
+                )
 
-        # Check if the leaving user is the only admin of the workspace
-        if (
-            workspace_member.role == 20
-            and not WorkspaceMember.objects.filter(workspace__slug=slug, role=20, is_active=True).count() > 1
-        ):
-            return Response(
-                {
-                    "error": "You cannot leave the workspace as you are the only admin of the workspace you will have to either delete the workspace or promote another user to admin."  # noqa: E501
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                if (
+                    Project.objects.annotate(
+                        total_members=Count("project_projectmember"),
+                        member_with_role=Count(
+                            "project_projectmember",
+                            filter=Q(
+                                project_projectmember__member_id=request.user.id,
+                                project_projectmember__role=20,
+                            ),
+                        ),
+                    )
+                    .filter(total_members=1, member_with_role=1, workspace=workspace)
+                    .exists()
+                ):
+                    return Response(
+                        {
+                            "error": "You are a part of some projects where you are the only admin, you should either leave the project or promote another user to admin."  # noqa: E501
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        if (
-            Project.objects.annotate(
-                total_members=Count("project_projectmember"),
-                member_with_role=Count(
-                    "project_projectmember",
-                    filter=Q(
-                        project_projectmember__member_id=request.user.id,
-                        project_projectmember__role=20,
-                    ),
-                ),
-            )
-            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
-            .exists()
-        ):
-            return Response(
-                {
-                    "error": "You are a part of some projects where you are the only admin, you should either leave the project or promote another user to admin."  # noqa: E501
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                ProjectMember.objects.filter(
+                    workspace=workspace,
+                    member_id=workspace_member.member_id,
+                    is_active=True,
+                ).update(is_active=False, updated_at=timezone.now())
 
-        # # Deactivate the users from the projects where the user is part of
-        _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False, updated_at=timezone.now())
-
-        # # Deactivate the user
-        workspace_member.is_active = False
-        workspace_member.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+                workspace_member.is_active = False
+                workspace_member.save(update_fields=["is_active", "updated_at"])
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        except LastWorkspaceAdminError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class WorkspaceMemberUserViewsEndpoint(BaseAPIView):

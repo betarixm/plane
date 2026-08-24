@@ -2,27 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from .instance import InstanceEndpoint, SignUpScreenVisitedEndpoint
-
-
 from .configuration import (
+    DisableEmailFeatureEndpoint,
     EmailCredentialCheckEndpoint,
     InstanceConfigurationEndpoint,
-    DisableEmailFeatureEndpoint,
 )
-
-
-from .admin import (
-    InstanceAdminEndpoint,
-    InstanceAdminSignInEndpoint,
-    InstanceAdminSignUpEndpoint,
-    InstanceAdminUserMeEndpoint,
-    InstanceAdminSignOutEndpoint,
-    InstanceAdminUserSessionEndpoint,
-)
-
-
+from .instance import InstanceEndpoint
+from .setup import InstanceSetupEndpoint
 from .workspace import (
-    InstanceWorkSpaceAvailabilityCheckEndpoint,
-    InstanceWorkSpaceEndpoint,
+    InstanceWorkspaceEndpoint,
 )

@@ -5,18 +5,18 @@
 import logging
 import os
 import uuid
-from typing import Dict, Any
+from typing import Any, Dict
 
 # third party imports
 from celery import shared_task
 from posthog import Posthog
 
+from plane.db.models import Workspace
+
 # module imports
 from plane.license.utils.instance_value import get_configuration_value
+from plane.utils.analytics_events import USER_INVITED_TO_WORKSPACE
 from plane.utils.exception_logger import log_exception
-from plane.db.models import Workspace
-from plane.utils.analytics_events import USER_INVITED_TO_WORKSPACE, WORKSPACE_DELETED
-
 
 logger = logging.getLogger("plane.worker")
 
@@ -43,7 +43,7 @@ def posthogConfiguration():
 def preprocess_data_properties(
     user_id: uuid.UUID, event_name: str, slug: str, data_properties: Dict[str, Any]
 ) -> Dict[str, Any]:
-    if event_name == USER_INVITED_TO_WORKSPACE or event_name == WORKSPACE_DELETED:
+    if event_name == USER_INVITED_TO_WORKSPACE:
         try:
             # Check if the current user is the workspace owner
             workspace = Workspace.objects.get(slug=slug)

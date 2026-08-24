@@ -17,9 +17,9 @@ from django.db.models import (
     IntegerField,
     OuterRef,
     Q,
+    Subquery,
     Value,
     When,
-    Subquery,
 )
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractWeek
@@ -34,25 +34,22 @@ from plane.app.permissions import WorkspaceEntityPermission, WorkspaceViewerPerm
 # Module imports
 from plane.app.serializers import (
     IssueActivitySerializer,
-    ProjectMemberSerializer,
-    WorkSpaceSerializer,
     WorkspaceUserPropertiesSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from plane.db.models import (
     CycleIssue,
+    FileAsset,
     Issue,
     IssueActivity,
-    FileAsset,
     IssueLink,
     IssueSubscriber,
     Project,
-    ProjectMember,
-    User,
     Workspace,
     WorkspaceMember,
     WorkspaceUserProperties,
 )
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -61,38 +58,6 @@ from plane.utils.grouper import (
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, order_issue_queryset, sanitize_order_by
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
-from plane.utils.filters import ComplexFilterBackend
-from plane.utils.filters import IssueFilterSet
-
-
-class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
-    def get(self, request):
-        user = User.objects.get(pk=request.user.id)
-
-        last_workspace_id = user.last_workspace_id
-
-        if last_workspace_id is None:
-            return Response(
-                {"project_details": [], "workspace_details": {}},
-                status=status.HTTP_200_OK,
-            )
-
-        workspace = Workspace.objects.get(pk=last_workspace_id)
-        workspace_serializer = WorkSpaceSerializer(workspace)
-
-        project_member = ProjectMember.objects.filter(
-            workspace_id=last_workspace_id, member=request.user
-        ).select_related("workspace", "project", "member", "workspace__owner")
-
-        project_member_serializer = ProjectMemberSerializer(project_member, many=True)
-
-        return Response(
-            {
-                "workspace_details": workspace_serializer.data,
-                "project_details": project_member_serializer.data,
-            },
-            status=status.HTTP_200_OK,
-        )
 
 
 class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):

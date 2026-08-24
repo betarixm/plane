@@ -26,15 +26,6 @@ authentication_config_variables = [
     },
 ]
 
-workspace_management_config_variables = [
-    {
-        "key": "DISABLE_WORKSPACE_CREATION",
-        "value": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
-        "category": "WORKSPACE_MANAGEMENT",
-        "is_encrypted": False,
-    },
-]
-
 google_config_variables = [
     {
         "key": "IS_GOOGLE_ENABLED",
@@ -252,7 +243,6 @@ unsplash_config_variables = [
 
 core_config_variables = [
     *authentication_config_variables,
-    *workspace_management_config_variables,
     *google_config_variables,
     *github_config_variables,
     *gitlab_config_variables,

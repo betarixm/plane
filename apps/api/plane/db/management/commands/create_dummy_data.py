@@ -4,6 +4,7 @@
 
 # Django imports
 from typing import Any
+
 from django.core.management.base import BaseCommand, CommandError
 
 # Module imports
@@ -11,18 +12,14 @@ from plane.db.models import User, Workspace, WorkspaceMember
 
 
 class Command(BaseCommand):
-    help = "Create dump issues, cycles etc. for a project in a given workspace"
+    help = "Create dummy issues, cycles, and projects in the singleton workspace"
 
     def handle(self, *args: Any, **options: Any) -> str | None:
         try:
-            workspace_name = input("Workspace Name: ")
-            workspace_slug = input("Workspace slug: ")
-
-            if workspace_slug == "":
-                raise CommandError("Workspace slug is required")
-
-            if Workspace.objects.filter(slug=workspace_slug).exists():
-                raise CommandError("Workspace already exists")
+            workspace = Workspace.objects.first()
+            if workspace is None:
+                raise CommandError("The workspace is not configured yet")
+            workspace_slug = workspace.slug
 
             creator = input("Your email: ")
 
@@ -30,17 +27,19 @@ class Command(BaseCommand):
                 raise CommandError("User email is required and should have signed in plane")
 
             user = User.objects.get(email=creator)
+            if not WorkspaceMember.objects.filter(
+                workspace=workspace,
+                member=user,
+                is_active=True,
+            ).exists():
+                raise CommandError("The creator must be an active workspace member")
 
             members = input("Enter Member emails (comma separated): ")
             members = members.split(",") if members != "" else []
-            # Create workspace
-            workspace = Workspace.objects.create(slug=workspace_slug, name=workspace_name, owner=user)
-            # Create workspace member
-            WorkspaceMember.objects.create(workspace=workspace, role=20, member=user)
             user_ids = User.objects.filter(email__in=members)
 
             _ = WorkspaceMember.objects.bulk_create(
-                [WorkspaceMember(workspace=workspace, member=user_id, role=20) for user_id in user_ids],
+                [WorkspaceMember(workspace=workspace, member=user_id, role=15) for user_id in user_ids],
                 ignore_conflicts=True,
             )
 

@@ -3,45 +3,45 @@
 # See the LICENSE file for details.
 
 # Python imports
-import os
 import json
+import logging
+import os
 import time
 import uuid
-from typing import Dict
-import logging
 from datetime import timedelta
+from typing import Dict
 from urllib.parse import urlparse
-
-# Django imports
-from django.conf import settings
-from django.utils import timezone
-from django.contrib.auth.hashers import make_password
 
 # Third party imports
 from celery import shared_task
 
+# Django imports
+from django.conf import settings
+from django.contrib.auth.hashers import make_password
+from django.utils import timezone
+
 # Module imports
 from plane.db.models import (
-    Workspace,
-    WorkspaceMember,
-    Project,
-    ProjectMember,
-    ProjectUserProperty,
-    State,
-    Label,
+    BotTypeEnum,
+    Cycle,
+    CycleIssue,
     Issue,
+    IssueActivity,
     IssueLabel,
     IssueSequence,
-    IssueActivity,
-    Page,
-    ProjectPage,
-    Cycle,
-    Module,
-    CycleIssue,
-    ModuleIssue,
     IssueView,
+    Label,
+    Module,
+    ModuleIssue,
+    Page,
+    Project,
+    ProjectMember,
+    ProjectPage,
+    ProjectUserProperty,
+    State,
     User,
-    BotTypeEnum,
+    Workspace,
+    WorkspaceMember,
 )
 
 logger = logging.getLogger("plane.worker")
@@ -118,7 +118,9 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
                 ProjectMember(
                     project=project,
                     member_id=workspace_member["member_id"],
-                    role=workspace_member["role"],
+                    # The seed bot needs project-level ownership for seeded
+                    # content, but must not be a workspace administrator.
+                    role=(20 if workspace_member["member_id"] == bot_user.id else workspace_member["role"]),
                     workspace_id=workspace.id,
                     created_by_id=bot_user.id,
                 )
@@ -536,7 +538,7 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         WorkspaceMember.objects.create(
             workspace=workspace,
             member=bot_user,
-            role=20,
+            role=15,
             company_role="",
         )
 

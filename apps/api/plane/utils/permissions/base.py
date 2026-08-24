@@ -2,12 +2,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from plane.db.models import WorkspaceMember, ProjectMember
-from functools import wraps
-from rest_framework.response import Response
-from rest_framework import status
-
 from enum import Enum
+from functools import wraps
+
+from rest_framework import status
+from rest_framework.response import Response
+
+from plane.db.models import ProjectMember, WorkspaceMember
+from plane.utils.workspace_admin import WORKSPACE_ADMIN_ROLE, active_human_workspace_admins
 
 
 class ROLE(Enum):
@@ -31,12 +33,23 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
 
             # Check role permissions
             if level == "WORKSPACE":
-                if WorkspaceMember.objects.filter(
-                    member=request.user,
-                    workspace__slug=kwargs["slug"],
-                    role__in=allowed_role_values,
-                    is_active=True,
-                ).exists():
+                workspace_role = (
+                    WorkspaceMember.objects.filter(
+                        member=request.user,
+                        workspace__slug=kwargs["slug"],
+                        role__in=allowed_role_values,
+                        is_active=True,
+                    )
+                    .values_list("role", flat=True)
+                    .first()
+                )
+                role_is_allowed = workspace_role is not None and (
+                    workspace_role != WORKSPACE_ADMIN_ROLE
+                    or active_human_workspace_admins()
+                    .filter(member=request.user, workspace__slug=kwargs["slug"])
+                    .exists()
+                )
+                if role_is_allowed:
                     return view_func(instance, request, *args, **kwargs)
             else:
                 is_user_has_allowed_role = ProjectMember.objects.filter(
@@ -57,12 +70,9 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
                         project_id=kwargs["project_id"],
                         is_active=True,
                     ).exists()
-                    and WorkspaceMember.objects.filter(
-                        member=request.user,
-                        workspace__slug=kwargs["slug"],
-                        role=ROLE.ADMIN.value,
-                        is_active=True,
-                    ).exists()
+                    and active_human_workspace_admins()
+                    .filter(member=request.user, workspace__slug=kwargs["slug"])
+                    .exists()
                 ):
                     return view_func(instance, request, *args, **kwargs)
 

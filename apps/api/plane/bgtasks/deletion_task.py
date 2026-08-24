@@ -3,15 +3,13 @@
 # See the LICENSE file for details.
 
 # Django imports
-from django.utils import timezone
+# Third party imports
+from celery import shared_task
 from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.db.models.fields.related import OneToOneRel
-
-
-# Third party imports
-from celery import shared_task
+from django.utils import timezone
 
 
 @shared_task
@@ -21,6 +19,8 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
     """
     # Get the model class using app registry
     model_class = apps.get_model(app_label, model_name)
+    if model_class._meta.label_lower == "db.workspace":
+        return
 
     # Get the instance using all_objects to ensure we can get even if it's already soft deleted
     try:
@@ -44,7 +44,7 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
         # Get the on_delete behavior name
         on_delete_name = relation.on_delete.__name__ if hasattr(relation.on_delete, "__name__") else ""
 
-        if on_delete_name == "DO_NOTHING":
+        if on_delete_name in {"DO_NOTHING", "PROTECT", "RESTRICT"}:
             continue
 
         elif on_delete_name == "SET_NULL":
@@ -113,30 +113,26 @@ def restore_related_objects(app_label, model_name, instance_pk, using=None):
 @shared_task
 def hard_delete():
     from plane.db.models import (
-        Workspace,
-        Project,
         Cycle,
-        Module,
+        CycleIssue,
+        Estimate,
+        EstimatePoint,
         Issue,
-        Page,
-        IssueView,
-        Label,
-        State,
         IssueActivity,
         IssueComment,
         IssueLink,
         IssueReaction,
-        UserFavorite,
+        IssueView,
+        Label,
+        Module,
         ModuleIssue,
-        CycleIssue,
-        Estimate,
-        EstimatePoint,
+        Page,
+        Project,
+        State,
+        UserFavorite,
     )
 
     days = settings.HARD_DELETE_AFTER_DAYS
-    # check delete workspace
-    _ = Workspace.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
-
     # check delete project
     _ = Project.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
@@ -185,6 +181,8 @@ def hard_delete():
 
     # Iterate through all models
     for model in all_models:
+        if model._meta.label_lower == "db.workspace":
+            continue
         # Check if the model has a 'deleted_at' field
         if hasattr(model, "deleted_at"):
             # Get all instances where 'deleted_at' is greater than 30 days ago

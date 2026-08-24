@@ -3,11 +3,11 @@
 # See the LICENSE file for details.
 
 # Third Party imports
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 # Module imports
 from plane.db.models import WorkspaceMember
-
+from plane.utils.workspace_admin import active_human_workspace_admins
 
 # Permission Mappings
 Admin = 20
@@ -18,12 +18,8 @@ Guest = 5
 # TODO: Move the below logic to python match - python v3.10
 class WorkSpaceBasePermission(BasePermission):
     def has_permission(self, request, view):
-        # allow anyone to create a workspace
         if request.user.is_anonymous:
             return False
-
-        if request.method == "POST":
-            return True
 
         ## Safe Methods
         if request.method in SAFE_METHODS:
@@ -38,24 +34,18 @@ class WorkSpaceBasePermission(BasePermission):
                 is_active=True,
             ).exists()
 
-        # allow only owner to delete the workspace
-        if request.method == "DELETE":
-            return WorkspaceMember.objects.filter(
-                member=request.user,
-                workspace__slug=view.workspace_slug,
-                role=Admin,
-                is_active=True,
-            ).exists()
 
+class WorkspaceAdminPermission(BasePermission):
+    """Allow only active human administrators of the singleton workspace."""
 
-class WorkspaceOwnerPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
 
-        return WorkspaceMember.objects.filter(
-            workspace__slug=view.workspace_slug, member=request.user, role=Admin, is_active=True
-        ).exists()
+        admins = active_human_workspace_admins().filter(member=request.user)
+        if view.workspace_slug:
+            admins = admins.filter(workspace__slug=view.workspace_slug)
+        return admins.exists()
 
 
 class WorkSpaceAdminPermission(BasePermission):
@@ -130,8 +120,6 @@ class WorkspaceMemberPermission(BasePermission):
 
         slug = view.kwargs.get("slug")
         if slug:
-            return WorkspaceMember.objects.filter(
-                workspace__slug=slug, member=request.user, is_active=True
-            ).exists()
+            return WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, is_active=True).exists()
 
         return False

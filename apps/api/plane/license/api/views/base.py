@@ -4,6 +4,7 @@
 
 # Python imports
 import zoneinfo
+
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
@@ -18,9 +19,10 @@ from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-# Module imports
-from plane.license.api.permissions import InstanceAdminPermission
 from plane.authentication.session import BaseSessionAuthentication
+
+# Module imports
+from plane.license.api.permissions import WorkspaceAdminPermission
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 
@@ -40,7 +42,7 @@ class TimezoneMixin:
 
 
 class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
-    permission_classes = [InstanceAdminPermission]
+    permission_classes = [WorkspaceAdminPermission]
 
     filter_backends = (DjangoFilterBackend, SearchFilter)
 

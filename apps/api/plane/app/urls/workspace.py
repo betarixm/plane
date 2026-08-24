@@ -4,60 +4,44 @@
 
 from django.urls import path
 
-
 from plane.app.views import (
-    UserWorkspaceInvitationsViewSet,
-    WorkSpaceViewSet,
-    WorkspaceJoinEndpoint,
-    WorkSpaceMemberViewSet,
-    WorkspaceInvitationsViewset,
-    WorkspaceMemberUserEndpoint,
-    WorkspaceMemberUserViewsEndpoint,
-    WorkSpaceAvailabilityCheckEndpoint,
-    UserLastProjectWithWorkspaceEndpoint,
-    WorkspaceThemeViewSet,
-    WorkspaceUserProfileStatsEndpoint,
-    WorkspaceUserActivityEndpoint,
-    WorkspaceUserProfileEndpoint,
-    WorkspaceUserProfileIssuesEndpoint,
-    WorkspaceLabelsEndpoint,
-    WorkspaceProjectMemberEndpoint,
-    WorkspaceUserPropertiesEndpoint,
-    WorkspaceStatesEndpoint,
-    WorkspaceEstimatesEndpoint,
     ExportWorkspaceUserActivityEndpoint,
-    WorkspaceModulesEndpoint,
-    WorkspaceCyclesEndpoint,
-    WorkspaceFavoriteEndpoint,
-    WorkspaceFavoriteGroupEndpoint,
-    WorkspaceDraftIssueViewSet,
     QuickLinkViewSet,
     UserRecentVisitViewSet,
+    UserWorkspaceInvitationEndpoint,
+    WorkspaceCyclesEndpoint,
+    WorkspaceDraftIssueViewSet,
+    WorkspaceEstimatesEndpoint,
+    WorkspaceFavoriteEndpoint,
+    WorkspaceFavoriteGroupEndpoint,
     WorkspaceHomePreferenceViewSet,
+    WorkspaceInvitationsViewset,
+    WorkspaceJoinEndpoint,
+    WorkspaceLabelsEndpoint,
+    WorkspaceMemberUserEndpoint,
+    WorkspaceMemberUserViewsEndpoint,
+    WorkSpaceMemberViewSet,
+    WorkspaceModulesEndpoint,
+    WorkspaceProjectMemberEndpoint,
+    WorkspaceStatesEndpoint,
     WorkspaceStickyViewSet,
+    WorkspaceThemeViewSet,
+    WorkspaceUserActivityEndpoint,
     WorkspaceUserPreferenceViewSet,
+    WorkspaceUserProfileEndpoint,
+    WorkspaceUserProfileIssuesEndpoint,
+    WorkspaceUserProfileStatsEndpoint,
+    WorkspaceUserPropertiesEndpoint,
+    WorkSpaceViewSet,
 )
 
-
 urlpatterns = [
-    path(
-        "workspace-slug-check/",
-        WorkSpaceAvailabilityCheckEndpoint.as_view(),
-        name="workspace-availability",
-    ),
-    path(
-        "workspaces/",
-        WorkSpaceViewSet.as_view({"get": "list", "post": "create"}),
-        name="workspace",
-    ),
     path(
         "workspaces/<str:slug>/",
         WorkSpaceViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
-                "delete": "destroy",
             }
         ),
         name="workspace",
@@ -72,11 +56,11 @@ urlpatterns = [
         WorkspaceInvitationsViewset.as_view({"delete": "destroy", "get": "retrieve", "patch": "partial_update"}),
         name="workspace-invitations",
     ),
-    # user workspace invitations
+    # current user's invitation to the singleton workspace
     path(
-        "users/me/workspaces/invitations/",
-        UserWorkspaceInvitationsViewSet.as_view({"get": "list", "post": "create"}),
-        name="user-workspace-invitations",
+        "users/me/workspace/invitation/",
+        UserWorkspaceInvitationEndpoint.as_view(),
+        name="user-workspace-invitation",
     ),
     path(
         "workspaces/<str:slug>/invitations/<uuid:pk>/join/",
@@ -103,11 +87,6 @@ urlpatterns = [
         "workspaces/<str:slug>/members/leave/",
         WorkSpaceMemberViewSet.as_view({"post": "leave"}),
         name="leave-workspace-members",
-    ),
-    path(
-        "users/last-visited-workspace/",
-        UserLastProjectWithWorkspaceEndpoint.as_view(),
-        name="workspace-project-details",
     ),
     path(
         "workspaces/<str:slug>/workspace-members/me/",

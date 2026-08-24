@@ -18,15 +18,14 @@ from django.utils import timezone
 
 # Module imports
 from plane.db.models import FileAsset
-from ..mixins import TimeAuditModel
 from plane.utils.color import get_random_color
+
+from ..mixins import TimeAuditModel
 
 
 def get_default_onboarding():
     return {
         "profile_complete": False,
-        "workspace_create": False,
-        "workspace_invite": False,
         "workspace_join": False,
     }
 
@@ -34,7 +33,6 @@ def get_default_onboarding():
 def get_mobile_default_onboarding():
     return {
         "profile_complete": False,
-        "workspace_create": False,
         "workspace_join": False,
     }
 
@@ -232,8 +230,6 @@ class Profile(TimeAuditModel):
     use_case = models.TextField(blank=True, null=True)
     role = models.CharField(max_length=300, null=True, blank=True)  # job role
     is_onboarded = models.BooleanField(default=False)
-    # Last visited workspace
-    last_workspace_id = models.UUIDField(null=True)
     # address data
     billing_address_country = models.CharField(max_length=255, default="INDIA")
     billing_address = models.JSONField(null=True)

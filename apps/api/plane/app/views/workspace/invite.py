@@ -19,19 +19,25 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.app.permissions import WorkspaceAdminPermission
 from plane.app.serializers import (
-    WorkSpaceMemberInviteSerializer,
     WorkSpaceMemberInvitePublicSerializer,
+    WorkSpaceMemberInviteSerializer,
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from plane.bgtasks.event_tracking_task import track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
-from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
+from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
+from plane.utils.analytics_events import USER_INVITED_TO_WORKSPACE, USER_JOINED_WORKSPACE
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
-from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
+from plane.utils.workspace_admin import (
+    LastWorkspaceAdminError,
+    activate_invited_workspace_member,
+    workspace_admin_guard,
+)
+
 from .. import BaseViewSet
 
 
@@ -41,7 +47,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkspaceAdminPermission]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -150,10 +156,11 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
 class WorkspaceJoinEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
+    use_read_replica = False
     """Invitation response endpoint the user can respond to the invitation"""
 
-    @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
+    @invalidate_cache(path="/api/instances/workspace/", user=False)
+    @invalidate_cache(path="/api/users/me/workspace/", multiple=True)
     @invalidate_cache(
         path="/api/workspaces/:slug/members/",
         user=False,
@@ -188,68 +195,54 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # If already responded then return error
-        if workspace_invite.responded_at is None:
-            workspace_invite.accepted = request.data.get("accepted", False)
-            workspace_invite.responded_at = timezone.now()
-            workspace_invite.save()
-
-            if workspace_invite.accepted:
-                # Check if the user created account after invitation
-                user = User.objects.filter(email=workspace_invite.email).first()
-
-                # If the user is present then create the workspace member
-                if user is not None:
-                    # Check if the user was already a member of workspace then activate the user
-                    workspace_member = WorkspaceMember.objects.filter(
-                        workspace=workspace_invite.workspace, member=user
-                    ).first()
-                    if workspace_member is not None:
-                        workspace_member.is_active = True
-                        workspace_member.role = workspace_invite.role
-                        workspace_member.save()
-                    else:
-                        # Create a Workspace
-                        _ = WorkspaceMember.objects.create(
-                            workspace=workspace_invite.workspace,
-                            member=user,
-                            role=workspace_invite.role,
-                        )
-
-                    # Set the user last_workspace_id to the accepted workspace
-                    user.last_workspace_id = workspace_invite.workspace.id
-                    user.save()
-                    track_event.delay(
-                        user_id=user.id,
-                        event_name=USER_JOINED_WORKSPACE,
-                        slug=slug,
-                        event_properties={
-                            "user_id": user.id,
-                            "workspace_id": workspace_invite.workspace.id,
-                            "workspace_slug": workspace_invite.workspace.slug,
-                            "role": workspace_invite.role,
-                            "joined_at": str(timezone.now()),
-                        },
+        try:
+            with workspace_admin_guard(workspace_id=workspace_invite.workspace_id) as workspace:
+                workspace_invite = (
+                    WorkspaceMemberInvite.objects.select_for_update()
+                    .select_related("workspace")
+                    .get(pk=pk, workspace=workspace)
+                )
+                if workspace_invite.responded_at is not None:
+                    return Response(
+                        {"error": "You have already responded to the invitation request"},
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
 
-                    # Delete the invitation
-                    workspace_invite.delete()
+                workspace_invite.accepted = request.data.get("accepted", False)
+                workspace_invite.responded_at = timezone.now()
+                workspace_invite.save(update_fields=["accepted", "responded_at", "updated_at"])
 
-                return Response(
-                    {"message": "Workspace Invitation Accepted"},
-                    status=status.HTTP_200_OK,
+                if not workspace_invite.accepted:
+                    return Response(
+                        {"message": "Workspace Invitation was not accepted"},
+                        status=status.HTTP_200_OK,
+                    )
+
+                workspace_member = activate_invited_workspace_member(
+                    workspace=workspace,
+                    user=request.user,
+                    role=workspace_invite.role,
                 )
+                workspace_invite.delete()
 
-            # Workspace invitation rejected
+            track_event.delay(
+                user_id=request.user.id,
+                event_name=USER_JOINED_WORKSPACE,
+                slug=slug,
+                event_properties={
+                    "user_id": request.user.id,
+                    "workspace_id": workspace.id,
+                    "workspace_slug": workspace.slug,
+                    "role": workspace_member.role,
+                    "joined_at": str(timezone.now()),
+                },
+            )
             return Response(
-                {"message": "Workspace Invitation was not accepted"},
+                {"message": "Workspace Invitation Accepted"},
                 status=status.HTTP_200_OK,
             )
-
-        return Response(
-            {"error": "You have already responded to the invitation request"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        except LastWorkspaceAdminError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, slug, pk):
         workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
@@ -260,65 +253,85 @@ class WorkspaceJoinEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserWorkspaceInvitationsViewSet(BaseViewSet):
-    serializer_class = WorkSpaceMemberInviteSerializer
-    model = WorkspaceMemberInvite
+class UserWorkspaceInvitationEndpoint(BaseAPIView):
+    """Return or accept the current user's invitation to the singleton workspace."""
 
-    def get_queryset(self):
-        return self.filter_queryset(
-            super().get_queryset().filter(email=self.request.user.email).select_related("workspace")
+    use_read_replica = False
+
+    def get(self, request):
+        invitation = (
+            WorkspaceMemberInvite.objects.filter(
+                email__iexact=request.user.email,
+                responded_at__isnull=True,
+            )
+            .select_related("workspace")
+            .first()
+        )
+        if invitation is None:
+            return Response(
+                {"error": "Workspace invitation not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(
+            WorkSpaceMemberInvitePublicSerializer(invitation).data,
+            status=status.HTTP_200_OK,
         )
 
-    @invalidate_cache(path="/api/workspaces/", user=False)
-    @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
-    def create(self, request):
-        invitations = request.data.get("invitations", [])
-        workspace_invitations = WorkspaceMemberInvite.objects.filter(
-            pk__in=invitations, email=request.user.email
-        ).order_by("-created_at")
-
-        # If the user is already a member of workspace and was deactivated then activate the user
-        for invitation in workspace_invitations:
-            invalidate_cache_directly(
-                path=f"/api/workspaces/{invitation.workspace.slug}/members/",
-                user=False,
-                request=request,
-                multiple=True,
-            )
-            # Update the WorkspaceMember for this specific invitation
-            WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
-                is_active=True, role=invitation.role
+    @invalidate_cache(path="/api/instances/workspace/", user=False)
+    @invalidate_cache(path="/api/users/me/workspace/", multiple=True)
+    def post(self, request):
+        workspace = Workspace.objects.first()
+        if workspace is None:
+            return Response(
+                {"error": "Workspace is not configured yet"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
-            # Track event
-            track_event.delay(
-                user_id=request.user.id,
-                event_name=USER_JOINED_WORKSPACE,
-                slug=invitation.workspace.slug,
-                event_properties={
-                    "user_id": request.user.id,
-                    "workspace_id": invitation.workspace.id,
-                    "workspace_slug": invitation.workspace.slug,
-                    "role": invitation.role,
-                    "joined_at": str(timezone.now()),
-                },
-            )
+        try:
+            with workspace_admin_guard(workspace_id=workspace.id) as workspace:
+                invitation = (
+                    WorkspaceMemberInvite.objects.select_for_update()
+                    .filter(
+                        workspace=workspace,
+                        email__iexact=request.user.email,
+                        responded_at__isnull=True,
+                    )
+                    .first()
+                )
+                if invitation is None:
+                    return Response(
+                        {"error": "Workspace invitation not found"},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
 
-        # Bulk create the user for all the workspaces
-        WorkspaceMember.objects.bulk_create(
-            [
-                WorkspaceMember(
-                    workspace=invitation.workspace,
-                    member=request.user,
+                workspace_member = activate_invited_workspace_member(
+                    workspace=workspace,
+                    user=request.user,
                     role=invitation.role,
                     created_by=request.user,
                 )
-                for invitation in workspace_invitations
-            ],
-            ignore_conflicts=True,
-        )
+                invitation.delete()
+        except LastWorkspaceAdminError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Delete joined workspace invites
-        workspace_invitations.delete()
+        invalidate_cache_directly(
+            path=f"/api/workspaces/{workspace.slug}/members/",
+            user=False,
+            request=request,
+            multiple=True,
+        )
+        track_event.delay(
+            user_id=request.user.id,
+            event_name=USER_JOINED_WORKSPACE,
+            slug=workspace.slug,
+            event_properties={
+                "user_id": request.user.id,
+                "workspace_id": workspace.id,
+                "workspace_slug": workspace.slug,
+                "role": workspace_member.role,
+                "joined_at": str(timezone.now()),
+            },
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

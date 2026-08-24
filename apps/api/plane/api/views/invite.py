@@ -3,22 +3,23 @@
 # See the LICENSE file for details.
 
 # Third party imports
-from rest_framework.response import Response
-from rest_framework import status
 from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiResponse,
-    OpenApiRequest,
     OpenApiParameter,
+    OpenApiRequest,
+    OpenApiResponse,
     OpenApiTypes,
+    extend_schema,
 )
+from rest_framework import status
+from rest_framework.response import Response
+
+from plane.api.serializers import WorkspaceInviteSerializer
 
 # Module imports
 from plane.api.views.base import BaseViewSet
-from plane.db.models import WorkspaceMemberInvite, Workspace
-from plane.api.serializers import WorkspaceInviteSerializer
-from plane.utils.permissions import WorkspaceOwnerPermission
+from plane.db.models import Workspace, WorkspaceMemberInvite
 from plane.utils.openapi.parameters import WORKSPACE_SLUG_PARAMETER
+from plane.utils.permissions import WorkspaceAdminPermission
 
 
 class WorkspaceInvitationsViewset(BaseViewSet):
@@ -30,7 +31,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
     model = WorkspaceMemberInvite
 
     permission_classes = [
-        WorkspaceOwnerPermission,
+        WorkspaceAdminPermission,
     ]
 
     def get_queryset(self):

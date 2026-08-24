@@ -3,38 +3,40 @@
 # See the LICENSE file for details.
 
 # Python imports
-import jwt
 from datetime import datetime
+
+import jwt
+from django.conf import settings
 
 # Django imports
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.conf import settings
 from django.utils import timezone
-
-# Third Party imports
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
-# Module imports
-from .base import BaseViewSet, BaseAPIView
+# Third Party imports
+from rest_framework.response import Response
+
+from plane.app.permissions import ROLE, allow_permission
 from plane.app.serializers import (
-    ProjectMemberInviteSerializer,
     ProjectMemberInvitePublicSerializer,
+    ProjectMemberInviteSerializer,
 )
-from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import (
-    ProjectMember,
-    Workspace,
-    ProjectMemberInvite,
-    User,
-    WorkspaceMember,
     Project,
+    ProjectMember,
+    ProjectMemberInvite,
     ProjectUserProperty,
+    Workspace,
+    WorkspaceMember,
 )
 from plane.db.models.project import ProjectNetwork
 from plane.utils.host import base_host
+from plane.utils.workspace_admin import LastWorkspaceAdminError, workspace_admin_guard
+
+# Module imports
+from .base import BaseAPIView, BaseViewSet
 
 
 class ProjectInvitationsViewset(BaseViewSet):
@@ -219,66 +221,69 @@ class ProjectJoinEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        if project_invite.responded_at is None:
-            accepted = request.data.get("accepted", False)
-            if not isinstance(accepted, bool):
-                return Response(
-                    {"error": "`accepted` must be a boolean"},
-                    status=status.HTTP_400_BAD_REQUEST,
+        accepted = request.data.get("accepted", False)
+        if not isinstance(accepted, bool):
+            return Response(
+                {"error": "`accepted` must be a boolean"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            with workspace_admin_guard(workspace_id=project_invite.workspace_id) as workspace:
+                project_invite = ProjectMemberInvite.objects.select_for_update().get(
+                    pk=pk,
+                    project_id=project_id,
+                    workspace=workspace,
                 )
-            project_invite.accepted = accepted
-            project_invite.responded_at = timezone.now()
-            project_invite.save()
+                if project_invite.responded_at is not None:
+                    return Response(
+                        {"error": "You have already responded to the invitation request"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-            if project_invite.accepted:
-                # Use the authenticated user directly — they've already been
-                # validated as the invite recipient above.
+                project_invite.accepted = accepted
+                project_invite.responded_at = timezone.now()
+                project_invite.save(update_fields=["accepted", "responded_at", "updated_at"])
+
+                if not accepted:
+                    return Response(
+                        {"message": "Project Invitation was not accepted"},
+                        status=status.HTTP_200_OK,
+                    )
+
                 user = request.user
-
-                # Check if user is a part of workspace
-                workspace_member = WorkspaceMember.objects.filter(workspace__slug=slug, member=user).first()
-                # Add him to workspace
+                workspace_member = (
+                    WorkspaceMember.objects.select_for_update().filter(workspace=workspace, member=user).first()
+                )
                 if workspace_member is None:
-                    _ = WorkspaceMember.objects.create(
-                        workspace_id=project_invite.workspace_id,
+                    WorkspaceMember.objects.create(
+                        workspace=workspace,
                         member=user,
                         role=(15 if project_invite.role >= 15 else project_invite.role),
                     )
-                else:
-                    # Else make him active
+                elif not workspace_member.is_active:
                     workspace_member.is_active = True
-                    workspace_member.save()
+                    workspace_member.save(update_fields=["is_active", "updated_at"])
 
-                # Check if the user was already a member of project then activate the user
-                project_member = ProjectMember.objects.filter(
-                    workspace_id=project_invite.workspace_id, member=user
-                ).first()
+                project_member = (
+                    ProjectMember.objects.select_for_update().filter(project_id=project_id, member=user).first()
+                )
                 if project_member is None:
-                    # Create a Project Member
-                    _ = ProjectMember.objects.create(
+                    ProjectMember.objects.create(
                         project_id=project_id,
                         member=user,
                         role=project_invite.role,
                     )
                 else:
                     project_member.is_active = True
-                    project_member.role = project_member.role
-                    project_member.save()
-
-                return Response(
-                    {"message": "Project Invitation Accepted"},
-                    status=status.HTTP_200_OK,
-                )
+                    project_member.save(update_fields=["is_active", "updated_at"])
 
             return Response(
-                {"message": "Project Invitation was not accepted"},
+                {"message": "Project Invitation Accepted"},
                 status=status.HTTP_200_OK,
             )
-
-        return Response(
-            {"error": "You have already responded to the invitation request"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        except LastWorkspaceAdminError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, slug, project_id, pk):
         project_invitation = ProjectMemberInvite.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
