@@ -2,14 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path as path
 
 
 from plane.app.views import (
     AnalyticsEndpoint,
     AnalyticViewViewset,
     SavedAnalyticEndpoint,
-    ExportAnalyticsEndpoint,
     AdvanceAnalyticsEndpoint,
     AdvanceAnalyticsStatsEndpoint,
     AdvanceAnalyticsChartEndpoint,
@@ -23,67 +22,62 @@ from plane.app.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/analytics/",
+        "workspace/analytics/",
         AnalyticsEndpoint.as_view(),
         name="plane-analytics",
     ),
     path(
-        "workspaces/<str:slug>/analytic-view/",
+        "workspace/analytic-view/",
         AnalyticViewViewset.as_view({"get": "list", "post": "create"}),
         name="analytic-view",
     ),
     path(
-        "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
+        "workspace/analytic-view/<uuid:pk>/",
         AnalyticViewViewset.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="analytic-view",
     ),
     path(
-        "workspaces/<str:slug>/saved-analytic-view/<uuid:analytic_id>/",
+        "workspace/saved-analytic-view/<uuid:analytic_id>/",
         SavedAnalyticEndpoint.as_view(),
         name="saved-analytic-view",
     ),
     path(
-        "workspaces/<str:slug>/export-analytics/",
-        ExportAnalyticsEndpoint.as_view(),
-        name="export-analytics",
-    ),
-    path(
-        "workspaces/<str:slug>/default-analytics/",
+        "workspace/default-analytics/",
         DefaultAnalyticsEndpoint.as_view(),
         name="default-analytics",
     ),
     path(
-        "workspaces/<str:slug>/project-stats/",
+        "workspace/project-stats/",
         ProjectStatsEndpoint.as_view(),
         name="project-analytics",
     ),
     path(
-        "workspaces/<str:slug>/advance-analytics/",
+        "workspace/advance-analytics/",
         AdvanceAnalyticsEndpoint.as_view(),
         name="advance-analytics",
     ),
     path(
-        "workspaces/<str:slug>/advance-analytics-stats/",
+        "workspace/advance-analytics-stats/",
         AdvanceAnalyticsStatsEndpoint.as_view(),
         name="advance-analytics-stats",
     ),
     path(
-        "workspaces/<str:slug>/advance-analytics-charts/",
+        "workspace/advance-analytics-charts/",
         AdvanceAnalyticsChartEndpoint.as_view(),
         name="advance-analytics-chart",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/advance-analytics/",
+        "workspace/projects/<uuid:project_id>/advance-analytics/",
         ProjectAdvanceAnalyticsEndpoint.as_view(),
         name="project-advance-analytics",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/advance-analytics-stats/",
+        "workspace/projects/<uuid:project_id>/advance-analytics-stats/",
         ProjectAdvanceAnalyticsStatsEndpoint.as_view(),
         name="project-advance-analytics-stats",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/advance-analytics-charts/",
+        "workspace/projects/<uuid:project_id>/advance-analytics-charts/",
         ProjectAdvanceAnalyticsChartEndpoint.as_view(),
         name="project-advance-analytics-chart",
     ),

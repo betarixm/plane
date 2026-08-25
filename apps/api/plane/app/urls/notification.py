@@ -2,51 +2,45 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path
 
 
 from plane.app.views import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     MarkAllReadNotificationViewSet,
-    UserNotificationPreferenceEndpoint,
 )
 
 
 urlpatterns = [
-    path(
-        "workspaces/<str:slug>/users/notifications/",
+    singleton_workspace_path(
+        "workspace/users/notifications/",
         NotificationViewSet.as_view({"get": "list"}),
         name="notifications",
     ),
-    path(
-        "workspaces/<str:slug>/users/notifications/<uuid:pk>/",
+    singleton_workspace_path(
+        "workspace/users/notifications/<uuid:pk>/",
         NotificationViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="notifications",
     ),
-    path(
-        "workspaces/<str:slug>/users/notifications/<uuid:pk>/read/",
+    singleton_workspace_path(
+        "workspace/users/notifications/<uuid:pk>/read/",
         NotificationViewSet.as_view({"post": "mark_read", "delete": "mark_unread"}),
         name="notifications",
     ),
-    path(
-        "workspaces/<str:slug>/users/notifications/<uuid:pk>/archive/",
+    singleton_workspace_path(
+        "workspace/users/notifications/<uuid:pk>/archive/",
         NotificationViewSet.as_view({"post": "archive", "delete": "unarchive"}),
         name="notifications",
     ),
-    path(
-        "workspaces/<str:slug>/users/notifications/unread/",
+    singleton_workspace_path(
+        "workspace/users/notifications/unread/",
         UnreadNotificationEndpoint.as_view(),
         name="unread-notifications",
     ),
-    path(
-        "workspaces/<str:slug>/users/notifications/mark-all-read/",
+    singleton_workspace_path(
+        "workspace/users/notifications/mark-all-read/",
         MarkAllReadNotificationViewSet.as_view({"post": "create"}),
         name="mark-all-read-notifications",
-    ),
-    path(
-        "users/me/notification-preferences/",
-        UserNotificationPreferenceEndpoint.as_view(),
-        name="user-notification-preferences",
     ),
 ]

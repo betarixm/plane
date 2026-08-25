@@ -4,10 +4,6 @@
       "heading": "Preferensi",
       "description": "Sesuaikan pengalaman aplikasi Anda dengan cara kerja Anda"
     },
-    "notifications": {
-      "heading": "Notifikasi email",
-      "description": "Tetap terupdate tentang item kerja yang Anda langgani. Aktifkan ini untuk mendapatkan notifikasi."
-    },
     "api_tokens": {
       "title": "Token Akses Personal",
       "description": "Hasilkan token API yang aman untuk mengintegrasikan data Anda dengan sistem dan aplikasi eksternal."

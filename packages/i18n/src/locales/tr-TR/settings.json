@@ -4,10 +4,6 @@
       "heading": "Tercihler",
       "description": "Uygulama deneyiminizi çalışma şeklinize göre özelleştirin"
     },
-    "notifications": {
-      "heading": "E-posta bildirimleri",
-      "description": "Abone olduğunuz İş öğelerinden haberdar olun. Bildirim almak için bunu etkinleştirin."
-    },
     "api_tokens": {
       "title": "Kişisel Erişim Tokenları",
       "description": "Verilerinizi harici sistemler ve uygulamalarla entegre etmek için güvenli API tokenları oluşturun."

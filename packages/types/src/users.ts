@@ -135,14 +135,6 @@ export interface IUserProjectsRole {
   [projectId: string]: TUserPermissions;
 }
 
-export interface IUserEmailNotificationSettings {
-  property_change: boolean;
-  state_change: boolean;
-  comment: boolean;
-  mention: boolean;
-  issue_completed: boolean;
-}
-
 export type TProfileViews = "assigned" | "created" | "subscribed";
 
 export type TPublicMember = {

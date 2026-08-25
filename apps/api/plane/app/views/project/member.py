@@ -19,9 +19,7 @@ from plane.app.serializers import (
     ProjectMemberRoleSerializer,
     ProjectMemberSerializer,
 )
-from plane.bgtasks.project_member_added_email_task import project_member_added_email
 from plane.db.models import Project, ProjectMember, ProjectUserProperty
-from plane.utils.host import base_host
 from plane.utils.identity_access import (
     active_workspace_members,
     lock_active_identity_source,
@@ -40,9 +38,13 @@ class ProjectMemberViewSet(BaseViewSet):
     search_fields = ["member__display_name", "member__first_name"]
 
     def get_queryset(self):
-        active_member_ids = active_workspace_members().filter(
-            workspace__slug=self.kwargs.get("slug"),
-        ).values("member_id")
+        active_member_ids = (
+            active_workspace_members()
+            .filter(
+                workspace__slug=self.kwargs.get("slug"),
+            )
+            .values("member_id")
+        )
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -69,13 +71,19 @@ class ProjectMemberViewSet(BaseViewSet):
                 {"error": "An active external workspace membership is required."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        requester_is_admin = ProjectMember.objects.select_for_update().filter(
-            project=project,
-            member=request.user,
-            is_active=True,
-        ).filter(
-            role=ROLE.ADMIN.value,
-        ).exists() or requester_workspace_member.role == ROLE.ADMIN.value
+        requester_is_admin = (
+            ProjectMember.objects.select_for_update()
+            .filter(
+                project=project,
+                member=request.user,
+                is_active=True,
+            )
+            .filter(
+                role=ROLE.ADMIN.value,
+            )
+            .exists()
+            or requester_workspace_member.role == ROLE.ADMIN.value
+        )
         if not requester_is_admin:
             return Response(
                 {"error": "You don't have the required permissions."},
@@ -148,23 +156,17 @@ class ProjectMemberViewSet(BaseViewSet):
         resulting_admin_member_ids = {
             member_id
             for member_id in active_admin_member_ids
-            if member_id not in member_roles
-            or member_roles[member_id] == ROLE.ADMIN.value
+            if member_id not in member_roles or member_roles[member_id] == ROLE.ADMIN.value
         }
         resulting_admin_member_ids.update(
-            member_id
-            for member_id, role in member_roles.items()
-            if role == ROLE.ADMIN.value
+            member_id for member_id, role in member_roles.items() if role == ROLE.ADMIN.value
         )
         if not resulting_admin_member_ids:
             return Response(
                 {"error": "The project must retain at least one active administrator"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        existing_member_ids = {
-            str(project_member.member_id)
-            for project_member in existing_project_members
-        }
+        existing_member_ids = {str(project_member.member_id) for project_member in existing_project_members}
         for project_member in existing_project_members:
             project_member.role = member_roles[str(project_member.member_id)]
             project_member.is_active = True
@@ -182,10 +184,7 @@ class ProjectMemberViewSet(BaseViewSet):
             .values("user_id")
             .annotate(min_sort_order=Min("sort_order"))
         )
-        sort_order_map = {
-            str(item["user_id"]): item["min_sort_order"]
-            for item in member_sort_orders
-        }
+        sort_order_map = {str(item["user_id"]): item["min_sort_order"] for item in member_sort_orders}
         ProjectMember.objects.bulk_create(
             [
                 ProjectMember(
@@ -207,9 +206,7 @@ class ProjectMemberViewSet(BaseViewSet):
                     project=project,
                     workspace=project.workspace,
                     sort_order=(
-                        sort_order_map[member_id] - 10000
-                        if sort_order_map.get(member_id) is not None
-                        else 65535
+                        sort_order_map[member_id] - 10000 if sort_order_map.get(member_id) is not None else 65535
                     ),
                 )
                 for member_id in member_roles
@@ -222,15 +219,6 @@ class ProjectMemberViewSet(BaseViewSet):
             project_id=project_id,
             member_id__in=member_roles,
         )
-        # Notify members whose external profile exposes an email address.
-        [
-            project_member_added_email.delay(
-                base_host(request=request, is_app=True),
-                project_member.id,
-                request.user.id,
-            )
-            for project_member in project_members
-        ]
         # Serialize the project members
         serializer = ProjectMemberRoleSerializer(project_members, many=True)
         # Return the serialized data
@@ -239,9 +227,13 @@ class ProjectMemberViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         # Get the list of project members for the project
-        active_member_ids = active_workspace_members().filter(
-            workspace__slug=slug,
-        ).values("member_id")
+        active_member_ids = (
+            active_workspace_members()
+            .filter(
+                workspace__slug=slug,
+            )
+            .values("member_id")
+        )
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
@@ -254,9 +246,13 @@ class ProjectMemberViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk):
-        active_member_ids = active_workspace_members().filter(
-            workspace__slug=slug,
-        ).values("member_id")
+        active_member_ids = (
+            active_workspace_members()
+            .filter(
+                workspace__slug=slug,
+            )
+            .values("member_id")
+        )
         requesting_project_member = ProjectMember.objects.get(
             project_id=project_id,
             workspace__slug=slug,
@@ -299,9 +295,13 @@ class ProjectMemberViewSet(BaseViewSet):
                 {"error": "Only role and is_active can be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        project = Project.objects.using("default").only("workspace_id").get(
-            pk=project_id,
-            workspace__slug=slug,
+        project = (
+            Project.objects.using("default")
+            .only("workspace_id")
+            .get(
+                pk=project_id,
+                workspace__slug=slug,
+            )
         )
         lock_active_identity_source(workspace_id=project.workspace_id)
         requester_workspace_member = lock_active_workspace_member(
@@ -320,10 +320,15 @@ class ProjectMemberViewSet(BaseViewSet):
         )
 
         # Fetch the target's workspace role (used to cap the new project role)
-        target_workspace_role = active_workspace_members().select_for_update().get(
-            workspace_id=project_member.workspace_id,
-            member=project_member.member,
-        ).role
+        target_workspace_role = (
+            active_workspace_members()
+            .select_for_update()
+            .get(
+                workspace_id=project_member.workspace_id,
+                member=project_member.member,
+            )
+            .role
+        )
         # Fetch the requester's workspace role to decide if they may bypass project-role checks
         is_workspace_admin = requester_workspace_member.role == ROLE.ADMIN.value
 
@@ -411,9 +416,7 @@ class ProjectMemberViewSet(BaseViewSet):
         if serializer.is_valid():
             next_role = serializer.validated_data.get("role", project_member.role)
             next_is_active = serializer.validated_data.get("is_active", project_member.is_active)
-            if project_member.role == ROLE.ADMIN.value and (
-                next_role != ROLE.ADMIN.value or not next_is_active
-            ):
+            if project_member.role == ROLE.ADMIN.value and (next_role != ROLE.ADMIN.value or not next_is_active):
                 active_admins = list(
                     ProjectMember.objects.select_for_update().filter(
                         project=project,
@@ -433,9 +436,13 @@ class ProjectMemberViewSet(BaseViewSet):
     @transaction.atomic
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
-        project = Project.objects.using("default").only("workspace_id").get(
-            pk=project_id,
-            workspace__slug=slug,
+        project = (
+            Project.objects.using("default")
+            .only("workspace_id")
+            .get(
+                pk=project_id,
+                workspace__slug=slug,
+            )
         )
         lock_active_identity_source(workspace_id=project.workspace_id)
         requester_workspace_member = lock_active_workspace_member(
@@ -498,15 +505,22 @@ class ProjectMemberViewSet(BaseViewSet):
     @transaction.atomic
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def leave(self, request, slug, project_id):
-        project = Project.objects.using("default").only("workspace_id").get(
-            pk=project_id,
-            workspace__slug=slug,
+        project = (
+            Project.objects.using("default")
+            .only("workspace_id")
+            .get(
+                pk=project_id,
+                workspace__slug=slug,
+            )
         )
         lock_active_identity_source(workspace_id=project.workspace_id)
-        if lock_active_workspace_member(
-            workspace_id=project.workspace_id,
-            user_id=request.user.id,
-        ) is None:
+        if (
+            lock_active_workspace_member(
+                workspace_id=project.workspace_id,
+                user_id=request.user.id,
+            )
+            is None
+        ):
             return Response(
                 {"error": "An active external workspace membership is required."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -541,9 +555,7 @@ class ProjectMemberUserEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
             member=request.user,
-            member_id__in=active_workspace_members()
-            .filter(workspace__slug=slug)
-            .values("member_id"),
+            member_id__in=active_workspace_members().filter(workspace__slug=slug).values("member_id"),
             is_active=True,
         )
         serializer = ProjectMemberSerializer(project_member)
@@ -560,9 +572,7 @@ class UserProjectRolesEndpoint(BaseAPIView):
             workspace__slug=slug,
             member_id=request.user.id,
             is_active=True,
-            member_id__in=active_workspace_members()
-            .filter(workspace__slug=slug)
-            .values("member_id"),
+            member_id__in=active_workspace_members().filter(workspace__slug=slug).values("member_id"),
         ).values("project_id", "role")
 
         project_members = {str(member["project_id"]): member["role"] for member in project_members}
@@ -576,9 +586,7 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
             member_id=member_id,
             workspace__slug=slug,
             is_active=True,
-            member_id__in=active_workspace_members()
-            .filter(workspace__slug=slug)
-            .values("member_id"),
+            member_id__in=active_workspace_members().filter(workspace__slug=slug).values("member_id"),
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])

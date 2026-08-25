@@ -47,7 +47,7 @@ from .issue import (
     IssueDescriptionVersion,
 )
 from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
-from .notification import EmailNotificationLog, Notification, UserNotificationPreference
+from .notification import Notification
 from .project import (
     Project,
     ProjectBaseModel,

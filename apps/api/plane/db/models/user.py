@@ -9,8 +9,6 @@ import pytz
 
 # Django imports
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 # Module imports
 from plane.db.models import FileAsset
@@ -177,20 +175,3 @@ class Profile(TimeAuditModel):
         verbose_name_plural = "Profiles"
         db_table = "profiles"
         ordering = ("-created_at",)
-
-
-@receiver(post_save, sender=User)
-def create_user_notification(sender, instance, created, **kwargs):
-    # create preferences
-    if created:
-        # Module imports
-        from plane.db.models import UserNotificationPreference
-
-        UserNotificationPreference.objects.create(
-            user=instance,
-            property_change=True,
-            state_change=True,
-            comment=True,
-            mention=True,
-            issue_completed=True,
-        )

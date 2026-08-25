@@ -264,9 +264,6 @@ TIME_ZONE = "UTC"
 # Default Auto Field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Email settings
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
 # Storage Settings
 # Use Minio settings
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
@@ -315,7 +312,6 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
     "plane.bgtasks.file_asset_task",
-    "plane.bgtasks.email_notification_task",
     "plane.bgtasks.cleanup_task",
     "plane.bgtasks.slack_sync",
     "plane.license.bgtasks.telemetry_metrics",
@@ -401,9 +397,6 @@ API_ACTIVITY_LOG_RETENTION_DAYS = _retention_days("API_ACTIVITY_LOG_RETENTION_DA
 # Webhook delivery logs are retained on their own window, independent of the
 # generic HARD_DELETE_AFTER_DAYS.
 WEBHOOK_LOG_RETENTION_DAYS = _retention_days("WEBHOOK_LOG_RETENTION_DAYS", 14)
-
-# Email notification logs are retained on their own window.
-EMAIL_LOG_RETENTION_DAYS = _retention_days("EMAIL_LOG_RETENTION_DAYS", 7)
 
 # Instance Changelog URL
 INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")

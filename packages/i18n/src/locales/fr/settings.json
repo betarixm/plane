@@ -4,10 +4,6 @@
       "heading": "Préférences",
       "description": "Personnalisez votre expérience de l’application selon votre façon de travailler"
     },
-    "notifications": {
-      "heading": "Notifications par e-mail",
-      "description": "Restez informé des éléments de travail auxquels vous êtes abonné. Activez cette option pour être notifié."
-    },
     "api_tokens": {
       "title": "Jetons d’accès personnel",
       "description": "Générez des jetons API sécurisés pour intégrer vos données avec des systèmes et applications externes."

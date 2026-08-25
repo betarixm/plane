@@ -4,10 +4,6 @@
       "heading": "Preferencje",
       "description": "Dostosuj sposób korzystania z aplikacji do swojego stylu pracy"
     },
-    "notifications": {
-      "heading": "Powiadomienia e-mail",
-      "description": "Bądź na bieżąco z subskrybowanymi elementami pracy. Włącz, aby otrzymywać powiadomienia."
-    },
     "api_tokens": {
       "title": "Osobiste tokeny dostępu",
       "description": "Generuj bezpieczne tokeny API, aby integrować swoje dane z zewnętrznymi systemami i aplikacjami."

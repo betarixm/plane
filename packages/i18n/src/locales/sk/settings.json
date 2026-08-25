@@ -4,10 +4,6 @@
       "heading": "Predvoľby",
       "description": "Prispôsobte si aplikáciu spôsobu, akým pracujete"
     },
-    "notifications": {
-      "heading": "E-mailové oznámenia",
-      "description": "Majte prehľad o pracovných položkách, ktoré odoberáte. Aktivujte toto pre zasielanie oznámení."
-    },
     "api_tokens": {
       "title": "Osobné prístupové tokeny",
       "description": "Generujte bezpečné API tokeny na integráciu vašich údajov s externými systémami a aplikáciami."

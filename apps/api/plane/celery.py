@@ -43,10 +43,6 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 
 app.conf.beat_schedule = {
     # Intra day recurring jobs
-    "check-every-five-minutes-to-send-email-notifications": {
-        "task": "plane.bgtasks.email_notification_task.stack_email_notification",
-        "schedule": crontab(minute="*/5"),  # Every 5 minutes
-    },
     "push-instance-metrics": {
         "task": "plane.license.bgtasks.telemetry_metrics.push_instance_metrics",
         "schedule": schedule(run_every=timedelta(minutes=METRICS_PUSH_INTERVAL_MINUTES)),
@@ -83,10 +79,6 @@ app.conf.beat_schedule = {
     "check-every-day-to-delete-api-logs": {
         "task": "plane.bgtasks.cleanup_task.delete_api_logs",
         "schedule": crontab(hour=2, minute=30),  # UTC 02:30
-    },
-    "check-every-day-to-delete-email-notification-logs": {
-        "task": "plane.bgtasks.cleanup_task.delete_email_notification_logs",
-        "schedule": crontab(hour=2, minute=45),  # UTC 02:45
     },
     "check-every-day-to-delete-issue-description-versions": {
         "task": "plane.bgtasks.cleanup_task.delete_issue_description_versions",

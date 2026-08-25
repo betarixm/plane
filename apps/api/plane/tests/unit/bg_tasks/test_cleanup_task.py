@@ -19,18 +19,17 @@ from uuid import uuid4
 
 from plane.bgtasks.cleanup_task import (
     delete_api_logs,
-    delete_email_notification_logs,
     delete_webhook_logs,
     process_cleanup_task,
 )
-from plane.db.models import APIActivityLog, EmailNotificationLog, WebhookLog
-from plane.tests.factories import UserFactory, WorkspaceFactory
+from plane.db.models import APIActivityLog, WebhookLog
+from plane.tests.factories import WorkspaceFactory
 
 
 def _make_api_log(created_at):
     log = APIActivityLog.objects.create(
         token_identifier="hashed-token",
-        path="/api/v1/workspaces/",
+        path="/api/v1/workspace/",
         method="GET",
         response_code=200,
     )
@@ -49,16 +48,6 @@ def _make_webhook_log(workspace, created_at):
     )
     WebhookLog.all_objects.filter(pk=log.pk).update(created_at=created_at)
     return log
-
-
-def _make_email_log(user, sent_at):
-    return EmailNotificationLog.objects.create(
-        receiver=user,
-        triggered_by=user,
-        entity_name="issue",
-        entity="issue",
-        sent_at=sent_at,
-    )
 
 
 @pytest.mark.unit
@@ -102,28 +91,6 @@ class TestDeleteWebhookLogs:
         delete_webhook_logs()
 
         assert WebhookLog.all_objects.filter(pk=recent.pk).exists()
-
-
-@pytest.mark.unit
-@pytest.mark.django_db
-class TestDeleteEmailLogs:
-    def test_expired_logs_are_hard_deleted(self):
-        user = UserFactory()
-        retention_days = settings.EMAIL_LOG_RETENTION_DAYS
-        expired = _make_email_log(user, timezone.now() - timedelta(days=retention_days + 1))
-
-        delete_email_notification_logs()
-
-        assert not EmailNotificationLog.all_objects.filter(pk=expired.pk).exists()
-
-    def test_recent_logs_are_retained(self):
-        user = UserFactory()
-        retention_days = settings.EMAIL_LOG_RETENTION_DAYS
-        recent = _make_email_log(user, timezone.now() - timedelta(days=retention_days - 1))
-
-        delete_email_notification_logs()
-
-        assert EmailNotificationLog.all_objects.filter(pk=recent.pk).exists()
 
 
 @pytest.mark.unit

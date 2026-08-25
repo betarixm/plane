@@ -18,7 +18,6 @@ from celery import shared_task
 
 # Module imports
 from plane.db.models import (
-    EmailNotificationLog,
     APIActivityLog,
     IssueDescriptionVersion,
     WebhookLog,
@@ -92,17 +91,6 @@ def get_api_logs_queryset():
     )
 
 
-def get_email_logs_queryset():
-    """Get email logs older than the email retention window."""
-    cutoff_time = timezone.now() - timedelta(days=settings.EMAIL_LOG_RETENTION_DAYS)
-    logger.info(f"Email logs cutoff time: {cutoff_time}")
-    return (
-        EmailNotificationLog.all_objects.filter(sent_at__lte=cutoff_time)
-        .values_list("id", flat=True)
-        .iterator(chunk_size=BATCH_SIZE)
-    )
-
-
 def get_issue_description_versions_queryset():
     """Get issue description versions beyond the maximum allowed (20 per issue)."""
     subq = (
@@ -143,16 +131,6 @@ def delete_api_logs():
         queryset_func=get_api_logs_queryset,
         model=APIActivityLog,
         task_name="API Activity Log",
-    )
-
-
-@shared_task
-def delete_email_notification_logs():
-    """Delete old email notification logs."""
-    process_cleanup_task(
-        queryset_func=get_email_logs_queryset,
-        model=EmailNotificationLog,
-        task_name="Email Notification Log",
     )
 
 

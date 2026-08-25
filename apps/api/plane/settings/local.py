@@ -16,17 +16,6 @@ MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
-# Only show emails in console don't send it to smtp
-EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,  # noqa
-        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-    }
-}
-
 INTERNAL_IPS = ("127.0.0.1",)
 
 MEDIA_URL = "/uploads/"

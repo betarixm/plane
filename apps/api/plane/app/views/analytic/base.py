@@ -18,7 +18,6 @@ from rest_framework.response import Response
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.app.serializers import AnalyticViewSerializer
 from plane.app.views.base import BaseAPIView, BaseViewSet
-from plane.bgtasks.analytic_plot_export import analytic_export_task
 from plane.db.models import (
     AnalyticView,
     Issue,
@@ -215,35 +214,6 @@ class SavedAnalyticEndpoint(BaseAPIView):
         total_issues = queryset.count()
         return Response(
             {"total": total_issues, "distribution": distribution},
-            status=status.HTTP_200_OK,
-        )
-
-
-class ExportAnalyticsEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def post(self, request, slug):
-        x_axis = request.data.get("x_axis", False)
-        y_axis = request.data.get("y_axis", False)
-        segment = request.data.get("segment", False)
-
-        # Check for x-axis and y-axis as thery are required parameters
-        if not x_axis or not y_axis or x_axis not in VALID_ANALYTICS_FIELDS or y_axis not in VALID_YAXIS:
-            return Response(
-                {"error": "x-axis and y-axis dimensions are required and the values should be valid"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # If segment is present it cannot be same as x-axis
-        if segment and (segment not in VALID_ANALYTICS_FIELDS or x_axis == segment):
-            return Response(
-                {"error": "Both segment and x axis cannot be same and segment should be valid"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        analytic_export_task.delay(email=request.user.email, data=request.data, slug=slug)
-
-        return Response(
-            {"message": f"Once the export is ready it will be emailed to you at {str(request.user.email)}"},
             status=status.HTTP_200_OK,
         )
 

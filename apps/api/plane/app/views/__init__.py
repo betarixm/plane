@@ -11,7 +11,6 @@ from .analytic.base import (
     AnalyticsEndpoint,
     AnalyticViewViewset,
     DefaultAnalyticsEndpoint,
-    ExportAnalyticsEndpoint,
     ProjectStatsEndpoint,
     SavedAnalyticEndpoint,
 )
@@ -102,7 +101,6 @@ from .notification.base import (
     MarkAllReadNotificationViewSet,
     NotificationViewSet,
     UnreadNotificationEndpoint,
-    UserNotificationPreferenceEndpoint,
 )
 from .project.base import (
     DeployBoardViewSet,
