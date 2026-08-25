@@ -6,7 +6,6 @@
 
 // editor
 import type { TExtensions } from "@plane/editor";
-import type { EPageStoreType } from "@/hooks/store";
 
 export type TEditorFlaggingHookReturnType = {
   document: {
@@ -26,7 +25,6 @@ export type TEditorFlaggingHookReturnType = {
 export type TEditorFlaggingHookProps = {
   workspaceSlug: string;
   projectId?: string;
-  storeType?: EPageStoreType;
 };
 
 /**
@@ -34,15 +32,15 @@ export type TEditorFlaggingHookProps = {
  */
 export const useEditorFlagging = (_props: TEditorFlaggingHookProps): TEditorFlaggingHookReturnType => ({
   document: {
-    disabled: ["ai", "collaboration-cursor"],
+    disabled: ["ai"],
     flagged: [],
   },
   liteText: {
-    disabled: ["ai", "collaboration-cursor"],
+    disabled: ["ai"],
     flagged: [],
   },
   richText: {
-    disabled: ["ai", "collaboration-cursor"],
+    disabled: ["ai"],
     flagged: [],
   },
 });

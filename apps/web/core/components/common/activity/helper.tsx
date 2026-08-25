@@ -12,7 +12,6 @@ import {
   AlignLeft,
   Paperclip,
   Type,
-  FileText,
   Hash,
   Clock,
   Bell,
@@ -62,7 +61,6 @@ export const iconsMap: ActivityIconMap = {
   estimate: EstimatePropertyIcon,
   cycle: CycleIcon,
   module: ModuleIcon,
-  page: FileText,
   network: GlobeIcon,
   identifier: Hash,
   timezone: Clock,
@@ -75,7 +73,6 @@ export const iconsMap: ActivityIconMap = {
   module_view: ModuleIcon,
   cycle_view: CycleIcon,
   issue_views_view: Layers,
-  page_view: FileText,
   intake_view: IntakeIcon,
 };
 
@@ -224,15 +221,6 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: <>{newValue ? "enabled" : "disabled"} inbox</>,
       };
-    case "page":
-      return {
-        message: (
-          <>
-            {newValue ? "created" : "removed"} the project page{" "}
-            <span className="font-medium text-primary">{newValue || oldValue || "Untitled page"}</span>
-          </>
-        ),
-      };
     case "network":
       return {
         message: <>{newValue ? "enabled" : "disabled"} network access</>,
@@ -256,7 +244,6 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
     case "module_view":
     case "cycle_view":
     case "issue_views_view":
-    case "page_view":
     case "intake_view":
       return {
         message: (

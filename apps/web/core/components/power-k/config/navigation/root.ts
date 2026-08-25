@@ -27,14 +27,12 @@ export const usePowerKNavigationCommands = (): TPowerKCommandConfig[] => {
     optionsList["nav_your_work"],
     // Project-Level Navigation (Only visible in project context)
     optionsList["nav_project_work_items"],
-    optionsList["nav_project_pages"],
     optionsList["nav_project_cycles"],
     optionsList["nav_project_modules"],
     optionsList["nav_project_views"],
     optionsList["nav_project_intake"],
     optionsList["nav_project_settings"],
     optionsList["nav_project_archives"],
-    // Navigate to workspace-level pages
     optionsList["nav_all_workspace_work_items"],
     optionsList["nav_assigned_workspace_work_items"],
     optionsList["nav_created_workspace_work_items"],

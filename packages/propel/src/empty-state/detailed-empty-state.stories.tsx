@@ -44,7 +44,6 @@ const meta: Meta<BaseEmptyStateCommonProps> = {
         "invalid-link",
         "module",
         "no-access",
-        "page",
         "project",
         "server-error",
         "teamspace",
@@ -246,23 +245,6 @@ export const ViewState: Story = {
       {
         label: "Create View",
         onClick: () => console.log("create-view-clicked"),
-        variant: "primary",
-      },
-    ],
-  },
-};
-
-export const PageState: Story = {
-  name: "Pages",
-  args: {
-    assetKey: "page",
-    assetClassName: "w-40 h-45",
-    title: "No pages found",
-    description: "Create pages to document your project, share knowledge, and collaborate.",
-    actions: [
-      {
-        label: "Create Page",
-        onClick: () => console.log("create-page-clicked"),
         variant: "primary",
       },
     ],

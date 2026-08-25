@@ -18,7 +18,6 @@ export * from "./initiative";
 export * from "./invalid-link";
 export * from "./module";
 export * from "./no-access";
-export * from "./page";
 export * from "./project";
 export * from "./server-error";
 export * from "./teamspace";

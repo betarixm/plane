@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { FileText, FolderPlus, Layers } from "lucide-react";
+import { FolderPlus, Layers } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
@@ -18,7 +18,6 @@ import { useUser } from "@/hooks/store/user";
 
 export type TPowerKCreationCommandKeys =
   | "create_work_item"
-  | "create_page"
   | "create_view"
   | "create_cycle"
   | "create_module"
@@ -40,7 +39,6 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
     toggleCreateCycleModal,
     toggleCreateModuleModal,
     toggleCreateViewModal,
-    toggleCreatePageModal,
   } = useCommandPalette();
   // derived values
   const canCreateWorkItem = canPerformAnyCreateAction && workspaceProjectIds && workspaceProjectIds.length > 0;
@@ -69,19 +67,6 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       action: () => toggleCreateIssueModal(true),
       isEnabled: () => Boolean(canCreateWorkItem),
       isVisible: () => Boolean(canCreateWorkItem),
-      closeOnSelect: true,
-    },
-    create_page: {
-      id: "create_page",
-      type: "action",
-      group: "create",
-      i18n_title: "power_k.creation_actions.create_page",
-      icon: FileText,
-      keySequence: "nd",
-      action: () => toggleCreatePageModal({ isOpen: true }),
-      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.page_view && hasProjectMemberLevelPermissions(ctx)),
-      isVisible: (ctx) =>
-        Boolean(ctx.params.projectId && getProjectDetails(ctx)?.page_view && hasProjectMemberLevelPermissions(ctx)),
       closeOnSelect: true,
     },
     create_view: {

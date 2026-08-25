@@ -582,18 +582,6 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //   },
       // },
       {
-        title: "Advanced Pages Analytics",
-        description: "See who's viewing, sharing, and commenting on\nyour pages along with other useful info.",
-        comingSoon: true,
-        cloud: {
-          free: false,
-          one: false,
-          pro: false,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
         title: "Custom Reports",
         description: "Generate reports by any dimension and metric\nacross your project or workspace.",
         comingSoon: true,
@@ -797,137 +785,6 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
           pro: "5,000",
           business: "10,000",
           enterprise: "Unlimited",
-        },
-      },
-    ],
-  },
-  {
-    id: "knowledge-management",
-    title: "Knowledge management",
-    features: [
-      {
-        title: "Pages",
-        description: "Build knowledge bases for your teams which are\naccessible & shareable.",
-        cloud: {
-          free: true,
-          one: true,
-          pro: true,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
-        title: "Real-time Collab",
-        description: "Edit a page together with members in your project,\nteam, or workspace.",
-        cloud: {
-          free: false,
-          one: true,
-          pro: true,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
-        title: "Work item Embeds",
-        description: "Embed work items from any project you are a member\nof.",
-        cloud: {
-          free: false,
-          one: true,
-          pro: true,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
-        title: "Link-to-work items",
-        description: "Link pages in work items in a separate section in work item\ndetails.",
-        cloud: {
-          free: false,
-          one: true,
-          pro: true,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
-        title: "Publish",
-        description:
-          "Put your pages on the web for external users and let\nthem comment without signing into your workspace.",
-        cloud: {
-          free: false,
-          one: true,
-          pro: true,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
-        title: "Wiki",
-        description: "Create company-wide wikis or knowledge bases\nwithout creating a project.",
-        cloud: {
-          free: false,
-          one: true,
-          pro: true,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
-        title: "Exports",
-        description: "Export page content into PDFs or Word-compatible\ndocs.",
-        cloud: {
-          free: false,
-          one: false,
-          pro: "One download\nat a time",
-          business: "Queued downloads",
-          enterprise: "Queued downloads",
-        },
-      },
-      {
-        title: "Templates",
-        description: "Use pages as templates for your project, team, or\nworkspace.",
-        cloud: {
-          free: false,
-          one: false,
-          pro: true,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
-        title: "Versions",
-        description: "See restorable version of edits to your pages.",
-        cloud: {
-          free: false,
-          one: false,
-          pro: "2 days",
-          business: "3 months",
-          enterprise: "Unlimited",
-        },
-      },
-      {
-        title: "Databases + Formulas",
-        description:
-          "Put databases and formulas into a page without\nworrying about losing text, images, or other content\ntypes.",
-        comingSoon: true,
-        cloud: {
-          free: false,
-          one: false,
-          pro: false,
-          business: true,
-          enterprise: true,
-        },
-      },
-      {
-        title: "Nested Pages",
-        description: "Pages inside a page, organize your pages\nas you see fit for the progressive\ndisclosure.",
-        comingSoon: true,
-        cloud: {
-          free: false,
-          one: false,
-          pro: false,
-          business: "Word-compatible + other format downloads",
-          enterprise: "Word-compatible + other format downloads",
         },
       },
     ],
@@ -1301,11 +1158,11 @@ export const PLANE_PLANS: PlanePlans = {
     },
   },
   planHighlights: {
-    free: ["Upto 12 users", "Pages", "Unlimited projects", "Unlimited cycles and modules"],
+    free: ["Upto 12 users", "Unlimited projects", "Unlimited cycles and modules"],
     one: ["Upto 50 users", "OIDC and SAML", "Active cycles", "Limited time tracking"],
     pro: ["Unlimited users", "Custom work items + Properties", "Work item templates", "Full Time Tracking"],
     business: ["RBAC", "Project Templates", "Baselines And Deviations", "Custom Reports"],
-    enterprise: ["Private + managed deployments", "GAC", "LDAP support", "Databases + Formulas"],
+    enterprise: ["Private + managed deployments", "GAC", "LDAP support"],
   },
   planComparison: PLANS_COMPARISON_LIST,
 };

@@ -19,7 +19,6 @@ import {
   InvalidLinkVerticalStackIllustration,
   ModuleVerticalStackIllustration,
   NoAccessVerticalStackIllustration,
-  PageVerticalStackIllustration,
   ProjectVerticalStackIllustration,
   ServerErrorVerticalStackIllustration,
   TeamspaceVerticalStackIllustration,
@@ -83,10 +82,6 @@ export const VerticalStackAssetsMap = [
   {
     asset: <NoAccessVerticalStackIllustration />,
     title: "NoAccessVerticalStackIllustration",
-  },
-  {
-    asset: <PageVerticalStackIllustration />,
-    title: "PageVerticalStackIllustration",
   },
   {
     asset: <ProjectVerticalStackIllustration />,

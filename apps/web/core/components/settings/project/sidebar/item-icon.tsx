@@ -14,7 +14,6 @@ import {
   IntakeIcon,
   LabelPropertyIcon,
   ModuleIcon,
-  PageIcon,
   StatePropertyIcon,
   ViewsIcon,
 } from "@plane/propel/icons";
@@ -28,7 +27,6 @@ export const PROJECT_SETTINGS_ICONS: Record<TProjectSettingsTabs, LucideIcon | R
   features_cycles: CycleIcon,
   features_modules: ModuleIcon,
   features_views: ViewsIcon,
-  features_pages: PageIcon,
   features_intake: IntakeIcon,
   states: StatePropertyIcon,
   labels: LabelPropertyIcon,

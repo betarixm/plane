@@ -7,12 +7,11 @@
 import type { LucideIcon } from "lucide-react";
 // plane imports
 import type { TLogoProps } from "@plane/types";
-import { CycleIcon, FavoriteFolderIcon, ModuleIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
+import { CycleIcon, FavoriteFolderIcon, ModuleIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 
 const ICON_MAP: Record<string, React.FC<ISvgIcons> | LucideIcon> = {
-  page: PageIcon,
   project: ProjectIcon,
   view: ViewsIcon,
   module: ModuleIcon,
@@ -26,7 +25,7 @@ type Props = {
 };
 
 export const FavoriteItemIcon = ({ type, logo }: Props) => {
-  const Icon = ICON_MAP[type] ?? PageIcon;
+  const Icon = ICON_MAP[type] ?? FavoriteFolderIcon;
 
   return (
     <>

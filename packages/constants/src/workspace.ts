@@ -186,7 +186,6 @@ export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
     cycle: [],
     module: [],
     issue_view: [],
-    page: [],
   },
 };
 

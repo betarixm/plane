@@ -43,7 +43,6 @@ export type VerticalStackAssetType =
   | "invalid-link"
   | "module"
   | "no-access"
-  | "page"
   | "project"
   | "server-error"
   | "teamspace"

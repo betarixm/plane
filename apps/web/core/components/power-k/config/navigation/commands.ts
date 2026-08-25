@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { BarChart2, Briefcase, FileText, Home, Inbox, Layers, PenSquare, Settings } from "lucide-react";
+import { BarChart2, Briefcase, Home, Inbox, Layers, PenSquare, Settings } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { ArchiveIcon, UserActivityIcon, LayersIcon, ContrastIcon, DiceIcon, Intake } from "@plane/propel/icons";
@@ -40,7 +40,6 @@ export type TPowerKNavigationCommandKeys =
   | "nav_project_modules"
   | "open_project_view"
   | "nav_project_views"
-  | "nav_project_pages"
   | "nav_project_intake"
   | "nav_project_archives"
   | "open_project_setting"
@@ -408,24 +407,6 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
         ]),
       isEnabled: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
       isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
-      closeOnSelect: true,
-    },
-    nav_project_pages: {
-      id: "nav_project_pages",
-      type: "action",
-      group: "navigation",
-      i18n_title: "power_k.navigation_actions.nav_project_pages",
-      icon: FileText,
-      keySequence: "gd",
-      action: (ctx) =>
-        handlePowerKNavigate(ctx, [
-          ctx.params.workspaceSlug?.toString(),
-          "projects",
-          ctx.params.projectId?.toString(),
-          "pages",
-        ]),
-      isEnabled: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.page_view,
-      isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.page_view,
       closeOnSelect: true,
     },
     nav_project_intake: {

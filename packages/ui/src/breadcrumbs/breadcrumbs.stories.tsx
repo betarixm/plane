@@ -5,7 +5,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import { Home, Settings, Briefcase, GridIcon, Layers2, FileIcon } from "lucide-react";
+import { Home, Settings, Briefcase, GridIcon, Layers2 } from "lucide-react";
 import * as React from "react";
 import { ContrastIcon, EpicIcon, LayersIcon } from "@plane/propel/icons";
 import { Breadcrumbs } from "./breadcrumbs";
@@ -204,13 +204,6 @@ export const WithNavigationDropdownAndIcons: Story = {
                 key: "feature-3",
                 title: "Views",
                 icon: Layers2,
-
-                action: () => console.log("Feature Gamma selected"),
-              },
-              {
-                key: "feature-3",
-                title: "Pages",
-                icon: FileIcon,
 
                 action: () => console.log("Feature Gamma selected"),
               },

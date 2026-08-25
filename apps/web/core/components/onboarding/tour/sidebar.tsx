@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import { CycleIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { CycleIcon, ModuleIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 // types
 import type { TTourSteps } from "./root";
@@ -34,11 +34,6 @@ const sidebarOptions: {
     key: "views",
     label: "Views",
     Icon: ViewsIcon,
-  },
-  {
-    key: "pages",
-    label: "Pages",
-    Icon: PageIcon,
   },
 ];
 

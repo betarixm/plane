@@ -11,7 +11,6 @@ import { OverviewIcon } from "../icons/overview-icon";
 import { CycleIcon } from "../icons/project/cycle-icon";
 import { IntakeIcon } from "../icons/project/intake-icon";
 import { ModuleIcon } from "../icons/project/module-icon";
-import { PageIcon } from "../icons/project/page-icon";
 import { ViewsIcon } from "../icons/project/view-icon";
 import { WorkItemsIcon } from "../icons/project/work-items-icon";
 // tab navigation import
@@ -47,7 +46,6 @@ export const Default: Story = {
       { key: "cycles", name: "Cycles", href: "#cycles", icon: CycleIcon },
       { key: "modules", name: "Modules", href: "#modules", icon: ModuleIcon },
       { key: "views", name: "Views", href: "#views", icon: ViewsIcon },
-      { key: "pages", name: "Pages", href: "#pages", icon: PageIcon },
       { key: "intake", name: "Intake", href: "#intake", icon: IntakeIcon },
     ];
 
