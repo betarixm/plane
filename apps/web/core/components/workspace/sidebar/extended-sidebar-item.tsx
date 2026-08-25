@@ -136,10 +136,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
     );
   }, [isLastChild, handleOnNavigationItemDrop, disableDrag, disableDrop, item.key]);
 
-  const itemHref =
-    item.key === "your_work"
-      ? `/${workspaceSlug.toString()}${item.href}${data?.id}`
-      : `/${workspaceSlug.toString()}${item.href}`;
+  const itemHref = item.key === "your_work" ? item.href + data?.id : item.href;
   const isActive = itemHref === pathname;
 
   const pinNavigationItem = (key: string) => {

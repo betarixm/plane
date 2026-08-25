@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
@@ -22,7 +23,8 @@ import { FeaturesCyclesProjectSettingsHeader } from "./header";
 import { SettingsHeading } from "@/components/settings/heading";
 
 function FeaturesCyclesSettingsPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug, projectId } = params;
+  const { workspaceSlug } = useParams();
+  const { projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();

@@ -50,8 +50,8 @@ export class FileService extends APIService {
     this.fileUploadService = new FileUploadService();
   }
 
-  private async updateWorkspaceAssetUploadStatus(workspaceSlug: string, assetId: string): Promise<void> {
-    return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`)
+  private async updateWorkspaceAssetUploadStatus(assetId: string): Promise<void> {
+    return this.patch(`/api/assets/v2/workspace/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -59,13 +59,12 @@ export class FileService extends APIService {
   }
 
   async uploadWorkspaceAsset(
-    workspaceSlug: string,
     data: TFileEntityInfo,
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
     const fileMetaData = await getFileMetaDataForUpload(file);
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/`, {
+    return this.post(`/api/assets/v2/workspace/`, {
       ...data,
       ...fileMetaData,
     })
@@ -77,7 +76,7 @@ export class FileService extends APIService {
           fileUploadPayload,
           uploadProgressHandler
         );
-        await this.updateWorkspaceAssetUploadStatus(workspaceSlug.toString(), signedURLResponse.asset_id);
+        await this.updateWorkspaceAssetUploadStatus(signedURLResponse.asset_id);
         return signedURLResponse;
       })
       .catch((error) => {
@@ -85,12 +84,8 @@ export class FileService extends APIService {
       });
   }
 
-  private async updateProjectAssetUploadStatus(
-    workspaceSlug: string,
-    projectId: string,
-    assetId: string
-  ): Promise<void> {
-    return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/`)
+  private async updateProjectAssetUploadStatus(projectId: string, assetId: string): Promise<void> {
+    return this.patch(`/api/assets/v2/workspace/projects/${projectId}/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -98,13 +93,12 @@ export class FileService extends APIService {
   }
 
   async updateBulkWorkspaceAssetsUploadStatus(
-    workspaceSlug: string,
     entityId: string,
     data: {
       asset_ids: string[];
     }
   ): Promise<void> {
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/${entityId}/bulk/`, data)
+    return this.post(`/api/assets/v2/workspace/${entityId}/bulk/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -112,14 +106,13 @@ export class FileService extends APIService {
   }
 
   async updateBulkProjectAssetsUploadStatus(
-    workspaceSlug: string,
     projectId: string,
     entityId: string,
     data: {
       asset_ids: string[];
     }
   ): Promise<void> {
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${entityId}/bulk/`, data)
+    return this.post(`/api/assets/v2/workspace/projects/${projectId}/${entityId}/bulk/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -127,14 +120,13 @@ export class FileService extends APIService {
   }
 
   async uploadProjectAsset(
-    workspaceSlug: string,
     projectId: string,
     data: TFileEntityInfo,
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
     const fileMetaData = await getFileMetaDataForUpload(file);
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/`, {
+    return this.post(`/api/assets/v2/workspace/projects/${projectId}/`, {
       ...data,
       ...fileMetaData,
     })
@@ -146,7 +138,7 @@ export class FileService extends APIService {
           fileUploadPayload,
           uploadProgressHandler
         );
-        await this.updateProjectAssetUploadStatus(workspaceSlug, projectId, signedURLResponse.asset_id);
+        await this.updateProjectAssetUploadStatus(projectId, signedURLResponse.asset_id);
         return signedURLResponse;
       })
       .catch((error) => {
@@ -162,41 +154,38 @@ export class FileService extends APIService {
       });
   }
 
-  async deleteOldWorkspaceAsset(workspaceId: string, src: string): Promise<any> {
+  async deleteOldWorkspaceAsset(src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
-    return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
+    return this.delete(`/api/workspace/file-assets/${assetKey}/`)
       .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async restoreNewAsset(workspaceSlug: string, src: string): Promise<void> {
+  async restoreNewAsset(src: string): Promise<void> {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
+    return this.post(`/api/assets/v2/workspace/restore/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async checkIfAssetExists(
-    workspaceSlug: string,
-    assetId: string
-  ): Promise<{
+  async checkIfAssetExists(assetId: string): Promise<{
     exists: boolean;
   }> {
-    return this.get(`/api/assets/v2/workspaces/${workspaceSlug}/check/${assetId}/`)
+    return this.get(`/api/assets/v2/workspace/check/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
+  async restoreOldEditorAsset(src: string): Promise<void> {
     const assetKey = getAssetIdFromUrl(src);
-    return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
+    return this.post(`/api/workspace/file-assets/${assetKey}/restore/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -220,7 +209,6 @@ export class FileService extends APIService {
   }
 
   async duplicateAsset(
-    workspaceSlug: string,
     assetId: string,
     data: {
       entity_id?: string;
@@ -228,7 +216,7 @@ export class FileService extends APIService {
       project_id?: string;
     }
   ): Promise<{ asset_id: string }> {
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, data)
+    return this.post(`/api/assets/v2/workspace/duplicate-assets/${assetId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

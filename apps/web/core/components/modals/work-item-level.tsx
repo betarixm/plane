@@ -59,7 +59,7 @@ export const WorkItemLevelModals = observer(function WorkItemLevelModals(props: 
     try {
       const isEpic = workItemDetails?.is_epic;
       const deleteAction = isEpic ? removeEpic : removeWorkItem;
-      const redirectPath = `/${workspaceSlug}/projects/${projectId}/${isEpic ? "epics" : "issues"}`;
+      const redirectPath = `/projects/${projectId}/${isEpic ? "epics" : "issues"}`;
 
       await deleteAction(projectId, issueId);
       router.push(redirectPath);

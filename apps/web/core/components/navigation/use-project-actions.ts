@@ -15,7 +15,7 @@ type UseProjectActionsProps = {
   activeItem?: TNavigationItem;
 };
 
-export const useProjectActions = ({ workspaceSlug, projectId, activeItem }: UseProjectActionsProps) => {
+export const useProjectActions = ({ projectId, activeItem }: UseProjectActionsProps) => {
   const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [leaveProjectModalOpen, setLeaveProjectModalOpen] = useState(false);
 
@@ -24,7 +24,7 @@ export const useProjectActions = ({ workspaceSlug, projectId, activeItem }: UseP
   }, []);
 
   const handleCopyText = useCallback(async () => {
-    const pathToCopy = activeItem?.href ?? `/${workspaceSlug}/projects/${projectId}/issues`;
+    const pathToCopy = activeItem?.href ?? `/projects/${projectId}/issues`;
 
     try {
       await copyUrlToClipboard(pathToCopy);
@@ -40,7 +40,7 @@ export const useProjectActions = ({ workspaceSlug, projectId, activeItem }: UseP
         message: "We couldn't copy the link. Please try again.",
       });
     }
-  }, [activeItem, projectId, workspaceSlug]);
+  }, [activeItem, projectId]);
 
   const handlePublishModal = useCallback((open: boolean) => {
     setPublishModalOpen(open);

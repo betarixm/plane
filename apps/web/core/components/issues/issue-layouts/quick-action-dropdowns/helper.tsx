@@ -81,18 +81,17 @@ export interface MenuItemFactoryProps {
 
 // Common action handlers hook
 export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
-  const { issue, workspaceSlug, projectIdentifier, handleRestore } = props;
+  const { issue, projectIdentifier, handleRestore } = props;
 
   const workItemLink = useMemo(
     () =>
       generateWorkItemLink({
-        workspaceSlug,
         projectId: issue?.project_id,
         issueId: issue?.id,
         projectIdentifier,
         sequenceId: issue?.sequence_id,
       }),
-    [workspaceSlug, projectIdentifier, issue]
+    [projectIdentifier, issue]
   );
 
   const handleCopyIssueLink = () =>

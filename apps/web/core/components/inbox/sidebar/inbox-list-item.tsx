@@ -24,7 +24,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { InboxIssueStatus } from "../inbox-issue-status";
 
 type InboxIssueListItemProps = {
-  workspaceSlug: string;
   projectId: string;
   projectIdentifier?: string;
   inboxIssueId: string;
@@ -32,7 +31,7 @@ type InboxIssueListItemProps = {
 };
 
 export const InboxIssueListItem = observer(function InboxIssueListItem(props: InboxIssueListItemProps) {
-  const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
+  const { projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
   // router
   const searchParams = useSearchParams();
   const selectedInboxIssueId = searchParams.get("inboxIssueId");
@@ -58,7 +57,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
       <Link
         id={`inbox-issue-list-item-${issue.id}`}
         key={`${projectId}_${issue.id}`}
-        href={`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${issue.id}`}
+        href={`/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${issue.id}`}
         onClick={(e) => handleIssueRedirection(e, issue.id)}
       >
         <Row

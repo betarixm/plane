@@ -99,7 +99,6 @@ export class SitesFileService extends FileService {
 
   /**
    * Restores a new asset
-   * @param {string} workspaceSlug - The workspace slug
    * @param {string} src - The asset source
    * @returns {Promise<void>} Promise resolving to void
    * @throws {Error} If the request fails

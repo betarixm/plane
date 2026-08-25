@@ -32,12 +32,12 @@ export const useNavigationItems = ({
   // Base navigation items
   const baseNavigation = useCallback(
     // oxlint-disable-next-line no-shadow
-    (workspaceSlug: string, projectId: string): TNavigationItem[] => [
+    (projectId: string): TNavigationItem[] => [
       {
         i18n_key: "sidebar.work_items",
         key: "work_items",
         name: "Work items",
-        href: `/${workspaceSlug}/projects/${projectId}/issues`,
+        href: `/projects/${projectId}/issues`,
         icon: WorkItemsIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: true,
@@ -47,7 +47,7 @@ export const useNavigationItems = ({
         i18n_key: "sidebar.cycles",
         key: "cycles",
         name: "Cycles",
-        href: `/${workspaceSlug}/projects/${projectId}/cycles`,
+        href: `/projects/${projectId}/cycles`,
         icon: CycleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: !!project?.cycle_view,
@@ -57,7 +57,7 @@ export const useNavigationItems = ({
         i18n_key: "sidebar.modules",
         key: "modules",
         name: "Modules",
-        href: `/${workspaceSlug}/projects/${projectId}/modules`,
+        href: `/projects/${projectId}/modules`,
         icon: ModuleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: !!project?.module_view,
@@ -67,7 +67,7 @@ export const useNavigationItems = ({
         i18n_key: "sidebar.views",
         key: "views",
         name: "Views",
-        href: `/${workspaceSlug}/projects/${projectId}/views`,
+        href: `/projects/${projectId}/views`,
         icon: ViewsIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: !!project?.issue_views_view,
@@ -77,7 +77,7 @@ export const useNavigationItems = ({
         i18n_key: "sidebar.intake",
         key: "intake",
         name: "Intake",
-        href: `/${workspaceSlug}/projects/${projectId}/intake`,
+        href: `/projects/${projectId}/intake`,
         icon: IntakeIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: !!project?.inbox_view,
@@ -89,7 +89,7 @@ export const useNavigationItems = ({
 
   // Combine, filter, and sort navigation items
   const navigationItems = useMemo(() => {
-    const navItems = baseNavigation(workspaceSlug, projectId);
+    const navItems = baseNavigation(projectId);
 
     // Filter by permissions and shouldRender
     const filteredItems = navItems.filter((item) => {

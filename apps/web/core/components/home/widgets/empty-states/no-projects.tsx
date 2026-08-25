@@ -80,7 +80,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       description: "home.empty.personalize_account.description",
       icon:
         currentUser?.avatar_url && currentUser?.avatar_url.trim() !== "" ? (
-          <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
+          <Link href={`/profile/${currentUser?.id}`}>
             <span className="relative flex size-4 items-center justify-center rounded-full p-4 text-on-color capitalize">
               <img
                 src={getFileURL(currentUser?.avatar_url)}
@@ -90,7 +90,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
             </span>
           </Link>
         ) : (
-          <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
+          <Link href={`/profile/${currentUser?.id}`}>
             <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 text-13 text-on-color capitalize">
               {(currentUser?.display_name || "?")[0]}
             </span>

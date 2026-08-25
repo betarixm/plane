@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { cn } from "@plane/utils";
@@ -25,7 +26,8 @@ import type { Route } from "./+types/page";
 function ModuleIssuesPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, moduleId } = params;
+  const { projectId, moduleId } = params;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { fetchModuleDetails, getModuleById } = useModule();
   const { getProjectById } = useProject();
@@ -57,7 +59,7 @@ function ModuleIssuesPage({ params }: Route.ComponentProps) {
           description="The module you are looking for does not exist or has been deleted."
           primaryButton={{
             text: "View other modules",
-            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
+            onClick: () => router.push(`/projects/${projectId}/modules`),
           }}
         />
       ) : (

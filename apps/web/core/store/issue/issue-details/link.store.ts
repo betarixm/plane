@@ -100,13 +100,13 @@ export class IssueLinkStore implements IIssueLinkStore {
   };
 
   fetchLinks = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const response = await this.issueService.fetchIssueLinks(workspaceSlug, projectId, issueId);
+    const response = await this.issueService.fetchIssueLinks(projectId, issueId);
     this.addLinks(issueId, response);
     return response;
   };
 
   createLink = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssueLink>) => {
-    const response = await this.issueService.createIssueLink(workspaceSlug, projectId, issueId, data);
+    const response = await this.issueService.createIssueLink(projectId, issueId, data);
     const issueLinkCount = this.getLinksByIssueId(issueId)?.length ?? 0;
     runInAction(() => {
       this.links[issueId].push(response.id);
@@ -135,7 +135,7 @@ export class IssueLinkStore implements IIssueLinkStore {
         });
       });
 
-      const response = await this.issueService.updateIssueLink(workspaceSlug, projectId, issueId, linkId, data);
+      const response = await this.issueService.updateIssueLink(projectId, issueId, linkId, data);
 
       // fetching activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
@@ -153,7 +153,7 @@ export class IssueLinkStore implements IIssueLinkStore {
 
   removeLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => {
     const issueLinkCount = this.getLinksByIssueId(issueId)?.length ?? 0;
-    await this.issueService.deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
+    await this.issueService.deleteIssueLink(projectId, issueId, linkId);
 
     const linkIndex = this.links[issueId].findIndex((_comment) => _comment === linkId);
     if (linkIndex >= 0)

@@ -43,7 +43,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug, cursor, `${per_page}`) : null,
-    workspaceSlug && cursor ? () => integrationService.getExportsServicesList(workspaceSlug, cursor, per_page) : null
+    workspaceSlug && cursor ? () => integrationService.getExportsServicesList(cursor, per_page) : null
   );
 
   const handleRefresh = useCallback(async () => {

@@ -79,7 +79,7 @@ export const InboxIssueDescription = observer(function InboxIssueDescription(pro
       onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
       placeholder={(isFocused, description) => t(`${getDescriptionPlaceholderI18n(isFocused, description)}`)}
       searchMentionCallback={async (payload) =>
-        await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+        await workspaceService.searchEntity({
           ...payload,
           project_id: projectId?.toString() ?? "",
         })

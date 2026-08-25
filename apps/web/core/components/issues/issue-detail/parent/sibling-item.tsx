@@ -16,12 +16,11 @@ import { useProject } from "@/hooks/store/use-project";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 type TIssueParentSiblingItem = {
-  workspaceSlug: string;
   issueId: string;
 };
 
 export const IssueParentSiblingItem = observer(function IssueParentSiblingItem(props: TIssueParentSiblingItem) {
-  const { workspaceSlug, issueId } = props;
+  const { issueId } = props;
   // hooks
   const { getProjectById } = useProject();
   const {
@@ -35,7 +34,6 @@ export const IssueParentSiblingItem = observer(function IssueParentSiblingItem(p
   const projectDetails = (issueDetail.project_id && getProjectById(issueDetail.project_id)) || undefined;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug,
     projectId: issueDetail?.project_id,
     issueId: issueDetail?.id,
     projectIdentifier: projectDetails?.identifier,

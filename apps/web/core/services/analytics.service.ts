@@ -21,12 +21,11 @@ export class AnalyticsService extends APIService {
   }
 
   async getAdvanceAnalytics<T extends IAnalyticsResponse>(
-    workspaceSlug: string,
     tab: TAnalyticsTabsBase,
     params?: TAnalyticsFilterParams,
     isPeekView?: boolean
   ): Promise<T> {
-    return this.get(this.processUrl<TAnalyticsTabsBase>("advance-analytics", workspaceSlug, tab, params, isPeekView), {
+    return this.get(this.processUrl<TAnalyticsTabsBase>("advance-analytics", tab, params, isPeekView), {
       params: {
         tab,
         ...params,
@@ -39,14 +38,12 @@ export class AnalyticsService extends APIService {
   }
 
   async getAdvanceAnalyticsStats<T>(
-    workspaceSlug: string,
     tab: Exclude<TAnalyticsTabsBase, "overview">,
     params?: TAnalyticsFilterParams,
     isPeekView?: boolean
   ): Promise<T> {
     const processedUrl = this.processUrl<Exclude<TAnalyticsTabsBase, "overview">>(
       "advance-analytics-stats",
-      workspaceSlug,
       tab,
       params,
       isPeekView
@@ -64,18 +61,11 @@ export class AnalyticsService extends APIService {
   }
 
   async getAdvanceAnalyticsCharts<T>(
-    workspaceSlug: string,
     tab: TAnalyticsGraphsBase,
     params?: TAnalyticsFilterParams,
     isPeekView?: boolean
   ): Promise<T> {
-    const processedUrl = this.processUrl<TAnalyticsGraphsBase>(
-      "advance-analytics-charts",
-      workspaceSlug,
-      tab,
-      params,
-      isPeekView
-    );
+    const processedUrl = this.processUrl<TAnalyticsGraphsBase>("advance-analytics-charts", tab, params, isPeekView);
     return this.get(processedUrl, {
       params: {
         type: tab,
@@ -90,12 +80,11 @@ export class AnalyticsService extends APIService {
 
   processUrl<_T extends string>(
     endpoint: string,
-    workspaceSlug: string,
     tab: TAnalyticsGraphsBase | TAnalyticsTabsBase,
     params?: TAnalyticsFilterParams,
     isPeekView?: boolean
   ) {
-    let processedUrl = `/api/workspaces/${workspaceSlug}`;
+    let processedUrl = `/api/workspace`;
     if (isPeekView && (tab === "work-items" || tab === "custom-work-items")) {
       const projectIds = params?.project_ids;
       if (typeof projectIds !== "string" || !projectIds.trim()) {

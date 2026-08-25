@@ -217,7 +217,7 @@ export class StateStore implements IStateStore {
    * @returns
    */
   fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
-    const statesResponse = await this.stateService.getStates(workspaceSlug, projectId);
+    const statesResponse = await this.stateService.getStates(projectId);
     runInAction(() => {
       statesResponse.forEach((state) => {
         set(this.stateMap, [state.id], state);
@@ -234,7 +234,7 @@ export class StateStore implements IStateStore {
    * @returns
    */
   fetchProjectIntakeState = async (workspaceSlug: string, projectId: string) => {
-    const intakeStateResponse = await this.stateService.getIntakeState(workspaceSlug, projectId);
+    const intakeStateResponse = await this.stateService.getIntakeState(projectId);
     runInAction(() => {
       set(this.intakeStateMap, [intakeStateResponse.id], intakeStateResponse);
       set(this.fetchedIntakeMap, projectId, true);
@@ -248,7 +248,7 @@ export class StateStore implements IStateStore {
    * @returns
    */
   fetchWorkspaceStates = async (workspaceSlug: string) => {
-    const statesResponse = await this.stateService.getWorkspaceStates(workspaceSlug);
+    const statesResponse = await this.stateService.getWorkspaceStates();
     runInAction(() => {
       statesResponse.forEach((state) => {
         set(this.stateMap, [state.id], state);
@@ -266,7 +266,7 @@ export class StateStore implements IStateStore {
    * @returns
    */
   createState = async (workspaceSlug: string, projectId: string, data: Partial<IState>) =>
-    await this.stateService.createState(workspaceSlug, projectId, data).then((response) => {
+    await this.stateService.createState(projectId, data).then((response) => {
       runInAction(() => {
         set(this.stateMap, [response?.id], response);
       });
@@ -287,7 +287,7 @@ export class StateStore implements IStateStore {
       runInAction(() => {
         set(this.stateMap, [stateId], { ...this.stateMap?.[stateId], ...data });
       });
-      const response = await this.stateService.patchState(workspaceSlug, projectId, stateId, data);
+      const response = await this.stateService.patchState(projectId, stateId, data);
       return response;
     } catch (error) {
       runInAction(() => {
@@ -309,7 +309,7 @@ export class StateStore implements IStateStore {
   deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
     if (!this.stateMap?.[stateId]) return;
     // oxlint-disable-next-line promise/always-return
-    await this.stateService.deleteState(workspaceSlug, projectId, stateId).then(() => {
+    await this.stateService.deleteState(projectId, stateId).then(() => {
       runInAction(() => {
         delete this.stateMap[stateId];
       });
@@ -332,7 +332,7 @@ export class StateStore implements IStateStore {
         if (currentDefaultState) set(this.stateMap, [currentDefaultState.id, "default"], false);
         set(this.stateMap, [stateId, "default"], true);
       });
-      await this.stateService.markDefault(workspaceSlug, projectId, stateId);
+      await this.stateService.markDefault(projectId, stateId);
     } catch (error) {
       // reverting back to old state group if api fails
       runInAction(() => {
@@ -359,7 +359,7 @@ export class StateStore implements IStateStore {
         });
       });
       // updating using api
-      await this.stateService.patchState(workspaceSlug, projectId, stateId, payload);
+      await this.stateService.patchState(projectId, stateId, payload);
     } catch {
       // reverting back to old state group if api fails
       runInAction(() => {

@@ -98,12 +98,11 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   // parse content
   const { getEditorMetaData } = useParseEditorContent({
     projectId,
-    workspaceSlug,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
-      await workspaceService.searchEntity(workspaceSlug, {
+      await workspaceService.searchEntity({
         ...payload,
         project_id: projectId,
         issue_id,
@@ -142,7 +141,6 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
               projectId,
               uploadFile: editable ? props.uploadFile : async () => "",
               duplicateFile: editable ? props.duplicateFile : async () => "",
-              workspaceId,
               workspaceSlug,
             })}
             getEditorMetaData={getEditorMetaData}

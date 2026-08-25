@@ -82,7 +82,7 @@ const useCyclesDetails = (props: IActiveCycleDetails) => {
         updateFilterExpression.bind(updateFilterExpression, workspaceSlug, projectId, cycleId)
       );
 
-      router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`);
+      router.push(`/projects/${projectId}/cycles/${cycleId}`);
     },
     [workspaceSlug, projectId, cycleId, updateFilterExpressionFromConditions, updateFilterExpression, router]
   );

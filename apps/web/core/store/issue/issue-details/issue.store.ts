@@ -90,7 +90,7 @@ export class IssueStore implements IIssueStore {
     };
 
     this.fetchingIssueDetails = issueId;
-    const issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
+    const issue = await this.issueService.retrieve(projectId, issueId, query);
 
     if (!issue) throw new Error("Work item not found");
 
@@ -101,7 +101,7 @@ export class IssueStore implements IIssueStore {
     // store handlers from issue detail
     // parent
     if (issue && issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
-      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+      this.issueService.retrieve(issue.parent.project_id, issue?.parent?.id).then((res) => {
         this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
       });
     }
@@ -271,7 +271,7 @@ export class IssueStore implements IIssueStore {
     const query = {
       expand: "issue_reactions,issue_attachments,issue_link,parent",
     };
-    const issue = await this.issueService.retrieveWithIdentifier(workspaceSlug, project_identifier, sequence_id, query);
+    const issue = await this.issueService.retrieveWithIdentifier(project_identifier, sequence_id, query);
     const issueIdentifier = `${project_identifier}-${sequence_id}`;
     const issueId = issue?.id;
     const projectId = issue?.project_id;
@@ -286,7 +286,7 @@ export class IssueStore implements IIssueStore {
 
     // handle parent issue if exists
     if (issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
-      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue.parent.id).then((res) => {
+      this.issueService.retrieve(issue.parent.project_id, issue.parent.id).then((res) => {
         this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
       });
     }

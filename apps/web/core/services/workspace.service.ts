@@ -41,47 +41,44 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async updateWorkspace(workspaceSlug: string, data: Pick<IWorkspace, "timezone">): Promise<IWorkspace> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
+  async updateWorkspace(data: Pick<IWorkspace, "timezone">): Promise<IWorkspace> {
+    return this.patch(`/api/workspace/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async workspaceMemberMe(workspaceSlug: string): Promise<IWorkspaceMemberMe> {
-    return this.get(`/api/workspaces/${workspaceSlug}/workspace-members/me/`)
+  async workspaceMemberMe(): Promise<IWorkspaceMemberMe> {
+    return this.get(`/api/workspace/workspace-members/me/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async updateWorkspaceView(workspaceSlug: string, data: { view_props: IWorkspaceViewProps }): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/workspace-views/`, data)
+  async updateWorkspaceView(data: { view_props: IWorkspaceViewProps }): Promise<any> {
+    return this.post(`/api/workspace/workspace-views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async fetchWorkspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/members/`)
+  async fetchWorkspaceMembers(): Promise<IWorkspaceMember[]> {
+    return this.get(`/api/workspace/members/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async searchWorkspace(
-    workspaceSlug: string,
-    params: {
-      project_id?: string;
-      search: string;
-      workspace_search: boolean;
-    }
-  ): Promise<IWorkspaceSearchResults> {
-    return this.get(`/api/workspaces/${workspaceSlug}/search/`, {
+  async searchWorkspace(params: {
+    project_id?: string;
+    search: string;
+    workspace_search: boolean;
+  }): Promise<IWorkspaceSearchResults> {
+    return this.get(`/api/workspace/search/`, {
       params,
     })
       .then((res) => res?.data)
@@ -97,50 +94,48 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async createView(workspaceSlug: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> {
-    return this.post(`/api/workspaces/${workspaceSlug}/views/`, data)
+  async createView(data: Partial<IWorkspaceView>): Promise<IWorkspaceView> {
+    return this.post(`/api/workspace/views/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async updateView(workspaceSlug: string, viewId: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/views/${viewId}/`, data)
+  async updateView(viewId: string, data: Partial<IWorkspaceView>): Promise<IWorkspaceView> {
+    return this.patch(`/api/workspace/views/${viewId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteView(workspaceSlug: string, viewId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/views/${viewId}/`)
+  async deleteView(viewId: string): Promise<any> {
+    return this.delete(`/api/workspace/views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getAllViews(workspaceSlug: string): Promise<IWorkspaceView[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/views/`)
+  async getAllViews(): Promise<IWorkspaceView[]> {
+    return this.get(`/api/workspace/views/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getViewDetails(workspaceSlug: string, viewId: string): Promise<IWorkspaceView> {
-    return this.get(`/api/workspaces/${workspaceSlug}/views/${viewId}/`)
+  async getViewDetails(viewId: string): Promise<IWorkspaceView> {
+    return this.get(`/api/workspace/views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getViewIssues(workspaceSlug: string, params: any, config = {}): Promise<TIssuesResponse> {
-    const path = params.expand?.includes("issue_relation")
-      ? `/api/workspaces/${workspaceSlug}/issues-detail/`
-      : `/api/workspaces/${workspaceSlug}/issues/`;
+  async getViewIssues(params: any, config = {}): Promise<TIssuesResponse> {
+    const path = params.expand?.includes("issue_relation") ? `/api/workspace/issues-detail/` : `/api/workspace/issues/`;
     return this.get(
       path,
       {
@@ -154,8 +149,8 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getWorkspaceUserProjectsRole(workspaceSlug: string): Promise<IUserProjectsRole> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/project-roles/`)
+  async getWorkspaceUserProjectsRole(): Promise<IUserProjectsRole> {
+    return this.get(`/api/users/me/workspace/project-roles/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -163,40 +158,40 @@ export class WorkspaceService extends APIService {
   }
 
   // quicklinks
-  async fetchWorkspaceLinks(workspaceSlug: string): Promise<TLink[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/quick-links/`)
+  async fetchWorkspaceLinks(): Promise<TLink[]> {
+    return this.get(`/api/workspace/quick-links/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async createWorkspaceLink(workspaceSlug: string, data: Partial<TLink>): Promise<TLink> {
-    return this.post(`/api/workspaces/${workspaceSlug}/quick-links/`, data)
+  async createWorkspaceLink(data: Partial<TLink>): Promise<TLink> {
+    return this.post(`/api/workspace/quick-links/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async updateWorkspaceLink(workspaceSlug: string, linkId: string, data: Partial<TLink>): Promise<TLink> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/quick-links/${linkId}/`, data)
+  async updateWorkspaceLink(linkId: string, data: Partial<TLink>): Promise<TLink> {
+    return this.patch(`/api/workspace/quick-links/${linkId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteWorkspaceLink(workspaceSlug: string, linkId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/quick-links/${linkId}/`)
+  async deleteWorkspaceLink(linkId: string): Promise<void> {
+    return this.delete(`/api/workspace/quick-links/${linkId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async searchEntity(workspaceSlug: string, params: TSearchEntityRequestPayload): Promise<TSearchResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/entity-search/`, {
+  async searchEntity(params: TSearchEntityRequestPayload): Promise<TSearchResponse> {
+    return this.get(`/api/workspace/entity-search/`, {
       params: {
         ...params,
         query_type: params.query_type.join(","),
@@ -209,8 +204,8 @@ export class WorkspaceService extends APIService {
   }
 
   // recents
-  async fetchWorkspaceRecents(workspaceSlug: string, entity_name?: string): Promise<TActivityEntityData[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/recent-visits/`, {
+  async fetchWorkspaceRecents(entity_name?: string): Promise<TActivityEntityData[]> {
+    return this.get(`/api/workspace/recent-visits/`, {
       params: {
         entity_name,
       },
@@ -222,28 +217,24 @@ export class WorkspaceService extends APIService {
   }
 
   // widgets
-  async fetchWorkspaceWidgets(workspaceSlug: string): Promise<TWidgetEntityData[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/home-preferences/`)
+  async fetchWorkspaceWidgets(): Promise<TWidgetEntityData[]> {
+    return this.get(`/api/workspace/home-preferences/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async updateWorkspaceWidget(
-    workspaceSlug: string,
-    widgetKey: string,
-    data: Partial<TWidgetEntityData>
-  ): Promise<TWidgetEntityData> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/home-preferences/${widgetKey}/`, data)
+  async updateWorkspaceWidget(widgetKey: string, data: Partial<TWidgetEntityData>): Promise<TWidgetEntityData> {
+    return this.patch(`/api/workspace/home-preferences/${widgetKey}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async fetchSidebarNavigationPreferences(workspaceSlug: string): Promise<IWorkspaceSidebarNavigation> {
-    return this.get(`/api/workspaces/${workspaceSlug}/sidebar-preferences/`)
+  async fetchSidebarNavigationPreferences(): Promise<IWorkspaceSidebarNavigation> {
+    return this.get(`/api/workspace/sidebar-preferences/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -251,11 +242,10 @@ export class WorkspaceService extends APIService {
   }
 
   async updateSidebarPreference(
-    workspaceSlug: string,
     key: string,
     data: Partial<IWorkspaceSidebarNavigationItem>
   ): Promise<IWorkspaceSidebarNavigationItem> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/sidebar-preferences/${key}/`, data)
+    return this.patch(`/api/workspace/sidebar-preferences/${key}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -263,18 +253,17 @@ export class WorkspaceService extends APIService {
   }
 
   async updateBulkSidebarPreferences(
-    workspaceSlug: string,
     data: Array<{ key: string; is_pinned: boolean; sort_order: number }>
   ): Promise<IWorkspaceSidebarNavigation> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/sidebar-preferences/`, data)
+    return this.patch(`/api/workspace/sidebar-preferences/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async fetchWorkspaceFilters(workspaceSlug: string): Promise<IWorkspaceUserPropertiesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-properties/`)
+  async fetchWorkspaceFilters(): Promise<IWorkspaceUserPropertiesResponse> {
+    return this.get(`/api/workspace/user-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -282,10 +271,9 @@ export class WorkspaceService extends APIService {
   }
 
   async patchWorkspaceFilters(
-    workspaceSlug: string,
     data: Partial<IWorkspaceUserPropertiesResponse>
   ): Promise<IWorkspaceUserPropertiesResponse> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/user-properties/`, data)
+    return this.patch(`/api/workspace/user-properties/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { useTheme } from "next-themes";
 import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
@@ -42,7 +43,8 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
   const { getProjectById, currentProjectDetails } = useProject();
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = params;
+  const { projectId } = params;
+  const { workspaceSlug } = useParams();
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
@@ -81,7 +83,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
           primaryButton={{
             text: t("disabled_project.empty_state.cycle.primary_button.text"),
             onClick: () => {
-              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
+              router.push(`/settings/projects/${projectId}/features`);
             },
             disabled: !hasAdminLevelPermission,
           }}

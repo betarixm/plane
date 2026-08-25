@@ -106,7 +106,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, viewId, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
+      const response = await this.issueService.getIssues(projectId, params, {
         signal: this.controller.signal,
       });
 
@@ -153,7 +153,7 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
+      const response = await this.issueService.getIssues(projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);

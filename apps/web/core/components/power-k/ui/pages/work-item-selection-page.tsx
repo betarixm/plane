@@ -50,7 +50,7 @@ export function WorkItemSelectionPage(props: Props) {
     if (!workspaceSlug) return;
 
     workspaceService
-      .fetchWorkspaceRecents(workspaceSlug.toString(), "issue")
+      .fetchWorkspaceRecents("issue")
       .then((res) =>
         setRecentIssues(res.map((r: TActivityEntityData) => r.entity_data as TIssueEntityData).slice(0, 10))
       )
@@ -65,7 +65,7 @@ export function WorkItemSelectionPage(props: Props) {
     }
 
     workspaceService
-      .searchEntity(workspaceSlug.toString(), {
+      .searchEntity({
         count: 10,
         query: debouncedSearchTerm,
         query_type: ["issue"],
@@ -107,7 +107,6 @@ export function WorkItemSelectionPage(props: Props) {
               togglePowerKModal(false);
               router.push(
                 generateWorkItemLink({
-                  workspaceSlug: workspaceSlug.toString(),
                   projectId: issue.project_id,
                   issueId: issue.id,
                   projectIdentifier: issue.project_identifier,
@@ -145,7 +144,6 @@ export function WorkItemSelectionPage(props: Props) {
             togglePowerKModal(false);
             router.push(
               generateWorkItemLink({
-                workspaceSlug: workspaceSlug.toString(),
                 projectId: issue.project_id,
                 issueId: issue.id,
                 projectIdentifier: issue.project__identifier,

@@ -58,7 +58,6 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
   if (!parentIssue) return <></>;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug,
     projectId: parentIssue?.project_id,
     issueId: parentIssue.id,
     projectIdentifier,

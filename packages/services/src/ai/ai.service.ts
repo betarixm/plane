@@ -37,15 +37,14 @@ export class AIService extends APIService {
 
   /**
    * Creates a GPT-based task for a specific workspace
-   * @param {string} workspaceSlug - The unique identifier for the workspace
    * @param {Object} data - The data payload for the GPT task
    * @param {string} data.prompt - The prompt text for the GPT model
    * @param {string} data.task - The type of task to be performed
    * @returns {Promise<any>} The response data from the GPT task
    * @throws {Error} Throws the response error if the request fails
    */
-  async prompt(workspaceSlug: string, data: { prompt: string; task: string }): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/ai-assistant/`, data)
+  async prompt(data: { prompt: string; task: string }): Promise<any> {
+    return this.post(`/api/workspace/ai-assistant/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -54,18 +53,14 @@ export class AIService extends APIService {
 
   /**
    * Performs an editor-specific AI task for text processing
-   * @param {string} workspaceSlug - The unique identifier for the workspace
    * @param {TTaskPayload} data - The task payload containing text and processing parameters
    * @returns {Promise<{response: string}>} The processed text response
    * @throws {Error} Throws the response data if the request fails
    */
-  async rephraseGrammar(
-    workspaceSlug: string,
-    data: TTaskPayload
-  ): Promise<{
+  async rephraseGrammar(data: TTaskPayload): Promise<{
     response: string;
   }> {
-    return this.post(`/api/workspaces/${workspaceSlug}/rephrase-grammar/`, data)
+    return this.post(`/api/workspace/rephrase-grammar/`, data)
       .then((res) => res?.data)
       .catch((error) => {
         throw error?.response?.data;

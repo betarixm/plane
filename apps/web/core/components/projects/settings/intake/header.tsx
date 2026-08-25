@@ -47,12 +47,12 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
       <Header.LeftItem>
         <div className="flex flex-grow items-center gap-4">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Intake"
-                  href={`/${workspaceSlug}/projects/${projectId}/intake/`}
+                  href={`/projects/${projectId}/intake/`}
                   icon={<IntakeIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />

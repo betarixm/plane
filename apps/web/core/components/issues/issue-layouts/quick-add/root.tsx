@@ -66,7 +66,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
   // i18n
   const { t } = useTranslation();
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { projectId } = useParams();
   // states
   const [isOpen, setIsOpen] = useState(isQuickAddOpen ?? false);
   // form info
@@ -98,7 +98,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
   };
 
   const onSubmitHandler = async (formData: TIssue) => {
-    if (isSubmitting || !workspaceSlug || !projectId) return;
+    if (isSubmitting || !projectId) return;
 
     reset({ ...defaultValues });
 
@@ -117,12 +117,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
           message: () => `${isEpic ? t("epic.create.success") : t("issue.create.success")}`,
           actionItems: (data) => (
             // TODO: Translate here
-            <CreateIssueToastActionItems
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              issueId={data.id}
-              isEpic={isEpic}
-            />
+            <CreateIssueToastActionItems issueId={data.id} isEpic={isEpic} />
           ),
         },
         error: {

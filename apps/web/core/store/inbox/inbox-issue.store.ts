@@ -105,7 +105,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     try {
       if (!this.issue.id) return;
 
-      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.update(this.projectId, this.issue.id, {
         status: status,
       });
       runInAction(() => {
@@ -152,7 +152,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     const wasPending = this.status === EInboxIssueStatus.PENDING;
     try {
       if (!this.issue.id) return;
-      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.update(this.projectId, this.issue.id, {
         status: inboxStatus,
         duplicate_to: issueId,
       });
@@ -188,7 +188,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     const previousStatus = this.status;
     try {
       if (!this.issue.id) return;
-      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.update(this.projectId, this.issue.id, {
         status: inboxStatus,
         snoozed_till: date ? new Date(date) : null,
       });
@@ -224,7 +224,7 @@ export class InboxIssueStore implements IInboxIssueStore {
         const issueKey = key as keyof TIssue;
         set(this.issue, issueKey, issue[issueKey]);
       });
-      await this.inboxIssueService.updateIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
+      await this.inboxIssueService.updateIssue(this.projectId, this.issue.id, issue);
       // fetching activity
       this.fetchIssueActivity();
     } catch {
@@ -243,7 +243,7 @@ export class InboxIssueStore implements IInboxIssueStore {
         const issueKey = key as keyof TIssue;
         set(this.issue, issueKey, issue[issueKey]);
       });
-      await this.issueService.patchIssue(this.workspaceSlug, this.projectId, this.issue.id, issue);
+      await this.issueService.patchIssue(this.projectId, this.issue.id, issue);
       if (issue.cycle_id) {
         await this.store.issue.issueDetail.addIssueToCycle(this.workspaceSlug, this.projectId, issue.cycle_id, [
           this.issue.id,

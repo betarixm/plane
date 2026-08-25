@@ -93,13 +93,13 @@ export class WorkspaceLinkStore implements IWorkspaceLinkStore {
   };
 
   fetchLinks = async (workspaceSlug: string) => {
-    const response = await this.workspaceService.fetchWorkspaceLinks(workspaceSlug);
+    const response = await this.workspaceService.fetchWorkspaceLinks();
     this.addLinks(workspaceSlug, response);
     return response;
   };
 
   createLink = async (workspaceSlug: string, data: Partial<TLink>) => {
-    const response = await this.workspaceService.createWorkspaceLink(workspaceSlug, data);
+    const response = await this.workspaceService.createWorkspaceLink(data);
 
     runInAction(() => {
       this.links[workspaceSlug] = [response.id, ...(this.links[workspaceSlug] ?? [])];
@@ -115,13 +115,13 @@ export class WorkspaceLinkStore implements IWorkspaceLinkStore {
       });
     });
 
-    const response = await this.workspaceService.updateWorkspaceLink(workspaceSlug, linkId, data);
+    const response = await this.workspaceService.updateWorkspaceLink(linkId, data);
     return response;
   };
 
   removeLink = async (workspaceSlug: string, linkId: string) => {
     // const issueLinkCount = this.getLinksByWorkspaceId(projectId)?.length ?? 0;
-    await this.workspaceService.deleteWorkspaceLink(workspaceSlug, linkId);
+    await this.workspaceService.deleteWorkspaceLink(linkId);
 
     const linkIndex = this.links[workspaceSlug].findIndex((link) => link === linkId);
     if (linkIndex >= 0)

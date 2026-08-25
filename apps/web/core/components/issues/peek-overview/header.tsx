@@ -108,7 +108,6 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
   } = useIssues(EIssuesStoreType.ARCHIVED);
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug,
     projectId: issueDetails?.project_id,
     issueId,
     projectIdentifier,

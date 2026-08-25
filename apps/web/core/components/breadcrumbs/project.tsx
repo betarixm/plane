@@ -17,13 +17,12 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import type { TProject } from "@plane/types";
 
 type TProjectBreadcrumbProps = {
-  workspaceSlug: string;
   projectId: string;
   handleOnClick?: () => void;
 };
 
 export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TProjectBreadcrumbProps) {
-  const { workspaceSlug, projectId, handleOnClick } = props;
+  const { projectId, handleOnClick } = props;
   // router
   const router = useAppRouter();
   // store hooks
@@ -70,13 +69,13 @@ export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TPro
             selectedItem={currentProjectDetails.id}
             navigationItems={switcherOptions}
             onChange={(value: string) => {
-              router.push(`/${workspaceSlug}/projects/${value}/issues`);
+              router.push(`/projects/${value}/issues`);
             }}
             title={currentProjectDetails?.name}
             icon={renderIcon(currentProjectDetails)}
             handleOnClick={() => {
               if (handleOnClick) handleOnClick();
-              else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues/`);
+              else router.push(`/projects/${currentProjectDetails.id}/issues/`);
             }}
             shouldTruncate
           />

@@ -17,7 +17,6 @@ import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 type Props = {
-  workspaceSlug: string;
   view: {
     key: TStaticViewTypes;
     i18n_label: string;
@@ -25,11 +24,11 @@ type Props = {
 };
 
 export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspaceViewQuickActions(props: Props) {
-  const { workspaceSlug, view } = props;
+  const { view } = props;
 
   const { t } = useTranslation();
 
-  const viewLink = `${workspaceSlug}/workspace-views/${view.key}`;
+  const viewLink = `/workspace-views/${view.key}`;
   const handleCopyText = () =>
     copyUrlToClipboard(viewLink).then(() => {
       setToast({
@@ -38,7 +37,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
         message: "View link copied to clipboard.",
       });
     });
-  const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(viewLink, "_blank");
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {

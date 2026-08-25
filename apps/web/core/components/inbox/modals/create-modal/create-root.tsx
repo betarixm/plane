@@ -145,13 +145,13 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
       // oxlint-disable-next-line promise/always-return
       .then(async (res) => {
         if (uploadedAssetIds.length > 0) {
-          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
+          await fileService.updateBulkProjectAssetsUploadStatus(projectId, res?.issue.id ?? "", {
             asset_ids: uploadedAssetIds,
           });
           setUploadedAssetIds([]);
         }
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+          router.push(`/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
           handleModalClose();
         } else {
           descriptionEditorRef?.current?.clearEditor();

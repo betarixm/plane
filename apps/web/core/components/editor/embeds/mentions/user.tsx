@@ -24,8 +24,6 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
   const { id } = props;
   // router
   const { projectId } = useParams();
-  // params
-  const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -35,7 +33,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
   // derived values
   const userDetails = getUserDetails(id);
   const roleDetails = projectId ? getProjectMemberDetails(id, projectId.toString())?.role : null;
-  const profileLink = `/${workspaceSlug}/profile/${id}`;
+  const profileLink = `/profile/${id}`;
 
   if (!userDetails) {
     return (

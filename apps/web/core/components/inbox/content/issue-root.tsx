@@ -186,9 +186,9 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
               }}
               fetchHandlers={{
                 listDescriptionVersions: (issueId) =>
-                  intakeWorkItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+                  intakeWorkItemVersionService.listDescriptionVersions(projectId, issueId),
                 retrieveDescriptionVersion: (issueId, versionId) =>
-                  intakeWorkItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+                  intakeWorkItemVersionService.retrieveDescriptionVersion(projectId, issueId, versionId),
               }}
               handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
               projectId={projectId}

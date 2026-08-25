@@ -109,7 +109,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   const defaultTabKey = tabPreferences.defaultTab;
   // Validate that the default tab is available
   const validatedDefaultTabKey = availableTabKeys.includes(defaultTabKey) ? defaultTabKey : DEFAULT_TAB_KEY;
-  const defaultTabUrl = project ? getTabUrl(workspaceSlug.toString(), project.id, validatedDefaultTabKey) : "";
+  const defaultTabUrl = project ? getTabUrl(project.id, validatedDefaultTabKey) : "";
 
   // toggle project list open
   const setIsProjectListOpen = useCallback(
@@ -413,7 +413,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   {isAuthorized && (
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        router.push(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
+                        router.push(`/projects/${project?.id}/archives/issues`);
                       }}
                     >
                       <div className="flex cursor-pointer items-center justify-start gap-2">
@@ -424,7 +424,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   )}
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      router.push(`/${workspaceSlug}/settings/projects/${project?.id}`);
+                      router.push(`/settings/projects/${project?.id}`);
                     }}
                   >
                     <div className="flex cursor-pointer items-center justify-start gap-2">

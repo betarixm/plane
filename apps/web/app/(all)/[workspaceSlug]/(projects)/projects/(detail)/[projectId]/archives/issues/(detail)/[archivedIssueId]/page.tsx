@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Banner } from "@plane/propel/banner";
@@ -23,7 +23,8 @@ import type { Route } from "./+types/page";
 
 function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId, archivedIssueId } = params;
+  const { projectId, archivedIssueId } = params;
+  const { workspaceSlug } = useParams();
   const router = useRouter();
   // states
   // hooks
@@ -74,7 +75,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             action={
               <Button
                 variant="secondary"
-                onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
+                onClick={() => router.push(`/projects/${projectId}/archives/issues/`)}
               >
                 Go to archives
               </Button>

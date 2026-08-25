@@ -64,7 +64,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
           <AppSidebarItem
             variant="link"
             item={{
-              href: `/${workspaceSlug?.toString()}/notifications/`,
+              href: `/notifications/`,
               icon: (
                 <div className="relative">
                   <InboxIcon className="size-5" />

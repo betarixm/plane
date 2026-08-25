@@ -138,12 +138,12 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+              <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
                     label="Cycles"
-                    href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
+                    href={`/projects/${projectId}/cycles/`}
                     icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                   />
                 }
@@ -154,7 +154,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     selectedItem={cycleId}
                     navigationItems={switcherOptions}
                     onChange={(value: string) => {
-                      router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${value}`);
+                      router.push(`/projects/${projectId}/cycles/${value}`);
                     }}
                     title={cycleDetails?.name}
                     icon={

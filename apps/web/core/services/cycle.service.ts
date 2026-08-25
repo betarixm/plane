@@ -23,50 +23,35 @@ export class CycleService extends APIService {
   }
 
   async workspaceActiveCyclesAnalytics(
-    workspaceSlug: string,
     projectId: string,
     cycleId: string,
     analytic_type: string = "points"
   ): Promise<TCycleDistribution | TCycleEstimateDistribution> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/analytics?type=${analytic_type}`
-    )
+    return this.get(`/api/workspace/projects/${projectId}/cycles/${cycleId}/analytics?type=${analytic_type}`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
       });
   }
 
-  async workspaceActiveCyclesProgress(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ): Promise<TProgressSnapshot> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/progress/`)
+  async workspaceActiveCyclesProgress(projectId: string, cycleId: string): Promise<TProgressSnapshot> {
+    return this.get(`/api/workspace/projects/${projectId}/cycles/${cycleId}/progress/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
       });
   }
 
-  async workspaceActiveCyclesProgressPro(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ): Promise<TProgressSnapshot> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-progress/`)
+  async workspaceActiveCyclesProgressPro(projectId: string, cycleId: string): Promise<TProgressSnapshot> {
+    return this.get(`/api/workspace/projects/${projectId}/cycles/${cycleId}/cycle-progress/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
       });
   }
 
-  async workspaceActiveCycles(
-    workspaceSlug: string,
-    cursor: string,
-    per_page: number
-  ): Promise<IWorkspaceActiveCyclesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/active-cycles/`, {
+  async workspaceActiveCycles(cursor: string, per_page: number): Promise<IWorkspaceActiveCyclesResponse> {
+    return this.get(`/api/workspace/active-cycles/`, {
       params: {
         per_page,
         cursor,
@@ -78,24 +63,24 @@ export class CycleService extends APIService {
       });
   }
 
-  async getWorkspaceCycles(workspaceSlug: string): Promise<ICycle[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/cycles/`)
+  async getWorkspaceCycles(): Promise<ICycle[]> {
+    return this.get(`/api/workspace/cycles/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<ICycle> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
+  async createCycle(projectId: string, data: any): Promise<ICycle> {
+    return this.post(`/api/workspace/projects/${projectId}/cycles/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getCyclesWithParams(workspaceSlug: string, projectId: string, cycleType?: "current"): Promise<ICycle[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, {
+  async getCyclesWithParams(projectId: string, cycleType?: "current"): Promise<ICycle[]> {
+    return this.get(`/api/workspace/projects/${projectId}/cycles/`, {
       params: {
         cycle_view: cycleType,
       },
@@ -106,23 +91,17 @@ export class CycleService extends APIService {
       });
   }
 
-  async getCycleDetails(workspaceSlug: string, projectId: string, cycleId: string): Promise<ICycle> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
+  async getCycleDetails(projectId: string, cycleId: string): Promise<ICycle> {
+    return this.get(`/api/workspace/projects/${projectId}/cycles/${cycleId}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
       });
   }
 
-  async getCycleIssues(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    queries?: any,
-    config = {}
-  ): Promise<TIssuesResponse> {
+  async getCycleIssues(projectId: string, cycleId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
+      `/api/workspace/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
       {
         params: queries,
       },
@@ -134,24 +113,24 @@ export class CycleService extends APIService {
       });
   }
 
-  async patchCycle(workspaceSlug: string, projectId: string, cycleId: string, data: Partial<ICycle>): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`, data)
+  async patchCycle(projectId: string, cycleId: string, data: Partial<ICycle>): Promise<any> {
+    return this.patch(`/api/workspace/projects/${projectId}/cycles/${cycleId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
+  async deleteCycle(projectId: string, cycleId: string): Promise<any> {
+    return this.delete(`/api/workspace/projects/${projectId}/cycles/${cycleId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async cycleDateCheck(workspaceSlug: string, projectId: string, data: CycleDateCheckData): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/date-check/`, data)
+  async cycleDateCheck(projectId: string, data: CycleDateCheckData): Promise<any> {
+    return this.post(`/api/workspace/projects/${projectId}/cycles/date-check/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -159,13 +138,12 @@ export class CycleService extends APIService {
   }
 
   async addCycleToFavorites(
-    workspaceSlug: string,
     projectId: string,
     data: {
       cycle: string;
     }
   ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/`, data)
+    return this.post(`/api/workspace/projects/${projectId}/user-favorite-cycles/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -173,22 +151,21 @@ export class CycleService extends APIService {
   }
 
   async transferIssues(
-    workspaceSlug: string,
     projectId: string,
     cycleId: string,
     data: {
       new_cycle_id: string;
     }
   ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/transfer-issues/`, data)
+    return this.post(`/api/workspace/projects/${projectId}/cycles/${cycleId}/transfer-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeCycleFromFavorites(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/${cycleId}/`)
+  async removeCycleFromFavorites(projectId: string, cycleId: string): Promise<any> {
+    return this.delete(`/api/workspace/projects/${projectId}/user-favorite-cycles/${cycleId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

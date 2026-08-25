@@ -43,7 +43,7 @@ export const DeleteProjectViewModal = observer(function DeleteProjectViewModal(p
       setIsDeleteLoading(true);
       await deleteView(workspaceSlug.toString(), projectId.toString(), data.id);
       handleClose();
-      router.push(`/${workspaceSlug}/projects/${projectId}/views`);
+      router.push(`/projects/${projectId}/views`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",

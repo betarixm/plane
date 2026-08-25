@@ -130,7 +130,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
 
   // Redirect to default tab when navigating to project root
   useEffect(() => {
-    const projectRootPath = `/${workspaceSlug}/projects/${projectId}`;
+    const projectRootPath = `/projects/${projectId}`;
     const isProjectRoot = pathname === projectRootPath || pathname === `${projectRootPath}/`;
 
     if (isProjectRoot && allNavigationItems.length > 0) {
@@ -180,7 +180,6 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
           <ProjectHeader workspaceSlug={workspaceSlug} projectId={projectId} />
           <div className="shrink-0">
             <ProjectActionsMenu
-              workspaceSlug={workspaceSlug}
               project={project}
               isAdmin={isAdmin}
               isAuthorized={isAuthorized}

@@ -48,7 +48,7 @@ export function ArchiveCycleModal(props: Props) {
           message: "Your archives can be found in project archives.",
         });
         onClose();
-        router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
+        router.push(`/projects/${projectId}/cycles`);
         return;
       })
       .catch(() => {

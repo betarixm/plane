@@ -14,7 +14,7 @@ import { getFileURL } from "@plane/utils";
 
 export type RowData = IWorkspaceMember;
 
-export function NameColumn({ rowData, workspaceSlug }: { rowData: RowData; workspaceSlug: string }) {
+export function NameColumn({ rowData }: { rowData: RowData }) {
   const { avatar_url, display_name, id } = rowData.member;
   const isSuspended = rowData.is_active === false;
 
@@ -25,7 +25,7 @@ export function NameColumn({ rowData, workspaceSlug }: { rowData: RowData; works
           <SuspendedUserIcon className="size-6 text-placeholder" />
         </div>
       ) : (
-        <Link href={`/${workspaceSlug}/profile/${id}`}>
+        <Link href={`/profile/${id}`}>
           {avatar_url?.trim() ? (
             <span className="relative flex size-6 items-center justify-center rounded-full text-on-color capitalize">
               <img

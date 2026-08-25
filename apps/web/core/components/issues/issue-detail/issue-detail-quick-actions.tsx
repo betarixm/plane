@@ -64,7 +64,6 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
   const projectIdentifier = getProjectIdentifierById(projectId);
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug,
     projectId,
     issueId,
     projectIdentifier,
@@ -93,8 +92,8 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
     try {
       const deleteIssue = issue?.archived_at ? removeArchivedIssue : removeIssue;
       const redirectionPath = issue?.archived_at
-        ? `/${workspaceSlug}/projects/${projectId}/archives/issues`
-        : `/${workspaceSlug}/projects/${projectId}/issues`;
+        ? `/projects/${projectId}/archives/issues`
+        : `/projects/${projectId}/issues`;
 
       await deleteIssue(workspaceSlug, projectId, issueId);
       router.push(redirectionPath);
@@ -110,7 +109,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
   const handleArchiveIssue = async () => {
     try {
       await archiveIssue(workspaceSlug, projectId, issueId);
-      router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+      router.push(`/projects/${projectId}/issues`);
     } catch (_error) {
       setToast({
         title: t("toast.error"),

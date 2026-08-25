@@ -184,14 +184,9 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
 
       // update uploaded assets' status
       if (uploadedAssetIds.length > 0) {
-        await fileService.updateBulkProjectAssetsUploadStatus(
-          workspaceSlug?.toString() ?? "",
-          response?.project_id ?? "",
-          response?.id ?? "",
-          {
-            asset_ids: uploadedAssetIds,
-          }
-        );
+        await fileService.updateBulkProjectAssetsUploadStatus(response?.project_id ?? "", response?.id ?? "", {
+          asset_ids: uploadedAssetIds,
+        });
         setUploadedAssetIds([]);
       }
 
@@ -237,13 +232,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
         message: `${is_draft_issue ? t("draft_created") : t("issue_created_successfully")} `,
-        actionItems: !is_draft_issue && response?.project_id && (
-          <CreateIssueToastActionItems
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={response?.project_id}
-            issueId={response.id}
-          />
-        ),
+        actionItems: !is_draft_issue && response?.project_id && <CreateIssueToastActionItems issueId={response.id} />,
       });
       if (!createMore) handleClose();
       if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
@@ -345,13 +334,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         title: t("success"),
         message: t("issue_updated_successfully"),
         actionItems:
-          showActionItemsOnUpdate && payload.project_id ? (
-            <CreateIssueToastActionItems
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={payload.project_id}
-              issueId={data.id}
-            />
-          ) : undefined,
+          showActionItemsOnUpdate && payload.project_id ? <CreateIssueToastActionItems issueId={data.id} /> : undefined,
       });
       handleClose();
     } catch (error: any) {

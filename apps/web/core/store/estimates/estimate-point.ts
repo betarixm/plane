@@ -134,7 +134,6 @@ export class EstimatePoint implements IEstimatePoint {
       if (!this.projectEstimate?.id || !this.id || !payload) return undefined;
 
       const estimatePoint = await estimateService.updateEstimatePoint(
-        workspaceSlug,
         projectId,
         this.projectEstimate?.id,
         this.id,

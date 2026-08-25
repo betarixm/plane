@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -27,7 +27,8 @@ import type { Route } from "./+types/page";
 function ProjectInboxPage({ params }: Route.ComponentProps) {
   /// router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = params;
+  const { projectId } = params;
+  const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
   const navigationTab = searchParams.get("currentTab");
   const inboxIssueId = searchParams.get("inboxIssueId");
@@ -53,7 +54,7 @@ function ProjectInboxPage({ params }: Route.ComponentProps) {
           primaryButton={{
             text: t("disabled_project.empty_state.inbox.primary_button.text"),
             onClick: () => {
-              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
+              router.push(`/settings/projects/${projectId}/features`);
             },
             disabled: !canPerformEmptyStateActions,
           }}

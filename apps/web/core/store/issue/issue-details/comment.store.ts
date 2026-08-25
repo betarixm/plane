@@ -104,7 +104,7 @@ export class IssueCommentStore implements IIssueCommentStore {
       if (_comment) props = { created_at__gt: _comment.created_at };
     }
 
-    const comments = await this.issueCommentService.getIssueComments(workspaceSlug, projectId, issueId, props);
+    const comments = await this.issueCommentService.getIssueComments(projectId, issueId, props);
 
     const commentIds = comments.map((comment) => comment.id);
     runInAction(() => {
@@ -123,7 +123,7 @@ export class IssueCommentStore implements IIssueCommentStore {
   };
 
   createComment = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssueComment>) => {
-    const response = await this.issueCommentService.createIssueComment(workspaceSlug, projectId, issueId, data);
+    const response = await this.issueCommentService.createIssueComment(projectId, issueId, data);
 
     runInAction(() => {
       update(this.comments, issueId, (_commentIds) => {
@@ -150,13 +150,7 @@ export class IssueCommentStore implements IIssueCommentStore {
         });
       });
 
-      const response = await this.issueCommentService.patchIssueComment(
-        workspaceSlug,
-        projectId,
-        issueId,
-        commentId,
-        data
-      );
+      const response = await this.issueCommentService.patchIssueComment(projectId, issueId, commentId, data);
 
       runInAction(() => {
         set(this.commentMap, [commentId, "updated_at"], response.updated_at);
@@ -171,7 +165,7 @@ export class IssueCommentStore implements IIssueCommentStore {
   };
 
   removeComment = async (workspaceSlug: string, projectId: string, issueId: string, commentId: string) => {
-    const response = await this.issueCommentService.deleteIssueComment(workspaceSlug, projectId, issueId, commentId);
+    const response = await this.issueCommentService.deleteIssueComment(projectId, issueId, commentId);
 
     runInAction(() => {
       pull(this.comments[issueId], commentId);

@@ -14,8 +14,8 @@ export class JiraImporterService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getJiraProjectInfo(workspaceSlug: string, params: IJiraMetadata): Promise<IJiraResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/importers/jira`, {
+  async getJiraProjectInfo(params: IJiraMetadata): Promise<IJiraResponse> {
+    return this.get(`/api/workspace/importers/jira`, {
       params,
     })
       .then((response) => response?.data)
@@ -24,8 +24,8 @@ export class JiraImporterService extends APIService {
       });
   }
 
-  async createJiraImporter(workspaceSlug: string, data: IJiraImporterForm): Promise<IJiraResponse> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/importers/jira/`, data)
+  async createJiraImporter(data: IJiraImporterForm): Promise<IJiraResponse> {
+    return this.post(`/api/workspace/projects/importers/jira/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

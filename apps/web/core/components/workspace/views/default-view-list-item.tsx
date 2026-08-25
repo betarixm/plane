@@ -6,7 +6,6 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 // helpers
 import { truncateText } from "@plane/utils";
@@ -15,13 +14,11 @@ type Props = { view: { key: string; i18n_label: string } };
 
 export const GlobalDefaultViewListItem = observer(function GlobalDefaultViewListItem(props: Props) {
   const { view } = props;
-  // router
-  const { workspaceSlug } = useParams();
   const { t } = useTranslation();
 
   return (
     <div className="group border-b border-subtle hover:bg-surface-2">
-      <Link href={`/${workspaceSlug}/workspace-views/${view.key}`}>
+      <Link href={`/workspace-views/${view.key}`}>
         <div className="relative flex h-[52px] w-full items-center justify-between rounded-sm px-5 py-4">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-4">

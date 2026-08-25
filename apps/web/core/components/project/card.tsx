@@ -111,7 +111,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     });
   };
 
-  const projectLink = `${workspaceSlug}/projects/${project.id}/issues`;
+  const projectLink = `/projects/${project.id}/issues`;
   const handleCopyText = () =>
     copyUrlToClipboard(projectLink).then(() =>
       setToast({
@@ -120,12 +120,12 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         message: "Project link copied to clipboard.",
       })
     );
-  const handleOpenInNewTab = () => window.open(`/${projectLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(projectLink, "_blank");
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
+      action: () => router.push(`/settings/projects/${project.id}`),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
@@ -196,7 +196,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       )}
       <Link
         ref={projectCardRef}
-        href={`/${workspaceSlug}/projects/${project.id}/issues`}
+        href={`/projects/${project.id}/issues`}
         onClick={(e) => {
           if (!isMemberOfProject || isArchived) {
             e.preventDefault();
@@ -341,7 +341,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
-                      href={`/${workspaceSlug}/settings/projects/${project.id}`}
+                      href={`/settings/projects/${project.id}`}
                     >
                       <Settings className="h-3.5 w-3.5" />
                     </Link>

@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
@@ -22,7 +23,8 @@ import { GeneralProjectSettingsControlSection } from "@/components/project/setti
 
 function ProjectSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = params;
+  const { workspaceSlug } = useParams();
+  const { projectId } = params;
   // store hooks
   const { currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();

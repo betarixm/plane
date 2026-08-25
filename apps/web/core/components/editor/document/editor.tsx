@@ -57,7 +57,6 @@ export const DocumentEditor = forwardRef(function DocumentEditor(
   // parse content
   const { getEditorMetaData } = useParseEditorContent({
     projectId,
-    workspaceSlug,
   });
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
@@ -82,7 +81,6 @@ export const DocumentEditor = forwardRef(function DocumentEditor(
         projectId,
         uploadFile: editable ? props.uploadFile : async () => "",
         duplicateFile: editable ? props.duplicateFile : async () => "",
-        workspaceId,
         workspaceSlug,
       })}
       getEditorMetaData={getEditorMetaData}

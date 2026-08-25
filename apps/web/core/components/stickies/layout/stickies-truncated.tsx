@@ -42,7 +42,7 @@ export const StickiesTruncated = observer(function StickiesTruncated(props: Stic
       fallback={null}
       customButton={
         <Link
-          href={`/${workspaceSlug}/stickies`}
+          href={`/stickies`}
           className={cn(
             "w-full gap-1 bg-surface-2/20 text-13 font-medium text-accent-primary transition-opacity duration-300"
           )}

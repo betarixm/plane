@@ -122,7 +122,6 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                     <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
                       <Link
                         href={generateWorkItemLink({
-                          workspaceSlug,
                           projectId: projectDetails?.id,
                           issueId: currentIssue.id,
                           projectIdentifier: projectDetails?.identifier,

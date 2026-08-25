@@ -48,7 +48,6 @@ export const useWorkItemCommentOperations = (
         if (!workspaceSlug || !issueDetails) return;
         try {
           const workItemLink = generateWorkItemLink({
-            workspaceSlug,
             projectId: issueDetails.project_id,
             issueId,
             projectIdentifier: projectDetails?.identifier,

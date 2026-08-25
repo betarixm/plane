@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { GROUP_CHOICES } from "@plane/constants";
@@ -25,11 +26,12 @@ import type { Route } from "./+types/page";
 const userService = new UserService();
 
 export default function ProfileOverviewPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug, userId } = params;
+  const { userId } = params;
+  const { workspaceSlug } = useParams();
 
   const { t } = useTranslation();
   const { data: userProfile } = useSWR(USER_PROFILE_DATA(workspaceSlug, userId), () =>
-    userService.getUserProfileData(workspaceSlug, userId)
+    userService.getUserProfileData(userId)
   );
 
   const stateDistribution: IUserStateDistribution[] = Object.keys(GROUP_CHOICES).map((key) => {

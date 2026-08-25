@@ -201,7 +201,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, cycleId, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params, {
+      const response = await this.issueService.getIssues(projectId, params, {
         signal: this.controller.signal,
       });
 
@@ -249,7 +249,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
+      const response = await this.issueService.getIssues(projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);
@@ -311,7 +311,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     }
   ) => {
     // call API call to transfer issues
-    const response = await this.cycleService.transferIssues(workspaceSlug, projectId, cycleId, payload);
+    const response = await this.cycleService.transferIssues(projectId, cycleId, payload);
     // call fetch issues
     if (this.paginationOptions) {
       await this.fetchIssues(workspaceSlug, projectId, "mutation", this.paginationOptions, cycleId);
@@ -336,7 +336,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     // set params for urgent and high
     const params = { priority: `urgent,high`, cursor: `${perPageCount}:0:0`, per_page: perPageCount };
     // call the fetch issues API
-    const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
+    const response = await this.cycleService.getCycleIssues(projectId, cycleId, params);
 
     // Process issue response
     const { issueList, groupedIssues } = this.processIssueResponse(response);
@@ -375,7 +375,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     // create params
     const params = { priority: `urgent,high`, cursor: activeCycle.nextCursor, per_page: activeCycle.perPageCount };
     // fetch API response
-    const response = await this.cycleService.getCycleIssues(workspaceSlug, projectId, cycleId, params);
+    const response = await this.cycleService.getCycleIssues(projectId, cycleId, params);
 
     // Process the response
     const { issueList, groupedIssues } = this.processIssueResponse(response);

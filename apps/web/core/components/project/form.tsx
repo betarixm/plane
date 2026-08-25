@@ -186,12 +186,10 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
     }
 
     if (project.identifier !== formData.identifier)
-      await projectService
-        .checkProjectIdentifierAvailability(workspaceSlug, payload.identifier ?? "")
-        .then(async (res) => {
-          if (res.exists) setError("identifier", { message: t("common.identifier_already_exists") });
-          else await handleUpdateChange(payload);
-        });
+      await projectService.checkProjectIdentifierAvailability(payload.identifier ?? "").then(async (res) => {
+        if (res.exists) setError("identifier", { message: t("common.identifier_already_exists") });
+        else await handleUpdateChange(payload);
+      });
     else await handleUpdateChange(payload);
     setTimeout(() => {
       setIsLoading(false);

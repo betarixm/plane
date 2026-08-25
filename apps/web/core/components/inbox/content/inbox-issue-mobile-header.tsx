@@ -32,7 +32,6 @@ import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { InboxIssueStatus } from "../inbox-issue-status";
 
 type Props = {
-  workspaceSlug: string;
   inboxIssue: IInboxIssueStore | undefined;
   isSubmitting: TNameDescriptionLoader;
   handleInboxIssueNavigation: (direction: "next" | "prev") => void;
@@ -65,7 +64,6 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     canDelete,
     canMarkAsDuplicate,
     isAcceptedOrDeclined,
-    workspaceSlug,
     setAcceptIssueModal,
     setDeclineIssueModal,
     setDeleteIssueModal,
@@ -92,7 +90,6 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug?.toString(),
     projectId: issue?.project_id,
     issueId: currentInboxIssueId,
     projectIdentifier,

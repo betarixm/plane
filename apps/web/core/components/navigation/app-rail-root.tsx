@@ -21,13 +21,13 @@ import { AppSidebarItemsRoot } from "./items-root";
 
 export const AppRailRoot = observer(() => {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { projectId } = useParams();
   const pathname = usePathname();
   // preferences
   const { preferences, updateDisplayMode } = useAppRailPreferences();
   const { isCollapsed, toggleAppRail } = useAppRailVisibility();
   // derived values
-  const isWorkspaceSettingsPath = pathname.includes(`/${workspaceSlug}/settings`) && !projectId;
+  const isWorkspaceSettingsPath = pathname.startsWith("/settings") && !pathname.startsWith("/settings/profile") && !projectId;
   const showLabel = preferences.displayMode === "icon_with_label";
   const railWidth = showLabel ? "3.75rem" : "3rem";
 
@@ -54,7 +54,7 @@ export const AppRailRoot = observer(() => {
                 item={{
                   label: "Settings",
                   icon: <SettingsIcon className="size-5" />,
-                  href: `/${workspaceSlug}/settings`,
+                  href: `/settings`,
                   isActive: isWorkspaceSettingsPath,
                   showLabel,
                 }}

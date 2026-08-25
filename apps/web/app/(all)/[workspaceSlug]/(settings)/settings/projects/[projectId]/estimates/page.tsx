@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -19,7 +20,8 @@ import type { Route } from "./+types/page";
 import { EstimatesProjectSettingsHeader } from "./header";
 
 function EstimatesSettingsPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug, projectId } = params;
+  const { workspaceSlug } = useParams();
+  const { projectId } = params;
   // store
   const { currentProjectDetails } = useProject();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();

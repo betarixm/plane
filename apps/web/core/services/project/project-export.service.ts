@@ -14,16 +14,13 @@ export class ProjectExportService extends APIService {
     super(API_BASE_URL);
   }
 
-  async csvExport(
-    workspaceSlug: string,
-    data: {
-      provider: string;
-      project: string[];
-      multiple?: boolean;
-      rich_filters?: TWorkItemFilterExpression;
-    }
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/export-issues/`, data)
+  async csvExport(data: {
+    provider: string;
+    project: string[];
+    multiple?: boolean;
+    rich_filters?: TWorkItemFilterExpression;
+  }): Promise<any> {
+    return this.post(`/api/workspace/export-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

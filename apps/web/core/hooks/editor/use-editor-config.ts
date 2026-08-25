@@ -21,7 +21,6 @@ type TArgs = {
   projectId?: string;
   uploadFile: TFileHandler["upload"];
   duplicateFile: TFileHandler["duplicate"];
-  workspaceId: string;
   workspaceSlug: string;
 };
 
@@ -34,26 +33,20 @@ export const useEditorConfig = () => {
 
   const getEditorFileHandlers = useCallback(
     (args: TArgs): TFileHandler => {
-      const { projectId, uploadFile, duplicateFile, workspaceId, workspaceSlug } = args;
+      const { projectId, uploadFile, duplicateFile, workspaceSlug } = args;
 
       return {
         assetsUploadStatus: assetsUploadPercentage,
         cancel: fileService.cancelUpload,
         checkIfAssetExists: async (assetId: string) => {
-          const res = await fileService.checkIfAssetExists(workspaceSlug, assetId);
+          const res = await fileService.checkIfAssetExists(assetId);
           return res?.exists ?? false;
         },
         delete: async (src: string) => {
           if (src?.startsWith("http")) {
-            await fileService.deleteOldWorkspaceAsset(workspaceId, src);
+            await fileService.deleteOldWorkspaceAsset(src);
           } else {
-            await fileService.deleteNewAsset(
-              getEditorAssetSrc({
-                assetId: src,
-                projectId,
-                workspaceSlug,
-              }) ?? ""
-            );
+            await fileService.deleteNewAsset(getEditorAssetSrc({ assetId: src, projectId }) ?? "");
           }
         },
         getAssetDownloadSrc: async (path) => {
@@ -61,13 +54,7 @@ export const useEditorConfig = () => {
           if (path?.startsWith("http")) {
             return path;
           } else {
-            return (
-              getEditorAssetDownloadSrc({
-                assetId: path,
-                projectId,
-                workspaceSlug,
-              }) ?? ""
-            );
+            return getEditorAssetDownloadSrc({ assetId: path, projectId }) ?? "";
           }
         },
         getAssetSrc: async (path) => {
@@ -75,20 +62,14 @@ export const useEditorConfig = () => {
           if (path?.startsWith("http")) {
             return path;
           } else {
-            return (
-              getEditorAssetSrc({
-                assetId: path,
-                projectId,
-                workspaceSlug,
-              }) ?? ""
-            );
+            return getEditorAssetSrc({ assetId: path, projectId }) ?? "";
           }
         },
         restore: async (src: string) => {
           if (src?.startsWith("http")) {
-            await fileService.restoreOldEditorAsset(workspaceId, src);
+            await fileService.restoreOldEditorAsset(src);
           } else {
-            await fileService.restoreNewAsset(workspaceSlug, src);
+            await fileService.restoreNewAsset(src);
           }
         },
         upload: uploadFile,

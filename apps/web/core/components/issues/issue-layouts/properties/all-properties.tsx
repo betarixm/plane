@@ -161,7 +161,6 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   };
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug?.toString(),
     projectId: issue?.project_id,
     issueId: issue?.id,
     projectIdentifier: projectDetails?.identifier,

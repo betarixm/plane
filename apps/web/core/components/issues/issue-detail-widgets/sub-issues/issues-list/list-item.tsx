@@ -96,7 +96,6 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
   const isCurrentIssueRoot = issueId === rootIssueId;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug,
     projectId: issue?.project_id,
     issueId: issue?.id,
     projectIdentifier: projectDetail?.identifier,

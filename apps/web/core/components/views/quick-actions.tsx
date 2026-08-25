@@ -47,7 +47,7 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
 
   const { publishContextMenu } = useViewPublish(!!view.anchor, isAdmin || isOwner);
 
-  const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
+  const viewLink = `/projects/${projectId}/views/${view.id}`;
   const handleCopyText = () =>
     // oxlint-disable-next-line promise/always-return
     copyUrlToClipboard(viewLink).then(() => {
@@ -57,7 +57,7 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
         message: "View link copied to clipboard.",
       });
     });
-  const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(viewLink, "_blank");
 
   const menuResult = useViewMenuItems({
     isOwner,

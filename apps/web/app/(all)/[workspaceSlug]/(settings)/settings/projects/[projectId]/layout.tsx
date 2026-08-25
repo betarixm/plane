@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
@@ -17,7 +17,8 @@ import type { Route } from "./+types/layout";
 import { ProjectSettingsSidebarRoot } from "@/components/settings/project/sidebar";
 
 function ProjectDetailSettingsLayout({ params }: Route.ComponentProps) {
-  const { workspaceSlug, projectId } = params;
+  const { workspaceSlug } = useParams();
+  const { projectId } = params;
   // router
   const pathname = usePathname();
 

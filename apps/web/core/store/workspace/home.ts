@@ -86,7 +86,7 @@ export class HomeStore implements IHomeStore {
   fetchWidgets = async (workspaceSlug: string) => {
     try {
       this.loading = true;
-      const widgets = await this.workspaceService.fetchWorkspaceWidgets(workspaceSlug);
+      const widgets = await this.workspaceService.fetchWorkspaceWidgets();
       runInAction(() => {
         this.widgets = orderBy(Object.values(widgets), "sort_order", "desc").map((widget) => widget.key);
         widgets.forEach((widget) => {
@@ -103,7 +103,7 @@ export class HomeStore implements IHomeStore {
 
   toggleWidget = async (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => {
     try {
-      await this.workspaceService.updateWorkspaceWidget(workspaceSlug, widgetKey, {
+      await this.workspaceService.updateWorkspaceWidget(widgetKey, {
         is_enabled,
       });
       runInAction(() => {
@@ -139,7 +139,7 @@ export class HomeStore implements IHomeStore {
       runInAction(() => {
         set(this.widgetsMap, [widgetKey, "sort_order"], resultSequence);
       });
-      await this.workspaceService.updateWorkspaceWidget(workspaceSlug, widgetKey, {
+      await this.workspaceService.updateWorkspaceWidget(widgetKey, {
         sort_order: resultSequence,
       });
     } catch (error) {

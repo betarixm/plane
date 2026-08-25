@@ -38,7 +38,7 @@ export function DeleteWebhookModal(props: IDeleteWebhook) {
     setIsDeleting(true);
     try {
       await removeWebhook(workspaceSlug.toString(), webhookId.toString());
-      router.replace(`/${workspaceSlug}/settings/webhooks/`);
+      router.replace(`/settings/webhooks/`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",

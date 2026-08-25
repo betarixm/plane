@@ -237,7 +237,7 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
   fetchUserWorkspaceInfo = async (workspaceSlug: string): Promise<IWorkspaceMemberMe> => {
     try {
       this.loader = true;
-      const response = await workspaceService.workspaceMemberMe(workspaceSlug);
+      const response = await workspaceService.workspaceMemberMe();
       if (response) {
         runInAction(() => {
           set(this.workspaceUserInfo, [workspaceSlug], response);
@@ -260,7 +260,7 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
    */
   fetchUserProjectInfo = async (workspaceSlug: string, projectId: string): Promise<TProjectMembership> => {
     try {
-      const response = await projectMemberService.projectMemberMe(workspaceSlug, projectId);
+      const response = await projectMemberService.projectMemberMe(projectId);
       if (response) {
         runInAction(() => {
           set(this.projectUserInfo, [workspaceSlug, projectId], response);
@@ -281,7 +281,7 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
    */
   fetchUserProjectPermissions = async (workspaceSlug: string): Promise<IUserProjectsRole> => {
     try {
-      const response = await workspaceService.getWorkspaceUserProjectsRole(workspaceSlug);
+      const response = await workspaceService.getWorkspaceUserProjectsRole();
       runInAction(() => {
         set(this.workspaceProjectsPermissions, [workspaceSlug], response);
       });
@@ -300,7 +300,7 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
    */
   joinProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
     try {
-      const response = await userService.joinProject(workspaceSlug, [projectId]);
+      const response = await userService.joinProject([projectId]);
       const projectMemberRole = this.getWorkspaceRoleByWorkspaceSlug(workspaceSlug) ?? EUserPermissions.MEMBER;
       if (response) {
         runInAction(() => {
@@ -322,7 +322,7 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
    */
   leaveProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
     try {
-      await userService.leaveProject(workspaceSlug, projectId);
+      await userService.leaveProject(projectId);
       runInAction(() => {
         unset(this.workspaceProjectsPermissions, [workspaceSlug, projectId]);
         unset(this.projectUserInfo, [workspaceSlug, projectId]);

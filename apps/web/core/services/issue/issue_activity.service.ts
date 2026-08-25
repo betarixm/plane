@@ -20,7 +20,6 @@ export class IssueActivityService extends APIService {
   }
 
   async getIssueActivities(
-    workspaceSlug: string,
     projectId: string,
     issueId: string,
     params:
@@ -29,7 +28,7 @@ export class IssueActivityService extends APIService {
         }
       | object = {}
   ): Promise<TIssueActivity[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/history/`, {
+    return this.get(`/api/workspace/projects/${projectId}/${this.serviceType}/${issueId}/history/`, {
       params: {
         activity_type: `${this.serviceType === EIssueServiceType.EPICS ? "epic-property" : "issue-property"}`,
         ...params,

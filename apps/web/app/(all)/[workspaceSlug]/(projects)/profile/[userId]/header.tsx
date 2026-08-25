@@ -30,7 +30,7 @@ type TUserProfileHeader = {
 export const UserProfileHeader = observer(function UserProfileHeader(props: TUserProfileHeader) {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
-  const { workspaceSlug, userId } = useParams();
+  const { userId } = useParams();
   const router = useRouter();
   // store hooks
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
@@ -89,7 +89,7 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
               <CustomMenu.MenuItem
                 className="flex items-center gap-2"
                 key={tab.route}
-                onClick={() => router.push(`/${workspaceSlug}/profile/${userId}/${tab.route}`)}
+                onClick={() => router.push(`/profile/${userId}/${tab.route}`)}
               >
                 <span className="w-full text-tertiary">{t(tab.i18n_label)}</span>
               </CustomMenu.MenuItem>

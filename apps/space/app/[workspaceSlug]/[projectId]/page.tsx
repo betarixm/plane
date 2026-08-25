@@ -30,7 +30,7 @@ export const clientLoader = async ({ params, request }: Route.ClientLoaderArgs) 
   let response: TProjectPublishSettings | undefined = undefined;
 
   try {
-    response = await publishService.retrieveSettingsByProjectId(workspaceSlug, projectId);
+    response = await publishService.retrieveSettingsByProjectId(projectId);
   } catch {
     throw redirect("/404");
   }

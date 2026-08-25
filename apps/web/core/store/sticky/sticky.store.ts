@@ -102,7 +102,7 @@ export class StickyStore implements IStickyStore {
   };
 
   fetchRecentSticky = async (workspaceSlug: string) => {
-    const response = await this.stickyService.getStickies(workspaceSlug, "1:0:0", undefined, 1);
+    const response = await this.stickyService.getStickies("1:0:0", undefined, 1);
     runInAction(() => {
       this.recentStickyId = response.results[0]?.id;
       this.stickies[response.results[0]?.id] = response.results[0];
@@ -114,11 +114,7 @@ export class StickyStore implements IStickyStore {
         return;
       }
       this.loader = "pagination";
-      const response = await this.stickyService.getStickies(
-        workspaceSlug,
-        this.paginationInfo.next_cursor,
-        this.searchQuery
-      );
+      const response = await this.stickyService.getStickies(this.paginationInfo.next_cursor, this.searchQuery);
 
       runInAction(() => {
         const { results, ...paginationInfo } = response;
@@ -151,11 +147,7 @@ export class StickyStore implements IStickyStore {
         this.loader = "init-loader";
       }
 
-      const response = await this.stickyService.getStickies(
-        workspaceSlug,
-        `${STICKIES_PER_PAGE}:0:0`,
-        this.searchQuery
-      );
+      const response = await this.stickyService.getStickies(`${STICKIES_PER_PAGE}:0:0`, this.searchQuery);
 
       runInAction(() => {
         const { results, ...paginationInfo } = response;
@@ -180,7 +172,7 @@ export class StickyStore implements IStickyStore {
     this.showAddNewSticky = false;
     this.creatingSticky = true;
     const workspaceStickies = this.workspaceStickies[workspaceSlug] || [];
-    const response = await this.stickyService.createSticky(workspaceSlug, sticky);
+    const response = await this.stickyService.createSticky(sticky);
     runInAction(() => {
       this.stickies[response.id] = response;
       this.workspaceStickies[workspaceSlug] = [response.id, ...workspaceStickies];
@@ -201,7 +193,7 @@ export class StickyStore implements IStickyStore {
         });
       });
       this.recentStickyId = id;
-      await this.stickyService.updateSticky(workspaceSlug, id, updates);
+      await this.stickyService.updateSticky(id, updates);
     } catch (error) {
       console.error("Error in updating sticky:", error);
       this.stickies[id] = sticky;
@@ -219,7 +211,7 @@ export class StickyStore implements IStickyStore {
       if (this.activeStickyId === id) this.activeStickyId = undefined;
       delete this.stickies[id];
       this.recentStickyId = this.workspaceStickies[workspaceSlug][0];
-      await this.stickyService.deleteSticky(workspaceSlug, id);
+      await this.stickyService.deleteSticky(id);
     } catch (e) {
       console.log(e);
       this.stickies[id] = sticky;
@@ -263,7 +255,7 @@ export class StickyStore implements IStickyStore {
         };
       });
 
-      await this.stickyService.updateSticky(workspaceSlug, stickyId, {
+      await this.stickyService.updateSticky(stickyId, {
         sort_order: resultSequence,
       });
     } catch (error) {

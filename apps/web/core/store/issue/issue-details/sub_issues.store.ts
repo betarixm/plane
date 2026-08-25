@@ -127,7 +127,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
   fetchSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string) => {
     this.loader = "init-loader";
-    const response = await this.issueService.subIssues(workspaceSlug, projectId, parentIssueId);
+    const response = await this.issueService.subIssues(projectId, parentIssueId);
 
     const subIssuesStateDistribution = response?.state_distribution ?? {};
 
@@ -162,7 +162,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   };
 
   createSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string, issueIds: string[]) => {
-    const response = await this.issueService.addSubIssues(workspaceSlug, projectId, parentIssueId, {
+    const response = await this.issueService.addSubIssues(projectId, parentIssueId, {
       sub_issue_ids: issueIds,
     });
 

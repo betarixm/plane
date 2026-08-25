@@ -128,7 +128,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   };
 
   fetchAttachments = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const response = await this.issueAttachmentService.getIssueAttachments(workspaceSlug, projectId, issueId);
+    const response = await this.issueAttachmentService.getIssueAttachments(projectId, issueId);
     this.addAttachments(issueId, response);
     return response;
   };
@@ -153,7 +153,6 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
         });
       });
       const response = await this.issueAttachmentService.uploadIssueAttachment(
-        workspaceSlug,
         projectId,
         issueId,
         file,
@@ -185,12 +184,7 @@ export class IssueAttachmentStore implements IIssueAttachmentStore {
   };
 
   removeAttachment = async (workspaceSlug: string, projectId: string, issueId: string, attachmentId: string) => {
-    const response = await this.issueAttachmentService.deleteIssueAttachment(
-      workspaceSlug,
-      projectId,
-      issueId,
-      attachmentId
-    );
+    const response = await this.issueAttachmentService.deleteIssueAttachment(projectId, issueId, attachmentId);
 
     runInAction(() => {
       update(this.attachments, [issueId], (attachmentIds = []) => {

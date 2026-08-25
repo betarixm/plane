@@ -186,7 +186,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       this.error = undefined;
       if (Object.keys(this.estimates || {}).length <= 0) this.loader = loader ? loader : "init-loader";
 
-      const estimates = await estimateService.fetchWorkspaceEstimates(workspaceSlug);
+      const estimates = await estimateService.fetchWorkspaceEstimates();
       if (estimates && estimates.length > 0) {
         runInAction(() => {
           estimates.forEach((estimate) => {
@@ -226,7 +226,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       this.error = undefined;
       if (!this.estimateIdsByProjectId(projectId)) this.loader = loader ? loader : "init-loader";
 
-      const estimates = await estimateService.fetchProjectEstimates(workspaceSlug, projectId);
+      const estimates = await estimateService.fetchProjectEstimates(projectId);
       if (estimates && estimates.length > 0) {
         runInAction(() => {
           estimates.forEach((estimate) => {
@@ -272,7 +272,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
     try {
       this.error = undefined;
 
-      const estimate = await estimateService.createEstimate(workspaceSlug, projectId, payload);
+      const estimate = await estimateService.createEstimate(projectId, payload);
       if (estimate) {
         // update estimate_id in current project
         // await this.store.projectRoot.project.updateProject(workspaceSlug, projectId, {
@@ -306,7 +306,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
    */
   deleteEstimate = async (workspaceSlug: string, projectId: string, estimateId: string) => {
     try {
-      await estimateService.deleteEstimate(workspaceSlug, projectId, estimateId);
+      await estimateService.deleteEstimate(projectId, estimateId);
       runInAction(() => estimateId && unset(this.estimates, [estimateId]));
     } catch (error) {
       this.error = {

@@ -289,7 +289,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
    * @param projectId
    */
   fetchProjectMembers = async (workspaceSlug: string, projectId: string, clearExistingMembers: boolean = false) =>
-    await this.projectMemberService.fetchProjectMembers(workspaceSlug, projectId).then((response) => {
+    await this.projectMemberService.fetchProjectMembers(projectId).then((response) => {
       runInAction(() => {
         if (clearExistingMembers) {
           unset(this.projectMemberMap, [projectId]);
@@ -310,7 +310,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
    * @returns Promise<TProjectMembership[]>
    */
   bulkAddMembersToProject = async (workspaceSlug: string, projectId: string, data: IProjectBulkAddFormData) =>
-    await this.projectMemberService.bulkAddMembersToProject(workspaceSlug, projectId, data).then((response) => {
+    await this.projectMemberService.bulkAddMembersToProject(projectId, data).then((response) => {
       runInAction(() => {
         response.forEach((member) => {
           set(this.projectMemberMap, [projectId, member.member], {
@@ -369,14 +369,9 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
         }
         set(this.rootStore.user.permission.projectUserInfo, [workspaceSlug, projectId, "role"], updatedProjectRole);
       });
-      const response = await this.projectMemberService.updateProjectMember(
-        workspaceSlug,
-        projectId,
-        memberDetails?.id,
-        {
-          role,
-        }
-      );
+      const response = await this.projectMemberService.updateProjectMember(projectId, memberDetails?.id, {
+        role,
+      });
       return response;
     } catch (error) {
       // revert back to original members in case of error
@@ -431,7 +426,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
     const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
     // oxlint-disable-next-line promise/always-return
-    await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id).then(() => {
+    await this.projectMemberService.deleteProjectMember(projectId, memberDetails?.id).then(() => {
       runInAction(() => {
         this.processMemberRemoval(projectId, userId);
       });
@@ -456,7 +451,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
     workspaceSlug: string,
     projectId: string
   ): Promise<IProjectUserPropertiesResponse> => {
-    const response = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
+    const response = await this.projectService.getProjectUserProperties(projectId);
     runInAction(() => {
       set(this.projectUserPropertiesMap, [projectId], response);
     });
@@ -480,7 +475,7 @@ export class BaseProjectMemberStore implements IBaseProjectMemberStore {
       runInAction(() => {
         set(this.projectUserPropertiesMap, [projectId], data);
       });
-      const response = await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, data);
+      const response = await this.projectService.updateProjectUserProperties(projectId, data);
       return response;
     } catch (error) {
       // Revert on error

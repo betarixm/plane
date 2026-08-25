@@ -39,7 +39,6 @@ const ProjectInsights = observer(function ProjectInsights() {
     `radar-chart-project-insights-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
     () =>
       analyticsService.getAdvanceAnalyticsCharts<TChartData<string, string>[]>(
-        workspaceSlug,
         "projects",
         {
           // date_filter: selectedDuration,

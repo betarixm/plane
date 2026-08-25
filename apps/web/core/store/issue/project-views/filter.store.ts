@@ -175,7 +175,7 @@ export class ProjectViewIssuesFilter extends IssueFilterHelperStore implements I
 
   fetchFilters = async (workspaceSlug: string, projectId: string, viewId: string) => {
     try {
-      const viewDetails = await this.issueFilterService.getViewDetails(workspaceSlug, projectId, viewId);
+      const viewDetails = await this.issueFilterService.getViewDetails(projectId, viewId);
       this.mutateFilters(workspaceSlug, viewId, viewDetails);
     } catch (error) {
       console.log("error while fetching project view filters", error);

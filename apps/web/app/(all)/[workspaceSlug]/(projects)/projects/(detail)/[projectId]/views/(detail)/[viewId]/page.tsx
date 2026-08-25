@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 // assets
 import emptyView from "@/app/assets/empty-state/view.svg?url";
@@ -21,7 +22,8 @@ import type { Route } from "./+types/page";
 function ProjectViewIssuesPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, viewId } = params;
+  const { projectId, viewId } = params;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { fetchViewDetails, getViewById } = useProjectView();
   const { getProjectById } = useProject();
@@ -40,7 +42,7 @@ function ProjectViewIssuesPage({ params }: Route.ComponentProps) {
         description="The view you are looking for does not exist or you don't have permission to view it."
         primaryButton={{
           text: "View other views",
-          onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/views`),
+          onClick: () => router.push(`/projects/${projectId}/views`),
         }}
       />
     );

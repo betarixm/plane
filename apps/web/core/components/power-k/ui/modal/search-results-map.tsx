@@ -33,8 +33,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
         <span className="text-11 text-tertiary">{cycle.project__identifier}</span> {cycle.name}
       </p>
     ),
-    path: (cycle: IWorkspaceDefaultSearchResult) =>
-      `/${cycle?.workspace__slug}/projects/${cycle?.project_id}/cycles/${cycle?.id}`,
+    path: (cycle: IWorkspaceDefaultSearchResult) => `/projects/${cycle?.project_id}/cycles/${cycle?.id}`,
     title: "Cycles",
   },
   issue: {
@@ -52,7 +51,6 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     ),
     path: (workItem: IWorkspaceIssueSearchResult) =>
       generateWorkItemLink({
-        workspaceSlug: workItem?.workspace__slug,
         projectId: workItem?.project_id,
         issueId: workItem?.id,
         projectIdentifier: workItem.project__identifier,
@@ -67,8 +65,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
         <span className="text-11 text-tertiary">{view.project__identifier}</span> {view.name}
       </p>
     ),
-    path: (view: IWorkspaceDefaultSearchResult) =>
-      `/${view?.workspace__slug}/projects/${view?.project_id}/views/${view?.id}`,
+    path: (view: IWorkspaceDefaultSearchResult) => `/projects/${view?.project_id}/views/${view?.id}`,
     title: "Views",
   },
   module: {
@@ -78,20 +75,19 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
         <span className="text-11 text-tertiary">{module.project__identifier}</span> {module.name}
       </p>
     ),
-    path: (module: IWorkspaceDefaultSearchResult) =>
-      `/${module?.workspace__slug}/projects/${module?.project_id}/modules/${module?.id}`,
+    path: (module: IWorkspaceDefaultSearchResult) => `/projects/${module?.project_id}/modules/${module?.id}`,
     title: "Modules",
   },
   project: {
     icon: Briefcase,
     itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
-    path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
+    path: (project: IWorkspaceProjectSearchResult) => `/projects/${project?.id}/issues/`,
     title: "Projects",
   },
   workspace: {
     icon: LayoutGrid,
     itemName: (workspace: IWorkspaceSearchResult) => workspace?.name,
-    path: (workspace: IWorkspaceSearchResult) => `/${workspace?.slug}/`,
+    path: (workspace: IWorkspaceSearchResult) => `/home`,
     title: "Workspaces",
   },
 };

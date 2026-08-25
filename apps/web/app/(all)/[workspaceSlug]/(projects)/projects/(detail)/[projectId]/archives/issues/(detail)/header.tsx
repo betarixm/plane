@@ -33,7 +33,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId.toString()) : null,
     workspaceSlug && projectId && archivedIssueId
-      ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
+      ? () => issueService.retrieve(projectId.toString(), archivedIssueId.toString())
       : null
   );
 
@@ -41,11 +41,11 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <ProjectBreadcrumb workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <ProjectBreadcrumb projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
+                href={`/projects/${projectId}/archives/issues`}
                 label="Archives"
                 icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
               />
@@ -54,7 +54,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
-                href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
+                href={`/projects/${projectId}/archives/issues`}
                 label="Work items"
                 icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
               />

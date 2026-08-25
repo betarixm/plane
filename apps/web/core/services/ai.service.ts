@@ -26,21 +26,18 @@ export class AIService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createGptTask(workspaceSlug: string, data: { prompt: string; task: string }): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/ai-assistant/`, data)
+  async createGptTask(data: { prompt: string; task: string }): Promise<any> {
+    return this.post(`/api/workspace/ai-assistant/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async performEditorTask(
-    workspaceSlug: string,
-    data: TTaskPayload
-  ): Promise<{
+  async performEditorTask(data: TTaskPayload): Promise<{
     response: string;
   }> {
-    return this.post(`/api/workspaces/${workspaceSlug}/rephrase-grammar/`, data)
+    return this.post(`/api/workspace/rephrase-grammar/`, data)
       .then((res) => res?.data)
       .catch((error) => {
         throw error?.response?.data;

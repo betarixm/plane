@@ -35,7 +35,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
     workspaceSlug && userId ? USER_PROFILE_ACTIVITY(workspaceSlug.toString(), userId.toString(), {}) : null,
     workspaceSlug && userId
       ? () =>
-          userService.getUserProfileActivity(workspaceSlug.toString(), userId.toString(), {
+          userService.getUserProfileActivity(userId.toString(), {
             per_page: 10,
           })
       : null

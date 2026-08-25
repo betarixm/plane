@@ -313,7 +313,6 @@ export const getComputedDisplayProperties = (
 });
 
 export const generateWorkItemLink = ({
-  workspaceSlug,
   projectId,
   issueId,
   projectIdentifier,
@@ -321,7 +320,6 @@ export const generateWorkItemLink = ({
   isArchived = false,
   isEpic = false,
 }: {
-  workspaceSlug: string | undefined | null;
   projectId: string | undefined | null;
   issueId: string | undefined | null;
   projectIdentifier: string | undefined | null;
@@ -329,8 +327,8 @@ export const generateWorkItemLink = ({
   isArchived?: boolean;
   isEpic?: boolean;
 }): string => {
-  const archiveIssueLink = `/${workspaceSlug}/projects/${projectId}/archives/issues/${issueId}`;
-  const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
+  const archiveIssueLink = `/projects/${projectId}/archives/issues/${issueId}`;
+  const workItemLink = `/browse/${projectIdentifier}-${sequenceId}/`;
   const epicLink = workItemLink;
 
   return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;

@@ -108,7 +108,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
       // get params from pagination options
       const params = this.issueFilterStore?.getFilterParams(options, projectId, undefined, undefined, undefined);
       // call the fetch issues API with the params
-      const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params, {
+      const response = await this.issueArchiveService.getArchivedIssues(projectId, params, {
         signal: this.controller.signal,
       });
 
@@ -149,7 +149,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.issueArchiveService.getArchivedIssues(workspaceSlug, projectId, params);
+      const response = await this.issueArchiveService.getArchivedIssues(projectId, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);
@@ -187,7 +187,7 @@ export class ArchivedIssues extends BaseIssuesStore implements IArchivedIssues {
    */
   restoreIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     // call API to restore the issue
-    const response = await this.issueArchiveService.restoreIssue(workspaceSlug, projectId, issueId);
+    const response = await this.issueArchiveService.restoreIssue(projectId, issueId);
 
     // update the store and remove from the archived issues list once restored
     runInAction(() => {

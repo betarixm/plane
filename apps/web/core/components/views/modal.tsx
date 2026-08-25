@@ -48,7 +48,7 @@ export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjec
     try {
       const res = await createView(workspaceSlug, projectId, payload);
       handleClose();
-      router.push(`/${workspaceSlug}/projects/${projectId}/views/${res.id}`);
+      router.push(`/projects/${projectId}/views/${res.id}`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",

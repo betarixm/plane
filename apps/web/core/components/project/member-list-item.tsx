@@ -49,7 +49,7 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         // oxlint-disable-next-line promise/always-return
         .then(async () => {
-          router.push(`/${workspaceSlug}/projects`);
+          router.push(`/projects`);
         })
         .catch((err) => {
           setToast({

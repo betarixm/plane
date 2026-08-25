@@ -156,7 +156,7 @@ export class DashboardStore implements IDashboardStore {
    */
   fetchHomeDashboardWidgets = async (workspaceSlug: string): Promise<THomeDashboardResponse> => {
     try {
-      const response = await this.dashboardService.getHomeDashboardWidgets(workspaceSlug);
+      const response = await this.dashboardService.getHomeDashboardWidgets();
 
       runInAction(() => {
         this.homeDashboardId = response.dashboard.id;
@@ -182,7 +182,7 @@ export class DashboardStore implements IDashboardStore {
    */
   fetchWidgetStats = async (workspaceSlug: string, dashboardId: string, params: TWidgetStatsRequestParams) =>
     this.dashboardService
-      .getWidgetStats(workspaceSlug, dashboardId, params)
+      .getWidgetStats(dashboardId, params)
       .then((res: any) => {
         runInAction(() => {
           if (res.issues) this.issueStore.addIssue(res.issues);

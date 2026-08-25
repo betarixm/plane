@@ -125,10 +125,8 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleRedirection = (nextOrPreviousIssueId: string | undefined) => {
     if (!isNotificationEmbed) {
       if (nextOrPreviousIssueId)
-        router.push(
-          `/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${nextOrPreviousIssueId}`
-        );
-      else router.push(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}`);
+        router.push(`/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${nextOrPreviousIssueId}`);
+      else router.push(`/projects/${projectId}/intake?currentTab=${currentTab}`);
     }
   };
 
@@ -160,7 +158,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
     await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).then(() => {
-      if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/intake`);
+      if (!isNotificationEmbed) router.push(`/projects/${projectId}/intake`);
     });
   };
 
@@ -196,7 +194,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
           : (currentIssueIndex - 1 + filteredInboxIssueIds.length) % filteredInboxIssueIds.length;
       const nextIssueId = filteredInboxIssueIds[nextIssueIndex];
       if (!nextIssueId) return;
-      router.push(`/${workspaceSlug}/projects/${projectId}/intake?inboxIssueId=${nextIssueId}`);
+      router.push(`/projects/${projectId}/intake?inboxIssueId=${nextIssueId}`);
     },
     [currentInboxIssueId, currentIssueIndex, filteredInboxIssueIds, projectId, router, workspaceSlug]
   );
@@ -234,7 +232,6 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
   if (!inboxIssue) return null;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug?.toString(),
     projectId: issue?.project_id,
     issueId: currentInboxIssueId,
     projectIdentifier: currentProjectDetails?.identifier,
@@ -455,7 +452,6 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
           canDelete={canDelete}
           isAcceptedOrDeclined={isAcceptedOrDeclined}
           handleInboxIssueNavigation={handleInboxIssueNavigation}
-          workspaceSlug={workspaceSlug}
           isMobileSidebar={isMobileSidebar}
           setIsMobileSidebar={setIsMobileSidebar}
           isNotificationEmbed={isNotificationEmbed}

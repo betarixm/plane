@@ -88,7 +88,7 @@ export class IssueStore implements IIssueStore {
   };
 
   getIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
-    const issues = await this.issueService.retrieveIssues(workspaceSlug, projectId, issueIds);
+    const issues = await this.issueService.retrieveIssues(projectId, issueIds);
 
     runInAction(() => {
       issues.forEach((issue) => {

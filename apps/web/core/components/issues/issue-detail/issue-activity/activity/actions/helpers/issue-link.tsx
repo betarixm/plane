@@ -26,7 +26,6 @@ export function IssueLink(props: TIssueLink) {
   if (!activity) return <></>;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: activity.workspace_detail?.slug,
     projectId: activity.project,
     issueId: activity.issue,
     projectIdentifier: activity.project_detail.identifier,

@@ -119,7 +119,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
                   selectedItem={globalViewId?.toString() || ""}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
-                    router.push(`/${workspaceSlug}/workspace-views/${value}`);
+                    router.push(`/workspace-views/${value}`);
                   }}
                   title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
                   icon={
@@ -159,7 +159,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
           <div className="hidden md:block">
             {viewDetails && <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={viewDetails} />}
             {isDefaultView && defaultViewDetails && (
-              <DefaultWorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={defaultViewDetails} />
+              <DefaultWorkspaceViewQuickActions view={defaultViewDetails} />
             )}
           </div>
         </Header.RightItem>

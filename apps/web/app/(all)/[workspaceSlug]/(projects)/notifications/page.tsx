@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
@@ -14,8 +15,8 @@ import { NotificationsRoot } from "@/components/workspace-notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import type { Route } from "./+types/page";
 
-function WorkspaceDashboardPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug } = params;
+function WorkspaceDashboardPage(_props: Route.ComponentProps) {
+  const { workspaceSlug } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // hooks

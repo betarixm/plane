@@ -110,7 +110,7 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @param workspaceSlug
    */
   fetchAllGlobalViews = async (workspaceSlug: string): Promise<IWorkspaceView[]> =>
-    await this.workspaceService.getAllViews(workspaceSlug).then((response) => {
+    await this.workspaceService.getAllViews().then((response) => {
       runInAction(() => {
         response.forEach((view) => {
           set(this.globalViewMap, view.id, view);
@@ -124,7 +124,7 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @param viewId
    */
   fetchGlobalViewDetails = async (workspaceSlug: string, viewId: string): Promise<IWorkspaceView> =>
-    await this.workspaceService.getViewDetails(workspaceSlug, viewId).then((response) => {
+    await this.workspaceService.getViewDetails(viewId).then((response) => {
       runInAction(() => {
         set(this.globalViewMap, viewId, response);
       });
@@ -138,7 +138,7 @@ export class GlobalViewStore implements IGlobalViewStore {
    */
   async createGlobalView(workspaceSlug: string, data: Partial<IWorkspaceView>) {
     try {
-      const response = await this.workspaceService.createView(workspaceSlug, data);
+      const response = await this.workspaceService.createView(data);
       runInAction(() => {
         set(this.globalViewMap, response.id, response);
       });
@@ -169,7 +169,7 @@ export class GlobalViewStore implements IGlobalViewStore {
         set(this.globalViewMap, [viewId, currentKey], data[currentKey]);
       });
 
-      const currentView = await this.workspaceService.updateView(workspaceSlug, viewId, data);
+      const currentView = await this.workspaceService.updateView(viewId, data);
 
       // applying the filters in the global view
       if (shouldSyncFilters && !isEqual(currentViewData?.rich_filters || {}, currentView?.rich_filters || {})) {
@@ -195,7 +195,7 @@ export class GlobalViewStore implements IGlobalViewStore {
    * @param viewId
    */
   deleteGlobalView = async (workspaceSlug: string, viewId: string): Promise<any> =>
-    await this.workspaceService.deleteView(workspaceSlug, viewId).then(() => {
+    await this.workspaceService.deleteView(viewId).then(() => {
       runInAction(() => {
         delete this.globalViewMap[viewId];
       });

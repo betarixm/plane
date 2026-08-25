@@ -17,11 +17,10 @@ import { useAdditionalEditorMention } from "@/hooks/use-additional-editor-mentio
 
 type TArgs = {
   projectId?: string;
-  workspaceSlug: string;
 };
 
 export const useParseEditorContent = (args: TArgs) => {
-  const { projectId, workspaceSlug } = args;
+  const { projectId } = args;
   // store hooks
   const { getUserDetails } = useMember();
   // parse additional content
@@ -182,7 +181,7 @@ export const useParseEditorContent = (args: TArgs) => {
         if (entityType === "user_mention") {
           const userDetails = getUserDetails(id);
           if (!userDetails) return "";
-          return `[${userDetails.display_name}](${originUrl}/${workspaceSlug}/profile/${id})`;
+          return `[${userDetails.display_name}](${originUrl}/profile/${id})`;
         } else {
           const mentionDetails = parseAdditionalEditorContent({
             id,
@@ -214,7 +213,7 @@ export const useParseEditorContent = (args: TArgs) => {
       parsedMarkdownContent = parsedMarkdownContent.replace(issueEmbedRegex, "");
       return parsedMarkdownContent;
     },
-    [getUserDetails, parseAdditionalEditorContent, workspaceSlug]
+    [getUserDetails, parseAdditionalEditorContent]
   );
 
   const getEditorMetaData = useCallback(
@@ -227,13 +226,7 @@ export const useParseEditorContent = (args: TArgs) => {
       imageComponents.forEach((element) => {
         const src = element.getAttribute("src");
         if (src) {
-          const assetSrc = src.startsWith("http")
-            ? src
-            : getEditorAssetSrc({
-                assetId: src,
-                projectId,
-                workspaceSlug,
-              });
+          const assetSrc = src.startsWith("http") ? src : getEditorAssetSrc({ assetId: src, projectId });
           if (assetSrc) {
             filesMetaData.push({
               id: src,
@@ -251,7 +244,7 @@ export const useParseEditorContent = (args: TArgs) => {
         if (id) {
           const userDetails = getUserDetails(id);
           const originUrl = typeof window !== "undefined" && (window.location.origin ?? "");
-          const path = `${workspaceSlug}/profile/${id}`;
+          const path = `profile/${id}`;
           const url = `${originUrl}/${path}`;
           if (userDetails) {
             userMentions.push({
@@ -268,7 +261,7 @@ export const useParseEditorContent = (args: TArgs) => {
         user_mentions: userMentions,
       };
     },
-    [getUserDetails, projectId, workspaceSlug]
+    [getUserDetails, projectId]
   );
 
   return {

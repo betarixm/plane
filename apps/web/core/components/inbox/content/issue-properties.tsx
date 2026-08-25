@@ -52,7 +52,6 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
   if (!issue || !issue?.id) return <></>;
 
   const duplicateWorkItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug?.toString(),
     projectId,
     issueId: duplicateIssueDetails?.id,
     projectIdentifier: currentProjectDetails?.identifier,

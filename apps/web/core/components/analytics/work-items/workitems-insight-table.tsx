@@ -51,7 +51,6 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
     `insights-table-work-items-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}-${isEpic}`,
     () =>
       analyticsService.getAdvanceAnalyticsStats<WorkItemInsightColumns[]>(
-        workspaceSlug,
         "work-items",
         {
           // date_filter: selectedDuration,

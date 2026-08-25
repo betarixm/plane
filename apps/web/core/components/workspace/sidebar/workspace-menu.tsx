@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { AnalyticsIcon, CycleIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
@@ -18,8 +17,6 @@ import { SidebarWorkspaceMenuHeader } from "./workspace-menu-header";
 import { SidebarWorkspaceMenuItem } from "./workspace-menu-item";
 
 export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
-  // router params
-  const { workspaceSlug } = useParams();
   // local storage
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
@@ -29,28 +26,28 @@ export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
     {
       key: "projects",
       labelTranslationKey: "sidebar.projects",
-      href: `/${workspaceSlug}/projects/`,
+      href: `/projects/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: ProjectIcon,
     },
     {
       key: "views",
       labelTranslationKey: "sidebar.views",
-      href: `/${workspaceSlug}/workspace-views/all-issues/`,
+      href: `/workspace-views/all-issues/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: ViewsIcon,
     },
     {
       key: "active-cycles",
       labelTranslationKey: "sidebar.cycles",
-      href: `/${workspaceSlug}/active-cycles/`,
+      href: `/active-cycles/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: CycleIcon,
     },
     {
       key: "analytics",
       labelTranslationKey: "sidebar.analytics",
-      href: `/${workspaceSlug}/analytics/`,
+      href: `/analytics/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: AnalyticsIcon,
     },

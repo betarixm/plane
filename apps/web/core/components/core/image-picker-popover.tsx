@@ -6,7 +6,6 @@
 
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -59,8 +58,6 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
   });
   // refs
   const ref = useRef<HTMLDivElement>(null);
-  // router params
-  const { workspaceSlug } = useParams();
   // store hooks
   const { config } = useInstance();
   // derived values
@@ -125,10 +122,8 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
       setIsOpen(false);
     };
 
-    if (!workspaceSlug) return;
     await fileService
       .uploadWorkspaceAsset(
-        workspaceSlug.toString(),
         {
           entity_identifier: projectId?.toString() ?? "",
           entity_type: EFileAssetType.PROJECT_COVER,

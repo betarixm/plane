@@ -17,29 +17,34 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { IssueService } from "@/services/issue/issue.service";
+import { WorkspaceService } from "@/services/workspace.service";
 // types
 import type { Route } from "./+types/page";
 
 const issueService = new IssueService();
+const workspaceService = new WorkspaceService();
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  const { workspaceSlug, projectId, issueId } = params;
+  const { projectId, issueId } = params;
 
   try {
-    const data = await issueService.getIssueMetaFromURL(workspaceSlug, projectId, issueId);
+    const workspace = await workspaceService.userWorkspace();
+    if (!workspace) return { error: true };
+
+    const data = await issueService.getIssueMetaFromURL(projectId, issueId);
 
     if (data) {
-      throw redirect(`/${workspaceSlug}/browse/${data.project_identifier}-${data.sequence_id}`);
+      throw redirect(`/browse/${data.project_identifier}-${data.sequence_id}`);
     }
 
-    return { error: true, workspaceSlug };
+    return { error: true };
   } catch (error) {
     // If it's a redirect, rethrow it
     if (error instanceof Response) {
       throw error;
     }
     // Otherwise return error state
-    return { error: true, workspaceSlug };
+    return { error: true };
   }
 }
 
@@ -57,7 +62,7 @@ export default function IssueDetailsPage({ loaderData }: Route.ComponentProps) {
           description={t("issue.empty_state.issue_detail.description")}
           primaryButton={{
             text: t("issue.empty_state.issue_detail.primary_button.text"),
-            onClick: () => router.push(`/${loaderData.workspaceSlug}/workspace-views/all-issues/`),
+            onClick: () => router.push("/workspace-views/all-issues/"),
           }}
         />
       </div>

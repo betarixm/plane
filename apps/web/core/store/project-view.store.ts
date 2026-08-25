@@ -165,7 +165,7 @@ export class ProjectViewStore implements IProjectViewStore {
   fetchViews = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
-      await this.viewService.getViews(workspaceSlug, projectId).then((response) => {
+      await this.viewService.getViews(projectId).then((response) => {
         runInAction(() => {
           response.forEach((view) => {
             set(this.viewMap, [view.id], view);
@@ -189,7 +189,7 @@ export class ProjectViewStore implements IProjectViewStore {
    * @returns Promise<IProjectView>
    */
   fetchViewDetails = async (workspaceSlug: string, projectId: string, viewId: string): Promise<IProjectView> =>
-    await this.viewService.getViewDetails(workspaceSlug, projectId, viewId).then((response) => {
+    await this.viewService.getViewDetails(projectId, viewId).then((response) => {
       runInAction(() => {
         set(this.viewMap, [viewId], response);
       });
@@ -204,7 +204,7 @@ export class ProjectViewStore implements IProjectViewStore {
    * @returns Promise<IProjectView>
    */
   async createView(workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> {
-    const response = await this.viewService.createView(workspaceSlug, projectId, getValidatedViewFilters(data));
+    const response = await this.viewService.createView(projectId, getValidatedViewFilters(data));
 
     runInAction(() => {
       set(this.viewMap, [response.id], response);
@@ -233,7 +233,7 @@ export class ProjectViewStore implements IProjectViewStore {
       set(this.viewMap, [viewId], { ...currentView, ...data });
     });
 
-    const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
+    const response = await this.viewService.patchView(projectId, viewId, data);
 
     return response;
   }
@@ -246,7 +246,7 @@ export class ProjectViewStore implements IProjectViewStore {
    * @returns
    */
   deleteView = async (workspaceSlug: string, projectId: string, viewId: string): Promise<any> => {
-    await this.viewService.deleteView(workspaceSlug, projectId, viewId).then(() => {
+    await this.viewService.deleteView(projectId, viewId).then(() => {
       runInAction(() => {
         delete this.viewMap[viewId];
         if (this.rootStore.favorite.entityMap[viewId]) this.rootStore.favorite.removeFavoriteFromStore(viewId);

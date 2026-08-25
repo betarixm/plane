@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { cn } from "@plane/utils";
 // assets
@@ -25,7 +26,8 @@ import type { Route } from "./+types/page";
 function CycleDetailPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, cycleId } = params;
+  const { projectId, cycleId } = params;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { getCycleById, loader } = useCycle();
   const { getProjectById } = useProject();
@@ -60,7 +62,7 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
           description="The cycle you are looking for does not exist or has been deleted."
           primaryButton={{
             text: "View other cycles",
-            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/cycles`),
+            onClick: () => router.push(`/projects/${projectId}/cycles`),
           }}
         />
       ) : (

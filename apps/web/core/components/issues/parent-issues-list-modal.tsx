@@ -75,7 +75,7 @@ export function ParentIssuesListModal({
     setIsLoading(true);
 
     projectService
-      .projectIssuesSearch(workspaceSlug, projectId, {
+      .projectIssuesSearch(projectId, {
         search: debouncedSearchTerm,
         parent: searchEpic ? undefined : true,
         issue_id: issueId,
@@ -174,7 +174,6 @@ export function ParentIssuesListModal({
                       </div>
                       <a
                         href={generateWorkItemLink({
-                          workspaceSlug: workspaceSlug.toString(),
                           projectId: issue?.project_id,
                           issueId: issue?.id,
                           projectIdentifier: issue.project__identifier,

@@ -74,7 +74,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
 
   const dateChecker = async (payload: any) => {
     try {
-      const res = await cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
+      const res = await cycleService.cycleDateCheck(projectId, payload);
       return res.status;
     } catch (_err) {
       return false;

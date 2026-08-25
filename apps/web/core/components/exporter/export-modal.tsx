@@ -7,7 +7,6 @@
 import React, { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -39,7 +38,6 @@ export const Exporter = observer(function Exporter(props: Props) {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();
   const { projectsWithCreatePermissions } = useUser();
@@ -72,17 +70,17 @@ export const Exporter = observer(function Exporter(props: Props) {
 
   async function ExportCSVToMail() {
     setExportLoading(true);
-    if (workspaceSlug && user && typeof provider === "string") {
+    if (user && typeof provider === "string") {
       const payload = {
         provider: provider,
         project: value,
         multiple: multiple,
       };
       await projectExportService
-        .csvExport(workspaceSlug, payload)
+        .csvExport(payload)
         .then(() => {
           mutateServices();
-          router.push(`/${workspaceSlug}/settings/exports`);
+          router.push(`/settings/exports`);
           setExportLoading(false);
           setToast({
             type: TOAST_TYPE.SUCCESS,

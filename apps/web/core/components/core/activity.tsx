@@ -42,12 +42,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
 export function IssueLink({ activity }: { activity: IIssueActivity }) {
-  // router params
-  const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug?.toString() ?? activity.workspace_detail?.slug,
     projectId: activity?.project,
     issueId: activity?.issue,
     projectIdentifier: activity?.project_detail?.identifier,
@@ -80,14 +77,9 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
 }
 
 function UserLink({ activity }: { activity: IIssueActivity }) {
-  // router params
-  const { workspaceSlug } = useParams();
-
   return (
     <a
-      href={`/${workspaceSlug ?? activity.workspace_detail?.slug}/profile/${
-        activity.new_identifier ?? activity.old_identifier
-      }`}
+      href={`/profile/${activity.new_identifier ?? activity.old_identifier}`}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center font-medium text-primary hover:underline"
@@ -432,7 +424,7 @@ const activityDetails: {
               <span className="whitespace-nowrap">to the cycle</span>{" "}
             </span>
             <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              href={`/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline items-center gap-1 font-medium text-primary hover:underline"
@@ -446,7 +438,7 @@ const activityDetails: {
           <>
             <span className="flex-shrink-0 whitespace-nowrap">set the cycle to </span>
             <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              href={`/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline items-center gap-1 font-medium text-primary hover:underline"
@@ -460,7 +452,7 @@ const activityDetails: {
           <>
             removed <IssueLink activity={activity} /> from the cycle{" "}
             <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
+              href={`/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline items-center gap-1 font-medium text-primary hover:underline"
@@ -479,7 +471,7 @@ const activityDetails: {
           <>
             added {showIssue ? <IssueLink activity={activity} /> : "this work item"} to the module{" "}
             <a
-              href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
+              href={`/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline items-center gap-1 font-medium text-primary hover:underline"
@@ -493,7 +485,7 @@ const activityDetails: {
           <>
             set the module to{" "}
             <a
-              href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
+              href={`/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline items-center gap-1 font-medium text-primary hover:underline"
@@ -507,7 +499,7 @@ const activityDetails: {
           <>
             removed <IssueLink activity={activity} /> from the module{" "}
             <a
-              href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
+              href={`/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline items-center gap-1 font-medium text-primary hover:underline"
@@ -759,9 +751,9 @@ type ActivityMessageProps = {
 };
 
 export function ActivityMessage({ activity, showIssue = false }: ActivityMessageProps) {
+  const activityField = activity.field ?? "issue";
   // router params
   const { workspaceSlug } = useParams();
-  const activityField = activity.field ?? "issue";
 
   return (
     <>

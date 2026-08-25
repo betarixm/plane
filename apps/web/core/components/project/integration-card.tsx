@@ -36,7 +36,7 @@ export function IntegrationCard({ integration }: Props) {
 
   const { data: syncedGithubRepository } = useSWR(projectId ? PROJECT_GITHUB_REPOSITORY(projectId) : null, () =>
     workspaceSlug && projectId && integration
-      ? projectService.getProjectGithubRepository(workspaceSlug, projectId, integration.id)
+      ? projectService.getProjectGithubRepository(projectId, integration.id)
       : null
   );
 
@@ -51,7 +51,7 @@ export function IntegrationCard({ integration }: Props) {
     } = repo;
 
     projectService
-      .syncGithubRepository(workspaceSlug, projectId, integration.id, {
+      .syncGithubRepository(projectId, integration.id, {
         name,
         owner: login,
         repository_id: id,

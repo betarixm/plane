@@ -176,7 +176,7 @@ export class Notification implements INotification {
     payload: Partial<TNotification>
   ): Promise<TNotification | undefined> => {
     try {
-      const notification = await workspaceNotificationService.updateNotificationById(workspaceSlug, this.id, payload);
+      const notification = await workspaceNotificationService.updateNotificationById(this.id, payload);
       if (notification) {
         runInAction(() => this.mutateNotification(notification));
       }
@@ -199,7 +199,7 @@ export class Notification implements INotification {
       };
       this.store.workspaceNotification.setUnreadNotificationsCount("decrement");
       runInAction(() => this.mutateNotification(payload));
-      const notification = await workspaceNotificationService.markNotificationAsRead(workspaceSlug, this.id);
+      const notification = await workspaceNotificationService.markNotificationAsRead(this.id);
       if (notification) {
         runInAction(() => this.mutateNotification(notification));
       }
@@ -224,7 +224,7 @@ export class Notification implements INotification {
       };
       this.store.workspaceNotification.setUnreadNotificationsCount("increment");
       runInAction(() => this.mutateNotification(payload));
-      const notification = await workspaceNotificationService.markNotificationAsUnread(workspaceSlug, this.id);
+      const notification = await workspaceNotificationService.markNotificationAsUnread(this.id);
       if (notification) {
         runInAction(() => this.mutateNotification(notification));
       }
@@ -248,7 +248,7 @@ export class Notification implements INotification {
         archived_at: new Date().toISOString(),
       };
       runInAction(() => this.mutateNotification(payload));
-      const notification = await workspaceNotificationService.markNotificationAsArchived(workspaceSlug, this.id);
+      const notification = await workspaceNotificationService.markNotificationAsArchived(this.id);
       if (notification) {
         runInAction(() => this.mutateNotification(notification));
       }
@@ -271,7 +271,7 @@ export class Notification implements INotification {
         archived_at: undefined,
       };
       runInAction(() => this.mutateNotification(payload));
-      const notification = await workspaceNotificationService.markNotificationAsUnArchived(workspaceSlug, this.id);
+      const notification = await workspaceNotificationService.markNotificationAsUnArchived(this.id);
       if (notification) {
         runInAction(() => this.mutateNotification(notification));
       }
@@ -295,7 +295,7 @@ export class Notification implements INotification {
         snoozed_till: snoozeTill.toISOString(),
       };
       runInAction(() => this.mutateNotification(payload));
-      const notification = await workspaceNotificationService.updateNotificationById(workspaceSlug, this.id, payload);
+      const notification = await workspaceNotificationService.updateNotificationById(this.id, payload);
       return notification;
     } catch (error) {
       runInAction(() => this.mutateNotification({ snoozed_till: currentNotificationSnoozeTill }));
@@ -315,7 +315,7 @@ export class Notification implements INotification {
         snoozed_till: undefined,
       };
       runInAction(() => this.mutateNotification(payload));
-      const notification = await workspaceNotificationService.updateNotificationById(workspaceSlug, this.id, payload);
+      const notification = await workspaceNotificationService.updateNotificationById(this.id, payload);
       return notification;
     } catch (error) {
       runInAction(() => this.mutateNotification({ snoozed_till: currentNotificationSnoozeTill }));

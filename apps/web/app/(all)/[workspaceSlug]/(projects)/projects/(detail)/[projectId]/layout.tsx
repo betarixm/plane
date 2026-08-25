@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Outlet } from "react-router";
 // plane imports
 import { Header, Row } from "@plane/ui";
@@ -22,7 +23,8 @@ import type { Route } from "./+types/layout";
 
 function ProjectLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = params;
+  const { projectId } = params;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   // preferences

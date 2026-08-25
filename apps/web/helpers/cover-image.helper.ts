@@ -228,7 +228,6 @@ export const uploadCoverImage = async (
   }
 
   const uploadResult = await fileService.uploadWorkspaceAsset(
-    workspaceSlug,
     {
       entity_identifier: entityIdentifier,
       entity_type: entityType,

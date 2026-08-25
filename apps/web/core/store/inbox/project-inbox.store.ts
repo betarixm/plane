@@ -349,7 +349,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
         this.PER_PAGE_COUNT,
         `${this.PER_PAGE_COUNT}:0:0`
       );
-      const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
+      const { results, ...paginationInfo } = await this.inboxIssueService.list(projectId, queryParams);
 
       runInAction(() => {
         this.loader = undefined;
@@ -390,7 +390,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
           this.PER_PAGE_COUNT,
           this.inboxIssuePaginationInfo?.next_cursor || `${this.PER_PAGE_COUNT}:0:0`
         );
-        const { results, ...paginationInfo } = await this.inboxIssueService.list(workspaceSlug, projectId, queryParams);
+        const { results, ...paginationInfo } = await this.inboxIssueService.list(projectId, queryParams);
 
         runInAction(() => {
           set(this, "inboxIssuePaginationInfo", paginationInfo);
@@ -424,7 +424,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
   ): Promise<TInboxIssue> => {
     try {
       this.loader = "issue-loading";
-      const inboxIssue = await this.inboxIssueService.retrieve(workspaceSlug, projectId, inboxIssueId);
+      const inboxIssue = await this.inboxIssueService.retrieve(projectId, inboxIssueId);
       const issueId = inboxIssue?.issue?.id || undefined;
 
       if (inboxIssue && issueId) {
@@ -459,7 +459,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
    */
   createInboxIssue = async (workspaceSlug: string, projectId: string, data: Partial<TInboxIssue>) => {
     try {
-      const inboxIssueResponse = await this.inboxIssueService.create(workspaceSlug, projectId, data);
+      const inboxIssueResponse = await this.inboxIssueService.create(projectId, data);
       if (inboxIssueResponse)
         runInAction(() => {
           update(this, ["inboxIssueIds"], (ids) => [...ids, inboxIssueResponse?.issue?.id]);
@@ -497,7 +497,7 @@ export class ProjectInboxStore implements IProjectInboxStore {
     const wasPending = currentIssue?.status === EInboxIssueStatus.PENDING;
     try {
       if (!currentIssue) return;
-      await this.inboxIssueService.destroy(workspaceSlug, projectId, inboxIssueId).then(() => {
+      await this.inboxIssueService.destroy(projectId, inboxIssueId).then(() => {
         runInAction(() => {
           set(
             this,

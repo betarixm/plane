@@ -37,7 +37,7 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  const viewLink = `${workspaceSlug}/workspace-views/${view.id}`;
+  const viewLink = `/workspace-views/${view.id}`;
   const handleCopyText = async () => {
     await copyUrlToClipboard(viewLink);
     setToast({
@@ -47,7 +47,7 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
     });
   };
 
-  const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(viewLink, "_blank");
 
   const MENU_ITEMS = useViewMenuItems({
     isOwner,

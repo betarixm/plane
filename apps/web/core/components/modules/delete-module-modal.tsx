@@ -48,7 +48,7 @@ export const DeleteModuleModal = observer(function DeleteModuleModal(props: Prop
 
     await deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
-        if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project_id}/modules`);
+        if (moduleId || peekModule) router.push(`/projects/${data.project_id}/modules`);
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,

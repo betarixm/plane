@@ -531,7 +531,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     shouldUpdateList = true
   ) {
     // perform an API call
-    const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
+    const response = await this.issueService.createIssue(projectId, data);
 
     // add Issue to Store
     this.addIssue(response, shouldUpdateList);
@@ -576,7 +576,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       } as TIssue);
 
       // call API to update the issue
-      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+      await this.issueService.patchIssue(projectId, issueId, data);
 
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
@@ -601,7 +601,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     this.updateParentStats(issueBeforeRemoval, undefined);
 
     // Male API call
-    await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+    await this.issueService.deleteIssue(projectId, issueId);
     // Remove from Respective issue Id list
     runInAction(() => {
       this.removeIssueFromList(issueId);
@@ -623,7 +623,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // update parent stats optimistically
     this.updateParentStats(issueBeforeArchive, undefined);
     // Male API call
-    const response = await this.issueArchiveService.archiveIssue(workspaceSlug, projectId, issueId);
+    const response = await this.issueArchiveService.archiveIssue(projectId, issueId);
     // call fetch Parent stats
     this.fetchParentStats(workspaceSlug, projectId);
     runInAction(() => {
@@ -677,7 +677,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    */
   async removeBulkIssues(workspaceSlug: string, projectId: string, issueIds: string[]) {
     // Make API call to bulk delete issues
-    const response = await this.issueService.bulkDeleteIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+    const response = await this.issueService.bulkDeleteIssues(projectId, { issue_ids: issueIds });
     // call fetch parent stats
     this.fetchParentStats(workspaceSlug, projectId);
     // Remove issues from the store
@@ -697,7 +697,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    * @param issueIds
    */
   bulkArchiveIssues = async (workspaceSlug: string, projectId: string, issueIds: string[]) => {
-    const response = await this.issueService.bulkArchiveIssues(workspaceSlug, projectId, { issue_ids: issueIds });
+    const response = await this.issueService.bulkArchiveIssues(projectId, { issue_ids: issueIds });
 
     runInAction(() => {
       issueIds.forEach((issueId) => {
@@ -722,7 +722,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   bulkUpdateProperties = async (workspaceSlug: string, projectId: string, data: TBulkOperationsPayload) => {
     const issueIds = data.issue_ids;
     // make request to update issue properties
-    await this.issueService.bulkOperations(workspaceSlug, projectId, data);
+    await this.issueService.bulkOperations(projectId, data);
     // update issues in the store
     runInAction(() => {
       issueIds.forEach((issueId) => {
@@ -783,7 +783,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         }
       });
 
-      await this.issueService.updateIssueDates(workspaceSlug, projectId, updates);
+      await this.issueService.updateIssueDates(projectId, updates);
     } catch (e) {
       runInAction(() => {
         // oxlint-disable-next-line no-shadow
@@ -816,7 +816,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     fetchAddedIssues = true
   ) {
     // Perform an APi call to add issue to cycle
-    await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+    await this.issueService.addIssueToCycle(projectId, cycleId, {
       issues: issueIds,
     });
 
@@ -854,7 +854,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     if (this.cycleId === cycleId) this.updateParentStats(issueBeforeRemoval, undefined, cycleId);
 
     // Perform an APi call to remove issue from cycle
-    await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, cycleId, issueId);
+    await this.issueService.removeIssueFromCycle(projectId, cycleId, issueId);
 
     // if cycle Id is the current Cycle Id then call fetch parent stats
     if (this.cycleId === cycleId) this.fetchParentStats(workspaceSlug, projectId, cycleId);
@@ -901,7 +901,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       if (this.cycleId === cycleId || this.cycleId === issueCycleId)
         this.updateParentStats(issueBeforeUpdate, issueAfterUpdate, this.cycleId);
 
-      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+      await this.issueService.addIssueToCycle(projectId, cycleId, {
         issues: [issueId],
       });
 
@@ -946,7 +946,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       if (this.cycleId === issueCycleId) this.updateParentStats(issueBeforeRemoval, undefined, issueCycleId);
 
       // make API call
-      await this.issueService.removeIssueFromCycle(workspaceSlug, projectId, issueCycleId, issueId);
+      await this.issueService.removeIssueFromCycle(projectId, issueCycleId, issueId);
 
       // if cycle Id is the current Cycle Id then call fetch parent stats
       if (this.cycleId === issueCycleId) this.fetchParentStats(workspaceSlug, projectId, issueCycleId);
@@ -980,7 +980,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     fetchAddedIssues = true
   ) {
     // Perform an APi call to add issue to module
-    await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+    await this.moduleService.addIssuesToModule(projectId, moduleId, {
       issues: issueIds,
     });
 
@@ -1014,7 +1014,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
    */
   async removeIssuesFromModule(workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) {
     // Perform an APi call to remove issue to module
-    const response = await this.moduleService.removeIssuesFromModuleBulk(workspaceSlug, projectId, moduleId, issueIds);
+    const response = await this.moduleService.removeIssuesFromModuleBulk(projectId, moduleId, issueIds);
 
     // if module Id is the current Module Id then call fetch parent stats
     if (this.moduleId === moduleId) this.fetchParentStats(workspaceSlug, projectId);
@@ -1048,7 +1048,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // keep a copy of the original module ids
     const originalModuleIds = get(this.rootIssueStore.issues.issuesMap, [issueId, "module_ids"]) ?? [];
     //Perform API call
-    await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+    await this.moduleService.addModulesToIssue(projectId, issueId, {
       modules: moduleIds,
       removed_modules: [],
     });
@@ -1116,7 +1116,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       }
 
       //Perform API call
-      await this.moduleService.addModulesToIssue(workspaceSlug, projectId, issueId, {
+      await this.moduleService.addModulesToIssue(projectId, issueId, {
         modules: addModuleIds,
         removed_modules: removeModuleIds,
       });

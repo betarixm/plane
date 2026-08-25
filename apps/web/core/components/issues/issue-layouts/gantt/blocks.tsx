@@ -125,7 +125,6 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
   };
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug,
     projectId: issueDetails?.project_id,
     issueId,
     projectIdentifier,

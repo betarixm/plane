@@ -6,7 +6,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
 import type { TIssue } from "@plane/types";
 // helpers
@@ -23,15 +22,13 @@ export const SpreadsheetSubIssueColumn = observer(function SpreadsheetSubIssueCo
   const { issue } = props;
   // router
   const router = useAppRouter();
-  // hooks
-  const { workspaceSlug } = useParams();
   // derived values
   const isEpic = issue?.is_epic;
   const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const redirectToIssueDetail = () => {
     router.push(
-      `/${workspaceSlug?.toString()}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}#sub-issues`
+      `/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}#sub-issues`
     );
   };
 

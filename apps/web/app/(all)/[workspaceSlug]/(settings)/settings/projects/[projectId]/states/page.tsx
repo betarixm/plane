@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -21,7 +22,8 @@ import type { Route } from "./+types/page";
 import { StatesProjectSettingsHeader } from "./header";
 
 function StatesSettingsPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug, projectId } = params;
+  const { workspaceSlug } = useParams();
+  const { projectId } = params;
   // store
   const { currentProjectDetails } = useProject();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();

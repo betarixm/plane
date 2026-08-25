@@ -102,9 +102,7 @@ export function ExistingIssuesListModal(props: Props) {
     setIsLoading(true);
     const searchService =
       workItemSearchServiceCallback ??
-      (projectId
-        ? projectService.projectIssuesSearch.bind(projectService, workspaceSlug?.toString(), projectId?.toString())
-        : undefined);
+      (projectId ? projectService.projectIssuesSearch.bind(projectService, projectId?.toString()) : undefined);
     if (!searchService) return;
     searchService({
       search: debouncedSearchTerm,
@@ -279,7 +277,6 @@ export function ExistingIssuesListModal(props: Props) {
                         </div>
                         <a
                           href={generateWorkItemLink({
-                            workspaceSlug,
                             projectId: issue?.project_id,
                             issueId: issue?.id,
                             projectIdentifier: issue.project__identifier,

@@ -59,7 +59,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
 
     try {
       await deleteProject(workspaceSlug.toString(), project.id);
-      if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
+      if (projectId && projectId.toString() === project.id) router.push(`/projects`);
       handleClose();
       setToast({
         type: TOAST_TYPE.SUCCESS,

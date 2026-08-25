@@ -247,7 +247,6 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   const canSelectIssues = !disableUserActions && !selectionHelpers.isSelectionDisabled;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug?.toString(),
     projectId: issueDetail?.project_id,
     issueId,
     projectIdentifier,

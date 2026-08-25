@@ -22,9 +22,9 @@ export class WorkspaceNotificationService extends APIService {
     super(API_BASE_URL);
   }
 
-  async fetchUnreadNotificationsCount(workspaceSlug: string): Promise<TUnreadNotificationsCount | undefined> {
+  async fetchUnreadNotificationsCount(): Promise<TUnreadNotificationsCount | undefined> {
     try {
-      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/users/notifications/unread/`);
+      const { data } = await this.get(`/api/workspace/users/notifications/unread/`);
       return data || undefined;
     } catch (error) {
       throw error;
@@ -32,11 +32,10 @@ export class WorkspaceNotificationService extends APIService {
   }
 
   async fetchNotifications(
-    workspaceSlug: string,
     params: TNotificationPaginatedInfoQueryParams
   ): Promise<TNotificationPaginatedInfo | undefined> {
     try {
-      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/users/notifications/`, {
+      const { data } = await this.get(`/api/workspace/users/notifications/`, {
         params,
       });
       return data || undefined;
@@ -46,72 +45,56 @@ export class WorkspaceNotificationService extends APIService {
   }
 
   async updateNotificationById(
-    workspaceSlug: string,
     notificationId: string,
     payload: Partial<TNotification>
   ): Promise<TNotification | undefined> {
     try {
-      const { data } = await this.patch(
-        `/api/workspaces/${workspaceSlug}/users/notifications/${notificationId}/`,
-        payload
-      );
+      const { data } = await this.patch(`/api/workspace/users/notifications/${notificationId}/`, payload);
       return data || undefined;
     } catch (error) {
       throw error;
     }
   }
 
-  async markNotificationAsRead(workspaceSlug: string, notificationId: string): Promise<TNotification | undefined> {
+  async markNotificationAsRead(notificationId: string): Promise<TNotification | undefined> {
     try {
-      const { data } = await this.post(`/api/workspaces/${workspaceSlug}/users/notifications/${notificationId}/read/`);
+      const { data } = await this.post(`/api/workspace/users/notifications/${notificationId}/read/`);
       return data || undefined;
     } catch (error) {
       throw error;
     }
   }
 
-  async markNotificationAsUnread(workspaceSlug: string, notificationId: string): Promise<TNotification | undefined> {
+  async markNotificationAsUnread(notificationId: string): Promise<TNotification | undefined> {
     try {
-      const { data } = await this.delete(
-        `/api/workspaces/${workspaceSlug}/users/notifications/${notificationId}/read/`
-      );
+      const { data } = await this.delete(`/api/workspace/users/notifications/${notificationId}/read/`);
       return data || undefined;
     } catch (error) {
       throw error;
     }
   }
 
-  async markNotificationAsArchived(workspaceSlug: string, notificationId: string): Promise<TNotification | undefined> {
+  async markNotificationAsArchived(notificationId: string): Promise<TNotification | undefined> {
     try {
-      const { data } = await this.post(
-        `/api/workspaces/${workspaceSlug}/users/notifications/${notificationId}/archive/`
-      );
+      const { data } = await this.post(`/api/workspace/users/notifications/${notificationId}/archive/`);
       return data || undefined;
     } catch (error) {
       throw error;
     }
   }
 
-  async markNotificationAsUnArchived(
-    workspaceSlug: string,
-    notificationId: string
-  ): Promise<TNotification | undefined> {
+  async markNotificationAsUnArchived(notificationId: string): Promise<TNotification | undefined> {
     try {
-      const { data } = await this.delete(
-        `/api/workspaces/${workspaceSlug}/users/notifications/${notificationId}/archive/`
-      );
+      const { data } = await this.delete(`/api/workspace/users/notifications/${notificationId}/archive/`);
       return data || undefined;
     } catch (error) {
       throw error;
     }
   }
 
-  async markAllNotificationsAsRead(
-    workspaceSlug: string,
-    payload: TNotificationPaginatedInfoQueryParams
-  ): Promise<TNotification | undefined> {
+  async markAllNotificationsAsRead(payload: TNotificationPaginatedInfoQueryParams): Promise<TNotification | undefined> {
     try {
-      const { data } = await this.post(`/api/workspaces/${workspaceSlug}/users/notifications/mark-all-read/`, payload);
+      const { data } = await this.post(`/api/workspace/users/notifications/mark-all-read/`, payload);
       return data || undefined;
     } catch (error) {
       throw error;

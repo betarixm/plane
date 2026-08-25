@@ -310,7 +310,7 @@ export class ProjectStore implements IProjectStore {
   fetchPartialProjects = async (workspaceSlug: string) => {
     try {
       this.loader = "init-loader";
-      const projectsResponse = await this.projectService.getProjectsLite(workspaceSlug);
+      const projectsResponse = await this.projectService.getProjectsLite();
       runInAction(() => {
         projectsResponse.forEach((project) => {
           update(this.projectMap, [project.id], (p) => ({ ...p, ...project }));
@@ -339,7 +339,7 @@ export class ProjectStore implements IProjectStore {
       } else {
         this.loader = "init-loader";
       }
-      const projectsResponse = await this.projectService.getProjects(workspaceSlug);
+      const projectsResponse = await this.projectService.getProjects();
       runInAction(() => {
         projectsResponse.forEach((project) => {
           update(this.projectMap, [project.id], (p) => ({ ...p, ...project }));
@@ -363,7 +363,7 @@ export class ProjectStore implements IProjectStore {
    */
   fetchProjectDetails = async (workspaceSlug: string, projectId: string) => {
     try {
-      const response = await this.projectService.getProject(workspaceSlug, projectId);
+      const response = await this.projectService.getProject(projectId);
       runInAction(() => {
         update(this.projectMap, [projectId], (p) => ({ ...p, ...response }));
       });
@@ -385,7 +385,7 @@ export class ProjectStore implements IProjectStore {
     params?: TProjectAnalyticsCountParams
   ): Promise<TProjectAnalyticsCount[]> => {
     try {
-      const response = await this.projectService.getProjectAnalyticsCount(workspaceSlug, params);
+      const response = await this.projectService.getProjectAnalyticsCount(params);
       runInAction(() => {
         for (const analyticsData of response) {
           set(this.projectAnalyticsCountMap, [analyticsData.id], analyticsData);
@@ -515,7 +515,7 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         set(this.projectMap, [projectId, "sort_order"], viewProps?.sort_order);
       });
-      const response = await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, viewProps);
+      const response = await this.projectService.updateProjectUserProperties(projectId, viewProps);
       return response;
     } catch (error) {
       runInAction(() => {
@@ -534,7 +534,7 @@ export class ProjectStore implements IProjectStore {
    */
   createProject = async (workspaceSlug: string, data: any) => {
     try {
-      const response = await this.projectService.createProject(workspaceSlug, data);
+      const response = await this.projectService.createProject(data);
       this.processProjectAfterCreation(workspaceSlug, response);
       return response;
     } catch (error) {
@@ -557,7 +557,7 @@ export class ProjectStore implements IProjectStore {
         set(this.projectMap, [projectId], { ...projectDetails, ...data });
         this.isUpdatingProject = true;
       });
-      const response = await this.projectService.updateProject(workspaceSlug, projectId, data);
+      const response = await this.projectService.updateProject(projectId, data);
       runInAction(() => {
         this.isUpdatingProject = false;
       });
@@ -581,7 +581,7 @@ export class ProjectStore implements IProjectStore {
   deleteProject = async (workspaceSlug: string, projectId: string) => {
     try {
       if (!this.projectMap?.[projectId]) return;
-      await this.projectService.deleteProject(workspaceSlug, projectId);
+      await this.projectService.deleteProject(projectId);
       runInAction(() => {
         delete this.projectMap[projectId];
         if (this.rootStore.favorite.entityMap[projectId]) this.rootStore.favorite.removeFavoriteFromStore(projectId);
@@ -601,7 +601,7 @@ export class ProjectStore implements IProjectStore {
    */
   archiveProject = async (workspaceSlug: string, projectId: string) => {
     await this.projectArchiveService
-      .archiveProject(workspaceSlug, projectId)
+      .archiveProject(projectId)
       .then((response) => {
         runInAction(() => {
           set(this.projectMap, [projectId, "archived_at"], response.archived_at);
@@ -622,7 +622,7 @@ export class ProjectStore implements IProjectStore {
    */
   restoreProject = async (workspaceSlug: string, projectId: string) => {
     await this.projectArchiveService
-      .restoreProject(workspaceSlug, projectId)
+      .restoreProject(projectId)
       .then(() => {
         runInAction(() => {
           set(this.projectMap, [projectId, "archived_at"], null);

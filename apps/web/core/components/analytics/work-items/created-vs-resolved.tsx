@@ -40,7 +40,6 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}-${isEpic}`,
     () =>
       analyticsService.getAdvanceAnalyticsCharts<IChartResponse>(
-        workspaceSlug,
         "work-items",
         {
           // date_filter: selectedDuration,

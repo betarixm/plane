@@ -182,7 +182,6 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug,
     projectId: issue?.project_id,
     issueId,
     projectIdentifier,

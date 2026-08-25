@@ -15,39 +15,16 @@ export class IssueFiltersService extends APIService {
     super(API_BASE_URL);
   }
 
-  // // workspace issue filters
-  // async fetchWorkspaceFilters(workspaceSlug: string): Promise<IIssueFiltersResponse> {
-  //   return this.get(`/api/workspaces/${workspaceSlug}/user-properties/`)
-  //     .then((response) => response?.data)
-  //     .catch((error) => {
-  //       throw error?.response?.data;
-  //     });
-  // }
-  // async patchWorkspaceFilters(
-  //   workspaceSlug: string,
-  //   data: Partial<IIssueFiltersResponse>
-  // ): Promise<IIssueFiltersResponse> {
-  //   return this.patch(`/api/workspaces/${workspaceSlug}/user-properties/`, data)
-  //     .then((response) => response?.data)
-  //     .catch((error) => {
-  //       throw error?.response?.data;
-  //     });
-  // }
-
   // epic issue filters
-  async fetchProjectEpicFilters(workspaceSlug: string, projectId: string): Promise<IIssueFiltersResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics-user-properties/`)
+  async fetchProjectEpicFilters(projectId: string): Promise<IIssueFiltersResponse> {
+    return this.get(`/api/workspace/projects/${projectId}/epics-user-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
-  async patchProjectEpicFilters(
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<IIssueFiltersResponse>
-  ): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics-user-properties/`, data)
+  async patchProjectEpicFilters(projectId: string, data: Partial<IIssueFiltersResponse>): Promise<any> {
+    return this.patch(`/api/workspace/projects/${projectId}/epics-user-properties/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -55,24 +32,15 @@ export class IssueFiltersService extends APIService {
   }
 
   // cycle issue filters
-  async fetchCycleIssueFilters(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string
-  ): Promise<IIssueFiltersResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/user-properties/`)
+  async fetchCycleIssueFilters(projectId: string, cycleId: string): Promise<IIssueFiltersResponse> {
+    return this.get(`/api/workspace/projects/${projectId}/cycles/${cycleId}/user-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
-  async patchCycleIssueFilters(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    data: Partial<IIssueFiltersResponse>
-  ): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/user-properties/`, data)
+  async patchCycleIssueFilters(projectId: string, cycleId: string, data: Partial<IIssueFiltersResponse>): Promise<any> {
+    return this.patch(`/api/workspace/projects/${projectId}/cycles/${cycleId}/user-properties/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -80,27 +48,19 @@ export class IssueFiltersService extends APIService {
   }
 
   // module issue filters
-  async fetchModuleIssueFilters(
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string
-  ): Promise<IIssueFiltersResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/user-properties/`)
+  async fetchModuleIssueFilters(projectId: string, moduleId: string): Promise<IIssueFiltersResponse> {
+    return this.get(`/api/workspace/projects/${projectId}/modules/${moduleId}/user-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
   async patchModuleIssueFilters(
-    workspaceSlug: string,
     projectId: string,
     moduleId: string,
     data: Partial<IIssueFiltersResponse>
   ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/user-properties/`,
-      data
-    )
+    return this.patch(`/api/workspace/projects/${projectId}/modules/${moduleId}/user-properties/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

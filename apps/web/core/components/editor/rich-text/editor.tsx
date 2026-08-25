@@ -68,7 +68,6 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
   // parse content
   const { getEditorMetaData } = useParseEditorContent({
     projectId,
-    workspaceSlug,
   });
 
   return (
@@ -81,7 +80,6 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
         projectId,
         uploadFile: editable ? props.uploadFile : async () => "",
         duplicateFile: editable ? props.duplicateFile : async () => "",
-        workspaceId,
         workspaceSlug,
       })}
       getEditorMetaData={getEditorMetaData}

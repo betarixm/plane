@@ -66,7 +66,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
   });
 
   const { data: workspaceIntegrations } = useSWR(workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug) : null, () =>
-    workspaceSlug ? integrationService.getWorkspaceIntegrationsList(workspaceSlug) : null
+    workspaceSlug ? integrationService.getWorkspaceIntegrationsList() : null
   );
 
   const handleRemoveIntegration = async () => {
@@ -79,7 +79,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
     setDeletingIntegration(true);
 
     await integrationService
-      .deleteWorkspaceIntegration(workspaceSlug, workspaceIntegrationId ?? "")
+      .deleteWorkspaceIntegration(workspaceIntegrationId ?? "")
       .then(() => {
         void mutate<IWorkspaceIntegration[]>(
           WORKSPACE_INTEGRATIONS(workspaceSlug),

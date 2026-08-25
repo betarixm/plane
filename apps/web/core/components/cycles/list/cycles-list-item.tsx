@@ -82,7 +82,7 @@ export const CyclesListItem = observer(function CyclesListItem(props: TCyclesLis
   return (
     <ListItem
       title={cycleDetails?.name ?? ""}
-      itemLink={`/${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`}
+      itemLink={`/projects/${projectId}/cycles/${cycleDetails.id}`}
       onItemClick={handleItemClick}
       className={className}
       prependTitleElement={

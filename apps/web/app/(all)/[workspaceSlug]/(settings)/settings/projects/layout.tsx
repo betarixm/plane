@@ -14,7 +14,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import type { Route } from "./+types/layout";
 
 function ProjectSettingsLayout({ params }: Route.ComponentProps) {
-  const { workspaceSlug, projectId } = params;
+  const { projectId } = params;
   // router
   const router = useAppRouter();
   // store hooks
@@ -23,9 +23,9 @@ function ProjectSettingsLayout({ params }: Route.ComponentProps) {
   useEffect(() => {
     if (projectId) return;
     if (joinedProjectIds.length > 0) {
-      router.push(`/${workspaceSlug}/settings/projects/${joinedProjectIds[0]}`);
+      router.push(`/settings/projects/${joinedProjectIds[0]}`);
     }
-  }, [joinedProjectIds, router, workspaceSlug, projectId]);
+  }, [joinedProjectIds, router, projectId]);
 
   return <Outlet />;
 }

@@ -46,11 +46,7 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
   const { data: recents, isLoading } = useSWR(
     workspaceSlug ? `WORKSPACE_RECENT_ACTIVITY_${workspaceSlug}_${filter}` : null,
     workspaceSlug
-      ? () =>
-          workspaceService.fetchWorkspaceRecents(
-            workspaceSlug.toString(),
-            filter === filters[0].name ? undefined : filter
-          )
+      ? () => workspaceService.fetchWorkspaceRecents(filter === filters[0].name ? undefined : filter)
       : null,
     {
       revalidateIfStale: false,
@@ -62,7 +58,7 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
   const resolveRecent = (activity: TActivityEntityData) => {
     switch (activity.entity_name) {
       case "project":
-        return <RecentProject activity={activity} ref={ref} workspaceSlug={workspaceSlug} />;
+        return <RecentProject activity={activity} ref={ref} />;
       case "issue":
         return <RecentIssue activity={activity} ref={ref} workspaceSlug={workspaceSlug} />;
       default:

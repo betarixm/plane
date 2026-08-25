@@ -22,7 +22,7 @@ type Props = {
 export const LayoutQuickActions = observer(function LayoutQuickActions(props: Props) {
   const { workspaceSlug, projectId, storeType } = props;
 
-  const layoutLink = `${workspaceSlug}/projects/${projectId}/${storeType === "EPIC" ? "epics" : "issues"}`;
+  const layoutLink = `/projects/${projectId}/${storeType === "EPIC" ? "epics" : "issues"}`;
 
   const handleCopyLink = () =>
     copyUrlToClipboard(layoutLink).then(() => {
@@ -33,7 +33,7 @@ export const LayoutQuickActions = observer(function LayoutQuickActions(props: Pr
       });
     });
 
-  const handleOpenInNewTab = () => window.open(`/${layoutLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(layoutLink, "_blank");
 
   const menuResult = useLayoutMenuItems({
     workspaceSlug,

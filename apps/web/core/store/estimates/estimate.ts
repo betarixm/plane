@@ -142,7 +142,7 @@ export class Estimate implements IEstimate {
   ): Promise<IEstimatePointType | undefined> => {
     if (!this.id || !payload) return;
 
-    const estimatePoint = await estimateService.createEstimatePoint(workspaceSlug, projectId, this.id, payload);
+    const estimatePoint = await estimateService.createEstimatePoint(projectId, this.id, payload);
     if (estimatePoint) {
       runInAction(() => {
         if (estimatePoint.id) {

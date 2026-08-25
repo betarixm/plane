@@ -160,7 +160,6 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     : 0;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug,
     projectId: issue?.project_id,
     issueId,
     projectIdentifier,

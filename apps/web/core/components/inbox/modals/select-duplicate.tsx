@@ -59,7 +59,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
 
     setIsSearching(true);
     projectService
-      .projectIssuesSearch(workspaceSlug.toString(), projectId.toString(), {
+      .projectIssuesSearch(projectId.toString(), {
         search: debouncedSearchTerm,
         workspace_search: false,
       })

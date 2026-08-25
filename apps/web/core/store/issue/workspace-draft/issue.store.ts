@@ -224,7 +224,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       const params = this.generateNotificationQueryParams(paginationType, filterParams);
 
       // fetching the paginated workspace draft issues
-      const draftIssuesResponse = await workspaceDraftService.getIssues(workspaceSlug, { ...params });
+      const draftIssuesResponse = await workspaceDraftService.getIssues({ ...params });
       if (!draftIssuesResponse) return undefined;
 
       const { results, ...paginationInfo } = draftIssuesResponse;
@@ -259,7 +259,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     try {
       this.loader = "create";
 
-      const response = await workspaceDraftService.createIssue(workspaceSlug, payload);
+      const response = await workspaceDraftService.createIssue(payload);
       if (response) {
         runInAction(() => {
           this.addIssue([response]);
@@ -295,7 +295,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
           ...{ updated_at: getCurrentDateTimeInISO() },
         });
       });
-      const response = await workspaceDraftService.updateIssue(workspaceSlug, issueId, payload);
+      const response = await workspaceDraftService.updateIssue(issueId, payload);
       this.loader = undefined;
       return response;
     } catch (error) {
@@ -311,7 +311,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     try {
       this.loader = "delete";
 
-      const response = await workspaceDraftService.deleteIssue(workspaceSlug, issueId);
+      const response = await workspaceDraftService.deleteIssue(issueId);
       runInAction(() => {
         // Remove the issue from the issueMapIds
         this.issueMapIds[workspaceSlug] = (this.issueMapIds[workspaceSlug] || []).filter((id) => id !== issueId);
@@ -340,7 +340,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
     try {
       this.loader = "move";
 
-      const response = await workspaceDraftService.moveIssue(workspaceSlug, issueId, payload);
+      const response = await workspaceDraftService.moveIssue(issueId, payload);
       runInAction(() => {
         // Remove the issue from the issueMapIds
         this.issueMapIds[workspaceSlug] = (this.issueMapIds[workspaceSlug] || []).filter((id) => id !== issueId);

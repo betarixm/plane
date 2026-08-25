@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -28,7 +29,8 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
   // states
   const [deleteWebhookModal, setDeleteWebhookModal] = useState(false);
   // router
-  const { workspaceSlug, webhookId } = params;
+  const { workspaceSlug } = useParams();
+  const { webhookId } = params;
   // mobx store
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();

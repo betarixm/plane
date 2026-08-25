@@ -150,9 +150,9 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
               }}
               fetchHandlers={{
                 listDescriptionVersions: (issueId) =>
-                  workItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+                  workItemVersionService.listDescriptionVersions(projectId, issueId),
                 retrieveDescriptionVersion: (issueId, versionId) =>
-                  workItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+                  workItemVersionService.retrieveDescriptionVersion(projectId, issueId, versionId),
               }}
               handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
               projectId={projectId}

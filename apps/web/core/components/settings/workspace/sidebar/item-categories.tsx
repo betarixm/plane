@@ -5,8 +5,8 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
-import { useParams } from "react-router";
+import { useParams } from "next/navigation";
+import { useLocation } from "react-router";
 // plane imports
 import {
   EUserPermissionsLevel,
@@ -15,7 +15,6 @@ import {
   WORKSPACE_SETTINGS_CATEGORY_LABELS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { joinUrlPath } from "@plane/utils";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
 // hooks
@@ -26,7 +25,7 @@ import { WORKSPACE_SETTINGS_ICONS } from "./item-icon";
 export const WorkspaceSettingsSidebarItemCategories = observer(function WorkspaceSettingsSidebarItemCategories() {
   // params
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   // store hooks
   const { allowPermissions } = useUserPermissions();
   // translation
@@ -51,14 +50,14 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
               {accessibleItems.map((item) => {
                 const isItemActive =
                   item.href === "/settings"
-                    ? pathname === `/${workspaceSlug}${item.href}/`
-                    : new RegExp(`^/${workspaceSlug}${item.href}/`).test(pathname);
+                    ? pathname === `${item.href}/`
+                    : new RegExp(`^${item.href}/`).test(pathname);
 
                 return (
                   <SettingsSidebarItem
                     key={item.key}
                     as="link"
-                    href={joinUrlPath(workspaceSlug ?? "", item.href)}
+                    href={item.href}
                     isActive={isItemActive}
                     icon={WORKSPACE_SETTINGS_ICONS[item.key]}
                     label={t(item.i18n_label)}

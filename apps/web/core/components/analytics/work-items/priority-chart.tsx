@@ -65,7 +65,6 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
     ${selectedProjects}-${selectedCycle}-${selectedModule}-${props.x_axis}-${props.y_axis}-${props.group_by}-${isPeekView}-${isEpic}`,
     () =>
       analyticsService.getAdvanceAnalyticsCharts<TChart>(
-        workspaceSlug,
         "custom-work-items",
         {
           // date_filter: selectedDuration,

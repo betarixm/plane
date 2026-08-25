@@ -30,7 +30,7 @@ import type { Route } from "./+types/page";
 function ProjectModulesPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = params;
+  const { projectId } = params;
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
@@ -74,7 +74,7 @@ function ProjectModulesPage({ params }: Route.ComponentProps) {
           primaryButton={{
             text: t("disabled_project.empty_state.module.primary_button.text"),
             onClick: () => {
-              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
+              router.push(`/settings/projects/${projectId}/features`);
             },
             disabled: !canPerformEmptyStateActions,
           }}

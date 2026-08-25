@@ -23,35 +23,31 @@ export class IntegrationService extends APIService {
       });
   }
 
-  async getWorkspaceIntegrationsList(workspaceSlug: string): Promise<IWorkspaceIntegration[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/workspace-integrations/`)
+  async getWorkspaceIntegrationsList(): Promise<IWorkspaceIntegration[]> {
+    return this.get(`/api/workspace/workspace-integrations/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteWorkspaceIntegration(workspaceSlug: string, integrationId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/workspace-integrations/${integrationId}/provider/`)
+  async deleteWorkspaceIntegration(integrationId: string): Promise<any> {
+    return this.delete(`/api/workspace/workspace-integrations/${integrationId}/provider/`)
       .then((res) => res?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getImporterServicesList(workspaceSlug: string): Promise<IImporterService[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/importers/`)
+  async getImporterServicesList(): Promise<IImporterService[]> {
+    return this.get(`/api/workspace/importers/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
-  async getExportsServicesList(
-    workspaceSlug: string,
-    cursor: string,
-    per_page: number
-  ): Promise<IExportServiceResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/export-issues`, {
+  async getExportsServicesList(cursor: string, per_page: number): Promise<IExportServiceResponse> {
+    return this.get(`/api/workspace/export-issues`, {
       params: {
         per_page,
         cursor,
@@ -63,8 +59,8 @@ export class IntegrationService extends APIService {
       });
   }
 
-  async deleteImporterService(workspaceSlug: string, service: string, importerId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/importers/${service}/${importerId}/`)
+  async deleteImporterService(service: string, importerId: string): Promise<any> {
+    return this.delete(`/api/workspace/importers/${service}/${importerId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

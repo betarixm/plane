@@ -40,12 +40,12 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label="Work Items"
-                href={`/${workspaceSlug}/projects/${projectId}/issues/`}
+                href={`/projects/${projectId}/issues/`}
                 icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
               />
             }

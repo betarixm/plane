@@ -24,7 +24,6 @@ export class IssueCommentService extends APIService {
   }
 
   async getIssueComments(
-    workspaceSlug: string,
     projectId: string,
     issueId: string,
     params:
@@ -33,7 +32,7 @@ export class IssueCommentService extends APIService {
         }
       | object = {}
   ): Promise<TIssueComment[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/history/`, {
+    return this.get(`/api/workspace/projects/${projectId}/${this.serviceType}/${issueId}/history/`, {
       params: {
         activity_type: `${this.serviceType === EIssueServiceType.EPICS ? "epic-comment" : "issue-comment"}`,
         ...params,
@@ -45,16 +44,8 @@ export class IssueCommentService extends APIService {
       });
   }
 
-  async createIssueComment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssueComment>
-  ): Promise<TIssueComment> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/comments/`,
-      data
-    )
+  async createIssueComment(projectId: string, issueId: string, data: Partial<TIssueComment>): Promise<TIssueComment> {
+    return this.post(`/api/workspace/projects/${projectId}/${this.serviceType}/${issueId}/comments/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -62,14 +53,13 @@ export class IssueCommentService extends APIService {
   }
 
   async patchIssueComment(
-    workspaceSlug: string,
     projectId: string,
     issueId: string,
     commentId: string,
     data: Partial<TIssueComment>
   ): Promise<TIssueComment> {
     return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/comments/${commentId}/`,
+      `/api/workspace/projects/${projectId}/${this.serviceType}/${issueId}/comments/${commentId}/`,
       data
     )
       .then((response) => response?.data)
@@ -78,15 +68,8 @@ export class IssueCommentService extends APIService {
       });
   }
 
-  async deleteIssueComment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string
-  ): Promise<void> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/comments/${commentId}/`
-    )
+  async deleteIssueComment(projectId: string, issueId: string, commentId: string): Promise<void> {
+    return this.delete(`/api/workspace/projects/${projectId}/${this.serviceType}/${issueId}/comments/${commentId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

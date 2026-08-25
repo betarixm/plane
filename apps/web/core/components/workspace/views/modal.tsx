@@ -55,7 +55,7 @@ export const CreateUpdateWorkspaceViewModal = observer(function CreateUpdateWork
         title: "Success!",
         message: "View created successfully.",
       });
-      router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
+      router.push(`/workspace-views/${res.id}`);
       handleClose();
     } catch (_error) {
       setToast({

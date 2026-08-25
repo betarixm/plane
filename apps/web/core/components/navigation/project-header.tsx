@@ -89,10 +89,10 @@ export const ProjectHeader = observer(function ProjectHeader(props: TProjectHead
   const handleProjectChange = useCallback(
     (value: string) => {
       if (value !== currentProjectDetails?.id) {
-        router.push(getTabUrl(workspaceSlug, value, validatedDefaultTabKey));
+        router.push(getTabUrl(value, validatedDefaultTabKey));
       }
     },
-    [currentProjectDetails?.id, router, workspaceSlug, validatedDefaultTabKey]
+    [currentProjectDetails?.id, router, validatedDefaultTabKey]
   );
 
   // Early return if no project details

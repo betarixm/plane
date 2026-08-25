@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useParams } from "next/navigation";
 // plane imports
 import { getIdentitySourceDescriptor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -21,7 +20,6 @@ import type { IMemberFilters } from "@/store/member/utils";
 const isSuspended = (rowData: RowData) => rowData.is_active === false;
 
 export const useMemberColumns = () => {
-  const { workspaceSlug } = useParams();
   const { config } = useInstance();
   const {
     workspace: {
@@ -46,7 +44,7 @@ export const useMemberColumns = () => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <NameColumn rowData={rowData} workspaceSlug={workspaceSlug.toString()} />,
+      tdRender: (rowData: RowData) => <NameColumn rowData={rowData} />,
     },
     {
       key: "Email address",

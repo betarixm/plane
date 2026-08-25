@@ -316,7 +316,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    */
   getUnreadNotificationsCount = async (workspaceSlug: string): Promise<TUnreadNotificationsCount | undefined> => {
     try {
-      const unreadNotificationCount = await workspaceNotificationService.fetchUnreadNotificationsCount(workspaceSlug);
+      const unreadNotificationCount = await workspaceNotificationService.fetchUnreadNotificationsCount();
       if (unreadNotificationCount)
         runInAction(() => {
           set(this, "unreadNotificationsCount", unreadNotificationCount);
@@ -343,7 +343,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     try {
       const queryParams = this.generateNotificationQueryParams(queryParamType);
       await this.getUnreadNotificationsCount(workspaceSlug);
-      const notificationResponse = await workspaceNotificationService.fetchNotifications(workspaceSlug, queryParams);
+      const notificationResponse = await workspaceNotificationService.fetchNotifications(queryParams);
       if (notificationResponse) {
         const { results, ...paginationInfo } = notificationResponse;
         runInAction(() => {
@@ -377,7 +377,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
         archived: queryParams.archived,
         read: queryParams.read,
       };
-      await workspaceNotificationService.markAllNotificationsAsRead(workspaceSlug, params);
+      await workspaceNotificationService.markAllNotificationsAsRead(params);
       runInAction(() => {
         update(
           this.unreadNotificationsCount,

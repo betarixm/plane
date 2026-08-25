@@ -107,7 +107,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         rich_filters: formData.filters,
       };
       try {
-        await projectExportService.csvExport(workspaceSlug, payload);
+        await projectExportService.csvExport(payload);
         mutateServices();
         setExportLoading(false);
         setToast({

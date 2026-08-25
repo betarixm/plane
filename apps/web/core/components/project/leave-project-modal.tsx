@@ -59,7 +59,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
     if (data) {
       if (data.projectName === project?.name) {
         if (data.confirmLeave === "Leave Project") {
-          router.push(`/${workspaceSlug}/projects`);
+          router.push(`/projects`);
           return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
               handleClose();

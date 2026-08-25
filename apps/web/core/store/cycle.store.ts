@@ -395,7 +395,7 @@ export class CycleStore implements ICycleStore {
    * @returns ICycle[]
    */
   fetchWorkspaceCycles = async (workspaceSlug: string) =>
-    await this.cycleService.getWorkspaceCycles(workspaceSlug).then((response) => {
+    await this.cycleService.getWorkspaceCycles().then((response) => {
       runInAction(() => {
         response.forEach((cycle) => {
           set(this.cycleMap, [cycle.id], { ...this.cycleMap[cycle.id], ...cycle });
@@ -414,7 +414,7 @@ export class CycleStore implements ICycleStore {
   fetchAllCycles = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
-      await this.cycleService.getCyclesWithParams(workspaceSlug, projectId).then((response) => {
+      await this.cycleService.getCyclesWithParams(projectId).then((response) => {
         runInAction(() => {
           response.forEach((cycle) => {
             set(this.cycleMap, [cycle.id], cycle);
@@ -442,7 +442,7 @@ export class CycleStore implements ICycleStore {
   fetchArchivedCycles = async (workspaceSlug: string, projectId: string) => {
     this.loader = true;
     return await this.cycleArchiveService
-      .getArchivedCycles(workspaceSlug, projectId)
+      .getArchivedCycles(projectId)
       .then((response) => {
         runInAction(() => {
           response.forEach((cycle) => {
@@ -465,7 +465,7 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   fetchActiveCycle = async (workspaceSlug: string, projectId: string) =>
-    await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, "current").then((response) => {
+    await this.cycleService.getCyclesWithParams(projectId, "current").then((response) => {
       runInAction(() => {
         response.forEach((cycle) => {
           set(this.activeCycleIdMap, [cycle.id], true);
@@ -484,7 +484,7 @@ export class CycleStore implements ICycleStore {
    */
   fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     this.progressLoader = true;
-    return await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((progress) => {
+    return await this.cycleService.workspaceActiveCyclesProgress(projectId, cycleId).then((progress) => {
       runInAction(() => {
         set(this.cycleMap, [cycleId], { ...this.cycleMap[cycleId], ...progress });
         this.progressLoader = false;
@@ -516,14 +516,12 @@ export class CycleStore implements ICycleStore {
     cycleId: string,
     analytic_type: string
   ) =>
-    await this.cycleService
-      .workspaceActiveCyclesAnalytics(workspaceSlug, projectId, cycleId, analytic_type)
-      .then((cycle) => {
-        runInAction(() => {
-          set(this.cycleMap, [cycleId, analytic_type === "points" ? "estimate_distribution" : "distribution"], cycle);
-        });
-        return cycle;
+    await this.cycleService.workspaceActiveCyclesAnalytics(projectId, cycleId, analytic_type).then((cycle) => {
+      runInAction(() => {
+        set(this.cycleMap, [cycleId, analytic_type === "points" ? "estimate_distribution" : "distribution"], cycle);
       });
+      return cycle;
+    });
 
   /**
    * @description fetches cycle details
@@ -533,7 +531,7 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   fetchArchivedCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) =>
-    await this.cycleArchiveService.getArchivedCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
+    await this.cycleArchiveService.getArchivedCycleDetails(projectId, cycleId).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
       });
@@ -548,7 +546,7 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   fetchCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string) =>
-    await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId).then((response) => {
+    await this.cycleService.getCycleDetails(projectId, cycleId).then((response) => {
       runInAction(() => {
         set(this.cycleMap, [response.id], { ...this.cycleMap?.[response.id], ...response });
       });
@@ -579,7 +577,7 @@ export class CycleStore implements ICycleStore {
    */
   createCycle = action(
     async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) =>
-      await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
+      await this.cycleService.createCycle(projectId, data).then((response) => {
         runInAction(() => {
           set(this.cycleMap, [response.id], response);
         });
@@ -600,7 +598,7 @@ export class CycleStore implements ICycleStore {
       runInAction(() => {
         set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
       });
-      const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
+      const response = await this.cycleService.patchCycle(projectId, cycleId, data);
       this.fetchCycleDetails(workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
@@ -618,7 +616,7 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    */
   deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
-    await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
+    await this.cycleService.deleteCycle(projectId, cycleId).then(() => {
       runInAction(() => {
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
@@ -689,7 +687,7 @@ export class CycleStore implements ICycleStore {
     const cycleDetails = this.getCycleById(cycleId);
     if (cycleDetails?.archived_at) return;
     await this.cycleArchiveService
-      .archiveCycle(workspaceSlug, projectId, cycleId)
+      .archiveCycle(projectId, cycleId)
       .then((response) => {
         runInAction(() => {
           set(this.cycleMap, [cycleId, "archived_at"], response.archived_at);
@@ -712,7 +710,7 @@ export class CycleStore implements ICycleStore {
     const cycleDetails = this.getCycleById(cycleId);
     if (!cycleDetails?.archived_at) return;
     await this.cycleArchiveService
-      .restoreCycle(workspaceSlug, projectId, cycleId)
+      .restoreCycle(projectId, cycleId)
       .then(() => {
         runInAction(() => {
           set(this.cycleMap, [cycleId, "archived_at"], null);

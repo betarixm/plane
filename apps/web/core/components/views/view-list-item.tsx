@@ -44,7 +44,7 @@ export const ProjectViewListItem = observer(function ProjectViewListItem(props: 
         </>
       }
       title={view.name}
-      itemLink={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
+      itemLink={`/projects/${projectId}/views/${view.id}`}
       actionableItems={<ViewListItemAction parentRef={parentRef} view={view} />}
       quickActionElement={
         <div className="block md:hidden">

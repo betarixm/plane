@@ -16,32 +16,32 @@ export class FavoriteService extends APIService {
     super(API_BASE_URL);
   }
 
-  async addFavorite(workspaceSlug: string, data: Partial<IFavorite>): Promise<IFavorite> {
-    return this.post(`/api/workspaces/${workspaceSlug}/user-favorites/`, data)
+  async addFavorite(data: Partial<IFavorite>): Promise<IFavorite> {
+    return this.post(`/api/workspace/user-favorites/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async updateFavorite(workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>): Promise<IFavorite> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/user-favorites/${favoriteId}/`, data)
+  async updateFavorite(favoriteId: string, data: Partial<IFavorite>): Promise<IFavorite> {
+    return this.patch(`/api/workspace/user-favorites/${favoriteId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteFavorite(workspaceSlug: string, favoriteId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/user-favorites/${favoriteId}/`)
+  async deleteFavorite(favoriteId: string): Promise<void> {
+    return this.delete(`/api/workspace/user-favorites/${favoriteId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async getFavorites(workspaceSlug: string): Promise<IFavorite[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-favorites/`, {
+  async getFavorites(): Promise<IFavorite[]> {
+    return this.get(`/api/workspace/user-favorites/`, {
       params: {
         all: true,
       },
@@ -52,8 +52,8 @@ export class FavoriteService extends APIService {
       });
   }
 
-  async getGroupedFavorites(workspaceSlug: string, favoriteId: string): Promise<IFavorite[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-favorites/${favoriteId}/group/`)
+  async getGroupedFavorites(favoriteId: string): Promise<IFavorite[]> {
+    return this.get(`/api/workspace/user-favorites/${favoriteId}/group/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

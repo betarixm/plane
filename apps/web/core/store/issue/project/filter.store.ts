@@ -135,7 +135,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
-    const _filters = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
+    const _filters = await this.projectService.getProjectUserProperties(projectId);
 
     const richFilters = _filters?.rich_filters;
     const displayFilters = this.computedDisplayFilters(_filters?.display_filters);
@@ -182,7 +182,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       });
 
       this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
-      await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
+      await this.projectService.updateProjectUserProperties(projectId, {
         rich_filters: filters,
       });
     } catch (error) {
@@ -244,7 +244,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             this.rootIssueStore.projectIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation");
           }
 
-          await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
+          await this.projectService.updateProjectUserProperties(projectId, {
             display_filters: _filters.displayFilters,
           });
 
@@ -264,7 +264,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             });
           });
 
-          await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
+          await this.projectService.updateProjectUserProperties(projectId, {
             display_properties: _filters.displayProperties,
           });
           break;

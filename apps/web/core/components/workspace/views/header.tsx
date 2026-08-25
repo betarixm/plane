@@ -56,7 +56,7 @@ function DefaultViewTab(props: {
   if (!workspaceSlug || !globalViewId) return null;
   return (
     <div key={tab.key} ref={parentRef} className="relative">
-      <DefaultWorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={tab} />
+      <DefaultWorkspaceViewQuickActions view={tab} />
     </div>
   );
 }

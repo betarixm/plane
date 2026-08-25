@@ -71,12 +71,12 @@ export const IssuesHeader = observer(function IssuesHeader() {
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"} className="flex-grow-0">
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Work Items"
-                  href={`/${workspaceSlug}/projects/${projectId}/issues/`}
+                  href={`/projects/${projectId}/issues/`}
                   icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />

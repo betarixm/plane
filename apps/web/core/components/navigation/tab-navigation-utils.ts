@@ -58,13 +58,12 @@ export const saveTabPreferences = (projectId: string, preferences: TTabPreferenc
 
 /**
  * Map tab keys to their corresponding URLs
- * @param workspaceSlug - The workspace slug
  * @param projectId - The project ID
  * @param tabKey - The tab key to map
  * @returns Full URL path for the tab
  */
-export const getTabUrl = (workspaceSlug: string, projectId: string, tabKey: string): string => {
-  const baseUrl = `/${workspaceSlug}/projects/${projectId}`;
+export const getTabUrl = (projectId: string, tabKey: string): string => {
+  const baseUrl = `/projects/${projectId}`;
   const tabUrlMap: Record<string, string> = {
     work_items: `${baseUrl}/issues`,
     cycles: `${baseUrl}/cycles`,
@@ -79,12 +78,11 @@ export const getTabUrl = (workspaceSlug: string, projectId: string, tabKey: stri
 
 /**
  * Get the default tab URL for a project
- * @param workspaceSlug - The workspace slug
  * @param projectId - The project ID
  * @param availableTabKeys - Optional array of available tab keys for validation
  * @returns Full URL path for the default tab (validated if availableTabKeys provided)
  */
-export const getDefaultTabUrl = (workspaceSlug: string, projectId: string, availableTabKeys?: string[]): string => {
+export const getDefaultTabUrl = (projectId: string, availableTabKeys?: string[]): string => {
   const preferences = getTabPreferences(projectId);
   let tabKey = preferences.defaultTab;
 
@@ -93,7 +91,7 @@ export const getDefaultTabUrl = (workspaceSlug: string, projectId: string, avail
     tabKey = getValidatedDefaultTab(projectId, availableTabKeys);
   }
 
-  return getTabUrl(workspaceSlug, projectId, tabKey);
+  return getTabUrl(projectId, tabKey);
 };
 
 /**

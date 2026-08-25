@@ -75,9 +75,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
   useEffect(() => {
     if (workspaceSlug && projectId && currentTab && filteredInboxIssueIds.length > 0) {
       if (inboxIssueId === undefined) {
-        router.push(
-          `/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
-        );
+        router.push(`/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`);
       }
     }
   }, [currentTab, filteredInboxIssueIds, inboxIssueId, projectId, router, workspaceSlug]);
@@ -96,7 +94,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
               onClick={() => {
                 if (currentTab != option?.key) {
                   handleCurrentTab(workspaceSlug, projectId, option?.key);
-                  router.push(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${option?.key}`);
+                  router.push(`/projects/${projectId}/intake?currentTab=${option?.key}`);
                 }
               }}
             >
@@ -130,7 +128,6 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             {filteredInboxIssueIds.length > 0 ? (
               <InboxIssueList
                 setIsMobileSidebar={setIsMobileSidebar}
-                workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 projectIdentifier={currentProjectDetails?.identifier}
                 inboxIssueIds={filteredInboxIssueIds}
@@ -154,7 +151,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                     actions={[
                       {
                         label: t("project_empty_state.intake_sidebar.cta_primary"),
-                        onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/intake`),
+                        onClick: () => router.push(`/projects/${projectId}/intake`),
                         variant: "primary",
                       },
                     ]}

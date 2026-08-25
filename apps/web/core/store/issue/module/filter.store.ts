@@ -146,7 +146,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string, moduleId: string) => {
-    const _filters = await this.issueFilterService.fetchModuleIssueFilters(workspaceSlug, projectId, moduleId);
+    const _filters = await this.issueFilterService.fetchModuleIssueFilters(projectId, moduleId);
 
     const richFilters: TWorkItemFilterExpression = _filters?.rich_filters;
     const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
@@ -199,7 +199,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
         "mutation",
         moduleId
       );
-      await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
+      await this.issueFilterService.patchModuleIssueFilters(projectId, moduleId, {
         rich_filters: filters,
       });
     } catch (error) {
@@ -266,7 +266,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
             );
           }
 
-          await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
+          await this.issueFilterService.patchModuleIssueFilters(projectId, moduleId, {
             display_filters: _filters.displayFilters,
           });
 
@@ -286,7 +286,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
             });
           });
 
-          await this.issueFilterService.patchModuleIssueFilters(workspaceSlug, projectId, moduleId, {
+          await this.issueFilterService.patchModuleIssueFilters(projectId, moduleId, {
             display_properties: _filters.displayProperties,
           });
           break;

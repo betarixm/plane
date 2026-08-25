@@ -5,7 +5,6 @@
  */
 
 import React from "react";
-import { useParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
 import type { IWorkspaceIntegration } from "@plane/types";
 // services
@@ -28,19 +27,14 @@ const projectService = new ProjectService();
 
 export function SelectRepository(props: Props) {
   const { integration, value, label, onChange, characterLimit = 25 } = props;
-  // router
-  const { workspaceSlug } = useParams();
-
   const getKey = (pageIndex: number) => {
-    if (!workspaceSlug || !integration) return;
+    if (!integration) return;
 
-    return `${process.env.VITE_API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-integrations/${
-      integration.id
-    }/github-repositories/?page=${++pageIndex}`;
+    return { integrationId: integration.id, page: pageIndex + 1 };
   };
 
-  const fetchGithubRepos = async (url: string) => {
-    const data = await projectService.getGithubRepositories(url);
+  const fetchGithubRepos = async ({ integrationId, page }: { integrationId: string; page: number }) => {
+    const data = await projectService.getGithubRepositories(integrationId, page);
 
     return data;
   };

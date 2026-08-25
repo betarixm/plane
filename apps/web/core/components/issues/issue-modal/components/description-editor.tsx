@@ -120,7 +120,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(workspaceSlug.toString(), {
+      .createGptTask({
         prompt: issueName,
         task: "Generate a proper description for this work item.",
       })
@@ -198,7 +198,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                 tabIndex={getIndex("description_html")}
                 placeholder={(isFocused, description) => t(getDescriptionPlaceholderI18n(isFocused, description))}
                 searchMentionCallback={async (payload) =>
-                  await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                  await workspaceService.searchEntity({
                     ...payload,
                     project_id: projectId?.toString() ?? "",
                   })

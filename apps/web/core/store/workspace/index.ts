@@ -113,7 +113,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
 
   /** Get the deterministic route for the instance workspace. */
   getWorkspaceRedirectionUrl = () => {
-    return this.workspace ? `/${this.workspace.slug}` : "/";
+    return this.workspace ? "/home" : "/";
   };
 
   /**
@@ -159,7 +159,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
    * @param data
    */
   updateWorkspace = async (workspaceSlug: string, data: Pick<IWorkspace, "timezone">) =>
-    await this.workspaceService.updateWorkspace(workspaceSlug, data).then((res) => {
+    await this.workspaceService.updateWorkspace(data).then((res) => {
       if (res && res.id) {
         runInAction(() => {
           this.workspace = res;
@@ -170,7 +170,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
 
   fetchSidebarNavigationPreferences = async (workspaceSlug: string) => {
     try {
-      const response = await this.workspaceService.fetchSidebarNavigationPreferences(workspaceSlug);
+      const response = await this.workspaceService.fetchSidebarNavigationPreferences();
 
       runInAction(() => {
         this.navigationPreferencesMap[workspaceSlug] = response;
@@ -199,7 +199,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
         };
       });
 
-      const response = await this.workspaceService.updateSidebarPreference(workspaceSlug, key, data);
+      const response = await this.workspaceService.updateSidebarPreference(key, data);
       return response;
     } catch (error) {
       // Revert to original data if API call fails
@@ -238,7 +238,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       });
 
       // Call API to persist changes
-      await this.workspaceService.updateBulkSidebarPreferences(workspaceSlug, data);
+      await this.workspaceService.updateBulkSidebarPreferences(data);
     } catch (error) {
       // Rollback on failure
       runInAction(() => {
@@ -256,7 +256,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
 
   fetchProjectNavigationPreferences = async (workspaceSlug: string) => {
     try {
-      const response = await this.workspaceService.fetchWorkspaceFilters(workspaceSlug);
+      const response = await this.workspaceService.fetchWorkspaceFilters();
 
       runInAction(() => {
         this.projectNavigationPreferencesMap[workspaceSlug] = response;
@@ -283,7 +283,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       });
 
       // Call API to persist changes
-      await this.workspaceService.patchWorkspaceFilters(workspaceSlug, data);
+      await this.workspaceService.patchWorkspaceFilters(data);
     } catch (error) {
       // Rollback on failure
       runInAction(() => {

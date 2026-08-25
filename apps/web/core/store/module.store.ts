@@ -269,7 +269,7 @@ export class ModulesStore implements IModuleStore {
    * @returns IModule[]
    */
   fetchWorkspaceModules = async (workspaceSlug: string) =>
-    await this.moduleService.getWorkspaceModules(workspaceSlug).then((response) => {
+    await this.moduleService.getWorkspaceModules().then((response) => {
       runInAction(() => {
         response.forEach((module) => {
           set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
@@ -292,7 +292,7 @@ export class ModulesStore implements IModuleStore {
   fetchModules = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
-      await this.moduleService.getModules(workspaceSlug, projectId).then((response) => {
+      await this.moduleService.getModules(projectId).then((response) => {
         runInAction(() => {
           response.forEach((module) => {
             set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
@@ -317,7 +317,7 @@ export class ModulesStore implements IModuleStore {
   fetchModulesSlim = async (workspaceSlug: string, projectId: string) => {
     try {
       this.loader = true;
-      await this.moduleService.getWorkspaceModules(workspaceSlug).then((response) => {
+      await this.moduleService.getWorkspaceModules().then((response) => {
         const projectModules = response.filter((module) => module.project_id === projectId);
         runInAction(() => {
           projectModules.forEach((module) => {
@@ -343,7 +343,7 @@ export class ModulesStore implements IModuleStore {
   fetchArchivedModules = async (workspaceSlug: string, projectId: string) => {
     this.loader = true;
     return await this.moduleArchiveService
-      .getArchivedModules(workspaceSlug, projectId)
+      .getArchivedModules(projectId)
       .then((response) => {
         runInAction(() => {
           response.forEach((module) => {
@@ -367,7 +367,7 @@ export class ModulesStore implements IModuleStore {
    * @returns IModule
    */
   fetchArchivedModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
-    await this.moduleArchiveService.getArchivedModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
+    await this.moduleArchiveService.getArchivedModuleDetails(projectId, moduleId).then((response) => {
       runInAction(() => {
         set(this.moduleMap, [response.id], { ...this.moduleMap?.[response.id], ...response });
       });
@@ -398,7 +398,7 @@ export class ModulesStore implements IModuleStore {
    * @returns IModule
    */
   fetchModuleDetails = async (workspaceSlug: string, projectId: string, moduleId: string) =>
-    await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId).then((response) => {
+    await this.moduleService.getModuleDetails(projectId, moduleId).then((response) => {
       runInAction(() => {
         set(this.moduleMap, [moduleId], response);
       });
@@ -413,7 +413,7 @@ export class ModulesStore implements IModuleStore {
    * @returns IModule
    */
   createModule = async (workspaceSlug: string, projectId: string, data: Partial<IModule>) =>
-    await this.moduleService.createModule(workspaceSlug, projectId, data).then((response) => {
+    await this.moduleService.createModule(projectId, data).then((response) => {
       runInAction(() => {
         set(this.moduleMap, [response?.id], response);
       });
@@ -434,7 +434,7 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [moduleId], { ...originalModuleDetails, ...data });
       });
-      const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
+      const response = await this.moduleService.patchModule(projectId, moduleId, data);
       return response;
     } catch (error) {
       console.error("Failed to update module in module store", error);
@@ -454,7 +454,7 @@ export class ModulesStore implements IModuleStore {
   deleteModule = async (workspaceSlug: string, projectId: string, moduleId: string) => {
     const moduleDetails = this.getModuleById(moduleId);
     if (!moduleDetails) return;
-    await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId).then(() => {
+    await this.moduleService.deleteModule(projectId, moduleId).then(() => {
       runInAction(() => {
         delete this.moduleMap[moduleId];
         if (this.rootStore.favorite.entityMap[moduleId]) this.rootStore.favorite.removeFavoriteFromStore(moduleId);
@@ -477,7 +477,7 @@ export class ModulesStore implements IModuleStore {
     data: Partial<ILinkDetails>
   ) => {
     try {
-      const moduleLink = await this.moduleService.createModuleLink(workspaceSlug, projectId, moduleId, data);
+      const moduleLink = await this.moduleService.createModuleLink(projectId, moduleId, data);
       runInAction(() => {
         update(this.moduleMap, [moduleId, "link_module"], (moduleLinks = []) => concat(moduleLinks, moduleLink));
       });
@@ -511,7 +511,7 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         set(this.moduleMap, [moduleId, "link_module"], linkModules);
       });
-      const response = await this.moduleService.updateModuleLink(workspaceSlug, projectId, moduleId, linkId, data);
+      const response = await this.moduleService.updateModuleLink(projectId, moduleId, linkId, data);
       return response;
     } catch (error) {
       console.error("Failed to update module link in module store", error);
@@ -531,7 +531,7 @@ export class ModulesStore implements IModuleStore {
    */
   deleteModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) => {
     try {
-      const moduleLink = await this.moduleService.deleteModuleLink(workspaceSlug, projectId, moduleId, linkId);
+      const moduleLink = await this.moduleService.deleteModuleLink(projectId, moduleId, linkId);
       runInAction(() => {
         update(this.moduleMap, [moduleId, "link_module"], (moduleLinks = []) =>
           moduleLinks.filter((link: ILinkDetails) => link.id !== linkId)
@@ -605,7 +605,7 @@ export class ModulesStore implements IModuleStore {
     const moduleDetails = this.getModuleById(moduleId);
     if (moduleDetails?.archived_at) return;
     await this.moduleArchiveService
-      .archiveModule(workspaceSlug, projectId, moduleId)
+      .archiveModule(projectId, moduleId)
       .then((response) => {
         runInAction(() => {
           set(this.moduleMap, [moduleId, "archived_at"], response.archived_at);
@@ -628,7 +628,7 @@ export class ModulesStore implements IModuleStore {
     const moduleDetails = this.getModuleById(moduleId);
     if (!moduleDetails?.archived_at) return;
     await this.moduleArchiveService
-      .restoreModule(workspaceSlug, projectId, moduleId)
+      .restoreModule(projectId, moduleId)
       .then(() => {
         runInAction(() => {
           set(this.moduleMap, [moduleId, "archived_at"], null);

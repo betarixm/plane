@@ -165,7 +165,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param workspaceSlug
    */
   fetchWorkspaceMembers = async (workspaceSlug: string) =>
-    await this.workspaceService.fetchWorkspaceMembers(workspaceSlug).then((response) => {
+    await this.workspaceService.fetchWorkspaceMembers().then((response) => {
       runInAction(() => {
         response.forEach((member) => {
           set(this.memberRoot?.memberMap, member.member.id, { ...member.member, joining_date: member.created_at });

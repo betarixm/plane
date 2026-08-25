@@ -53,7 +53,7 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
   const { activeTab } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { projectId } = useParams();
   // store hooks
   const {
     issues: { getGroupIssueCount },
@@ -72,11 +72,11 @@ export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(pro
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
+                  href={`/projects/${projectId}/archives/issues`}
                   label="Archives"
                   icon={<ArchiveIcon className="h-4 w-4 text-tertiary" />}
                 />

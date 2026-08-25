@@ -146,7 +146,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    const _filters = await this.issueFilterService.fetchCycleIssueFilters(workspaceSlug, projectId, cycleId);
+    const _filters = await this.issueFilterService.fetchCycleIssueFilters(projectId, cycleId);
 
     const richFilters: TWorkItemFilterExpression = _filters?.rich_filters;
     const displayFilters: IIssueDisplayFilterOptions = this.computedDisplayFilters(_filters?.display_filters);
@@ -194,7 +194,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
       });
 
       this.rootIssueStore.cycleIssues.fetchIssuesWithExistingPagination(workspaceSlug, projectId, "mutation", cycleId);
-      await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
+      await this.issueFilterService.patchCycleIssueFilters(projectId, cycleId, {
         rich_filters: filters,
       });
     } catch (error) {
@@ -261,7 +261,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             );
           }
 
-          await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
+          await this.issueFilterService.patchCycleIssueFilters(projectId, cycleId, {
             display_filters: _filters.displayFilters,
           });
 
@@ -281,7 +281,7 @@ export class CycleIssuesFilter extends IssueFilterHelperStore implements ICycleI
             });
           });
 
-          await this.issueFilterService.patchCycleIssueFilters(workspaceSlug, projectId, cycleId, {
+          await this.issueFilterService.patchCycleIssueFilters(projectId, cycleId, {
             display_properties: _filters.displayProperties,
           });
           break;

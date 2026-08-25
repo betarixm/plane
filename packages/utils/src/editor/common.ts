@@ -10,7 +10,6 @@ import { getFileURL } from "../file";
 type TEditorSrcArgs = {
   assetId: string;
   projectId?: string;
-  workspaceSlug: string;
 };
 
 /**
@@ -18,12 +17,12 @@ type TEditorSrcArgs = {
  * @param {TEditorSrcArgs} args
  */
 export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
-  const { assetId, projectId, workspaceSlug } = args;
+  const { assetId, projectId } = args;
   let url: string | undefined = "";
   if (projectId) {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspace/projects/${projectId}/${assetId}/`);
   } else {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspace/${assetId}/`);
   }
   return url;
 };
@@ -33,12 +32,12 @@ export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
  * @param {TEditorSrcArgs} args
  */
 export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefined => {
-  const { assetId, projectId, workspaceSlug } = args;
+  const { assetId, projectId } = args;
   let url: string | undefined = "";
   if (projectId) {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/download/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspace/projects/${projectId}/download/${assetId}/`);
   } else {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/download/${assetId}/`);
+    url = getFileURL(`/api/assets/v2/workspace/download/${assetId}/`);
   }
   return url;
 };

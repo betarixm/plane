@@ -15,40 +15,40 @@ export class IssueLabelService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getWorkspaceIssueLabels(workspaceSlug: string): Promise<IIssueLabel[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/labels/`)
+  async getWorkspaceIssueLabels(): Promise<IIssueLabel[]> {
+    return this.get(`/api/workspace/labels/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getProjectLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabel[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`)
+  async getProjectLabels(projectId: string): Promise<IIssueLabel[]> {
+    return this.get(`/api/workspace/projects/${projectId}/issue-labels/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async createIssueLabel(workspaceSlug: string, projectId: string, data: any): Promise<IIssueLabel> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`, data)
+  async createIssueLabel(projectId: string, data: any): Promise<IIssueLabel> {
+    return this.post(`/api/workspace/projects/${projectId}/issue-labels/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async patchIssueLabel(workspaceSlug: string, projectId: string, labelId: string, data: any): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`, data)
+  async patchIssueLabel(projectId: string, labelId: string, data: any): Promise<any> {
+    return this.patch(`/api/workspace/projects/${projectId}/issue-labels/${labelId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteIssueLabel(workspaceSlug: string, projectId: string, labelId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`)
+  async deleteIssueLabel(projectId: string, labelId: string): Promise<any> {
+    return this.delete(`/api/workspace/projects/${projectId}/issue-labels/${labelId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

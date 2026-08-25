@@ -86,7 +86,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       runInAction(() => {
         this.fetchSettingsLoader = true;
       });
-      const response = await this.projectPublishService.fetchPublishSettings(workspaceSlug, projectID);
+      const response = await this.projectPublishService.fetchPublishSettings(projectID);
 
       runInAction(() => {
         set(this.publishSettingsMap, [projectID], response);
@@ -113,7 +113,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       runInAction(() => {
         this.generalLoader = true;
       });
-      const response = await this.projectPublishService.publishProject(workspaceSlug, projectID, data);
+      const response = await this.projectPublishService.publishProject(projectID, data);
       runInAction(() => {
         set(this.publishSettingsMap, [projectID], response);
         set(this.projectRootStore.project.projectMap, [projectID, "anchor"], response.anchor);
@@ -146,12 +146,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       runInAction(() => {
         this.generalLoader = true;
       });
-      const response = await this.projectPublishService.updatePublishSettings(
-        workspaceSlug,
-        projectID,
-        projectPublishId,
-        data
-      );
+      const response = await this.projectPublishService.updatePublishSettings(projectID, projectPublishId, data);
       runInAction(() => {
         set(this.publishSettingsMap, [projectID], response);
         this.generalLoader = false;
@@ -177,7 +172,7 @@ export class ProjectPublishStore implements IProjectPublishStore {
       runInAction(() => {
         this.generalLoader = true;
       });
-      const response = await this.projectPublishService.unpublishProject(workspaceSlug, projectID, projectPublishId);
+      const response = await this.projectPublishService.unpublishProject(projectID, projectPublishId);
       runInAction(() => {
         unset(this.publishSettingsMap, [projectID]);
         set(this.projectRootStore.project.projectMap, [projectID, "anchor"], null);

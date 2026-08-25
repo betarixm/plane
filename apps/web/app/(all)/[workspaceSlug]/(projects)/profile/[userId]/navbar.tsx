@@ -19,7 +19,7 @@ type Props = {
 export function ProfileNavbar(props: Props) {
   const { isAuthorized } = props;
   const { t } = useTranslation();
-  const { workspaceSlug, userId } = useParams();
+  const { userId } = useParams();
   const pathname = usePathname();
 
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
@@ -28,11 +28,11 @@ export function ProfileNavbar(props: Props) {
     <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
       <div className="flex items-center overflow-x-scroll">
         {tabsList.map((tab) => (
-          <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
+          <Link key={tab.route} href={`/profile/${userId}/${tab.route}`}>
             <span
               className={cn(
                 `flex border-b-2 p-4 text-13 font-medium whitespace-nowrap text-tertiary outline-none hover:text-primary ${
-                  pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`
+                  pathname === `/profile/${userId}${tab.selected}`
                     ? "border-accent-strong text-accent-primary hover:text-accent-primary"
                     : "border-transparent"
                 }`

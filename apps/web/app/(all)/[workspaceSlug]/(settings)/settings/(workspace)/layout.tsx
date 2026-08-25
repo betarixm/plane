@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -19,11 +19,9 @@ import { WorkspaceSettingsSidebarRoot } from "@/components/settings/workspace/si
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 
-import type { Route } from "./+types/layout";
-
-const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params }: Route.ComponentProps) {
+const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout() {
   // router
-  const { workspaceSlug } = params;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks

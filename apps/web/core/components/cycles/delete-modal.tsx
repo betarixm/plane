@@ -46,7 +46,7 @@ export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycle
     try {
       await deleteCycle(workspaceSlug, projectId, cycle.id)
         .then(() => {
-          if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
+          if (cycleId || peekCycle) router.push(`/projects/${projectId}/cycles`);
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",

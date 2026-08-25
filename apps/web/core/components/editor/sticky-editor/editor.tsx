@@ -70,7 +70,6 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
   // parse content
   const { getEditorMetaData } = useParseEditorContent({
     projectId,
-    workspaceSlug,
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
@@ -95,7 +94,6 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
           projectId,
           uploadFile,
           duplicateFile,
-          workspaceId,
           workspaceSlug,
         })}
         getEditorMetaData={getEditorMetaData}

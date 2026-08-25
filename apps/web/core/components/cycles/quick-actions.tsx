@@ -55,7 +55,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     projectId
   );
 
-  const cycleLink = `${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`;
+  const cycleLink = `/projects/${projectId}/cycles/${cycleId}`;
   const handleCopyText = () =>
     copyUrlToClipboard(cycleLink).then(() => {
       setToast({
@@ -64,7 +64,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
         message: t("common.link_copied_to_clipboard"),
       });
     });
-  const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(cycleLink, "_blank");
 
   const handleRestoreCycle = async () =>
     await restoreCycle(workspaceSlug, projectId, cycleId)
@@ -74,7 +74,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
           title: t("project_cycles.action.restore.success.title"),
           message: t("project_cycles.action.restore.success.description"),
         });
-        router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
+        router.push(`/projects/${projectId}/archives/cycles`);
       })
       .catch(() => {
         setToast({

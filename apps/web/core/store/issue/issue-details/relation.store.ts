@@ -111,7 +111,7 @@ export class IssueRelationStore implements IIssueRelationStore {
 
   // actions
   fetchRelations = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const response = await this.issueRelationService.listIssueRelations(workspaceSlug, projectId, issueId);
+    const response = await this.issueRelationService.listIssueRelations(projectId, issueId);
 
     runInAction(() => {
       Object.keys(response).forEach((key) => {
@@ -137,7 +137,7 @@ export class IssueRelationStore implements IIssueRelationStore {
     relationType: TIssueRelationTypes,
     issues: string[]
   ) => {
-    const response = await this.issueRelationService.createIssueRelations(workspaceSlug, projectId, issueId, {
+    const response = await this.issueRelationService.createIssueRelations(projectId, issueId, {
       relation_type: relationType,
       issues,
     });
@@ -202,7 +202,7 @@ export class IssueRelationStore implements IIssueRelationStore {
       });
 
       // perform API call
-      await this.issueRelationService.createIssueRelations(workspaceSlug, projectId, issueId, {
+      await this.issueRelationService.createIssueRelations(projectId, issueId, {
         relation_type: relationType,
         issues: [relatedIssueId],
       });
@@ -240,7 +240,7 @@ export class IssueRelationStore implements IIssueRelationStore {
         });
 
       if (!updateLocally) {
-        await this.issueRelationService.deleteIssueRelation(workspaceSlug, projectId, issueId, {
+        await this.issueRelationService.deleteIssueRelation(projectId, issueId, {
           relation_type: relationType,
           related_issue,
         });

@@ -15,8 +15,8 @@ export class DashboardService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getHomeDashboardWidgets(workspaceSlug: string): Promise<THomeDashboardResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/dashboard/`, {
+  async getHomeDashboardWidgets(): Promise<THomeDashboardResponse> {
+    return this.get(`/api/workspace/dashboard/`, {
       params: {
         dashboard_type: "home",
       },
@@ -27,12 +27,8 @@ export class DashboardService extends APIService {
       });
   }
 
-  async getWidgetStats(
-    workspaceSlug: string,
-    dashboardId: string,
-    params: TWidgetStatsRequestParams
-  ): Promise<TWidgetStatsResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/dashboard/${dashboardId}/`, {
+  async getWidgetStats(dashboardId: string, params: TWidgetStatsRequestParams): Promise<TWidgetStatsResponse> {
+    return this.get(`/api/workspace/dashboard/${dashboardId}/`, {
       params,
     })
       .then((response) => response?.data)

@@ -100,7 +100,7 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
   const dateChecker = async (projectId: string, payload: CycleDateCheckData) => {
     let status = false;
 
-    await cycleService.cycleDateCheck(workspaceSlug, projectId, payload).then((res) => {
+    await cycleService.cycleDateCheck(projectId, payload).then((res) => {
       status = res.status;
     });
 

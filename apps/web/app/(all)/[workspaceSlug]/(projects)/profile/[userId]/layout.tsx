@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
@@ -30,7 +30,8 @@ const userService = new UserService();
 
 function UseProfileLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, userId } = params;
+  const { userId } = params;
+  const { workspaceSlug } = useParams();
   const pathname = usePathname();
   // store hooks
   const { allowPermissions } = useUserPermissions();
@@ -45,7 +46,7 @@ function UseProfileLayout({ params }: Route.ComponentProps) {
   const isSmallerScreen = windowSize[0] >= 768;
 
   const { data: userProjectsData } = useSWR(USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug, userId), () =>
-    userService.getUserProfileProjectsSegregation(workspaceSlug, userId)
+    userService.getUserProfileProjectsSegregation(userId)
   );
   // derived values
   const isAuthorizedPath =
@@ -53,7 +54,7 @@ function UseProfileLayout({ params }: Route.ComponentProps) {
   const isIssuesTab = pathname.includes("assigned") || pathname.includes("created") || pathname.includes("subscribed");
 
   const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
-  const currentTab = tabsList.find((tab) => pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`);
+  const currentTab = tabsList.find((tab) => pathname === `/profile/${userId}${tab.selected}`);
 
   return (
     <>

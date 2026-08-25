@@ -17,10 +17,9 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 type BlockProps = {
   activity: TActivityEntityData;
   ref: React.RefObject<HTMLDivElement>;
-  workspaceSlug: string;
 };
 export function RecentProject(props: BlockProps) {
-  const { activity, ref, workspaceSlug } = props;
+  const { activity, ref } = props;
   // router
   const router = useRouter();
   // derived values
@@ -28,7 +27,7 @@ export function RecentProject(props: BlockProps) {
 
   if (!projectDetails) return <></>;
 
-  const projectLink = `/${workspaceSlug}/projects/${projectDetails?.id}/issues`;
+  const projectLink = `/projects/${projectDetails?.id}/issues`;
 
   return (
     <ListItem

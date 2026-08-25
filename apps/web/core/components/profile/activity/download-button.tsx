@@ -20,19 +20,19 @@ export function DownloadActivityButton() {
   // states
   const [isDownloading, setIsDownloading] = useState(false);
   // router
-  const { workspaceSlug, userId } = useParams();
+  const { userId } = useParams();
   //hooks
   const { t } = useTranslation();
 
   const handleDownload = async () => {
     const today = renderFormattedPayloadDate(new Date());
 
-    if (!workspaceSlug || !userId || !today) return;
+    if (!userId || !today) return;
 
     setIsDownloading(true);
 
     const csv = await userService
-      .downloadProfileActivity(workspaceSlug.toString(), userId.toString(), {
+      .downloadProfileActivity(userId.toString(), {
         date: today,
       })
       .finally(() => setIsDownloading(false));

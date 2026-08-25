@@ -124,12 +124,12 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label="Views"
-                href={`/${workspaceSlug}/projects/${projectId}/views/`}
+                href={`/projects/${projectId}/views/`}
                 icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
@@ -140,7 +140,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
                 selectedItem={viewId?.toString() ?? ""}
                 navigationItems={switcherOptions}
                 onChange={(value: string) => {
-                  router.push(`/${workspaceSlug}/projects/${projectId}/views/${value}`);
+                  router.push(`/projects/${projectId}/views/${value}`);
                 }}
                 title={viewDetails?.name}
                 icon={

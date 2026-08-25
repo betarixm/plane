@@ -6,7 +6,6 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 // ui
 import { MODULE_STATUS } from "@plane/constants";
 import { ModuleStatusIcon } from "@plane/propel/icons";
@@ -28,7 +27,6 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
   const { moduleId } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
   // store hooks
   const { getModuleById } = useModule();
   // derived values
@@ -55,11 +53,7 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
       <div
         className="relative flex h-full w-full cursor-pointer items-center rounded-sm"
         style={blockStyle}
-        onClick={() =>
-          router.push(
-            `/${workspaceSlug?.toString()}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`
-          )
-        }
+        onClick={() => router.push(`/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`)}
       >
         <div className="absolute top-0 left-0 h-full w-full bg-surface-1/50" />
         <div
@@ -75,7 +69,6 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
 
 export const ModuleGanttSidebarBlock = observer(function ModuleGanttSidebarBlock(props: Props) {
   const { moduleId } = props;
-  const { workspaceSlug } = useParams();
   // store hooks
   const { getModuleById } = useModule();
   // derived values
@@ -84,7 +77,7 @@ export const ModuleGanttSidebarBlock = observer(function ModuleGanttSidebarBlock
   return (
     <Link
       className="relative flex h-full w-full items-center gap-2"
-      href={`/${workspaceSlug?.toString()}/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`}
+      href={`/projects/${moduleDetails?.project_id}/modules/${moduleDetails?.id}`}
       draggable={false}
     >
       <ModuleStatusIcon status={moduleDetails?.status ?? "backlog"} height="16px" width="16px" />

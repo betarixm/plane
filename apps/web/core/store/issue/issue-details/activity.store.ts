@@ -154,7 +154,7 @@ export class IssueActivityStore implements IIssueActivityStore {
         if (currentActivity) props = { created_at__gt: currentActivity.created_at };
       }
 
-      const activities = await this.issueActivityService.getIssueActivities(workspaceSlug, projectId, issueId, props);
+      const activities = await this.issueActivityService.getIssueActivities(projectId, issueId, props);
 
       const activityIds = activities.map((activity) => activity.id);
 

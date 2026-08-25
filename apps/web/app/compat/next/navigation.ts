@@ -6,6 +6,7 @@
 
 import { useMemo } from "react";
 import { useLocation, useNavigate, useParams as useParamsRR, useSearchParams as useSearchParamsRR } from "react-router";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ensureTrailingSlash } from "./helper";
 
 export function useRouter() {
@@ -47,6 +48,11 @@ export function useSearchParams(): URLSearchParams {
   return searchParams;
 }
 
-export function useParams() {
-  return useParamsRR();
+export function useParams<T = Record<string, string>>(): T {
+  const params = useParamsRR();
+  const { workspace } = useWorkspace();
+  return useMemo(
+    () => ({ ...params, ...(workspace?.slug ? { workspaceSlug: workspace.slug } : {}) }) as T,
+    [params, workspace?.slug]
+  );
 }

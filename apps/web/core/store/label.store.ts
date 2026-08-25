@@ -161,7 +161,7 @@ export class LabelStore implements ILabelStore {
    * @returns Promise<IIssueLabel[]>
    */
   fetchProjectLabels = async (workspaceSlug: string, projectId: string) =>
-    await this.issueLabelService.getProjectLabels(workspaceSlug, projectId).then((response) => {
+    await this.issueLabelService.getProjectLabels(projectId).then((response) => {
       runInAction(() => {
         response.forEach((label) => {
           set(this.labelMap, [label.id], label);
@@ -178,7 +178,7 @@ export class LabelStore implements ILabelStore {
    * @returns Promise<IIssueLabel[]>
    */
   fetchWorkspaceLabels = async (workspaceSlug: string) =>
-    await this.issueLabelService.getWorkspaceIssueLabels(workspaceSlug).then((response) => {
+    await this.issueLabelService.getWorkspaceIssueLabels().then((response) => {
       runInAction(() => {
         response.forEach((label) => {
           set(this.labelMap, [label.id], label);
@@ -196,7 +196,7 @@ export class LabelStore implements ILabelStore {
    * @returns Promise<IIssueLabel>
    */
   createLabel = async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) =>
-    await this.issueLabelService.createIssueLabel(workspaceSlug, projectId, data).then((response) => {
+    await this.issueLabelService.createIssueLabel(projectId, data).then((response) => {
       runInAction(() => {
         set(this.labelMap, [response.id], response);
       });
@@ -217,7 +217,7 @@ export class LabelStore implements ILabelStore {
       runInAction(() => {
         set(this.labelMap, [labelId], { ...originalLabel, ...data });
       });
-      const response = await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data);
+      const response = await this.issueLabelService.patchIssueLabel(projectId, labelId, data);
       return response;
     } catch (error) {
       console.log("Failed to update label from project store");
@@ -300,7 +300,7 @@ export class LabelStore implements ILabelStore {
    */
   deleteLabel = async (workspaceSlug: string, projectId: string, labelId: string) => {
     if (!this.labelMap[labelId]) return;
-    await this.issueLabelService.deleteIssueLabel(workspaceSlug, projectId, labelId).then(() => {
+    await this.issueLabelService.deleteIssueLabel(projectId, labelId).then(() => {
       runInAction(() => {
         delete this.labelMap[labelId];
       });

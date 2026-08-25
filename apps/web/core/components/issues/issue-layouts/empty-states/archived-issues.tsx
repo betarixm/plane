@@ -19,8 +19,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 export const ProjectArchivedEmptyState = observer(function ProjectArchivedEmptyState() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const { projectId: routerProjectId } = useParams();
   const projectId = routerProjectId ? routerProjectId.toString() : undefined;
   // plane hooks
   const { t } = useTranslation();
@@ -57,7 +56,7 @@ export const ProjectArchivedEmptyState = observer(function ProjectArchivedEmptyS
           actions={[
             {
               label: t("workspace_empty_state.archive_work_items.cta_primary"),
-              onClick: () => router.push(`/${workspaceSlug}/settings/projects/${projectId}/automations`),
+              onClick: () => router.push(`/settings/projects/${projectId}/automations`),
               disabled: !canPerformEmptyStateActions,
               variant: "primary",
             },

@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -24,7 +25,8 @@ import { AutomationsProjectSettingsHeader } from "./header";
 
 function AutomationSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = params;
+  const { workspaceSlug } = useParams();
+  const { projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails, updateProject } = useProject();

@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -49,7 +49,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const workspaceSlug = params.workspaceSlug;
+  const { workspaceSlug } = useParams();
   const ANALYTICS_TABS = useAnalyticsTabs(workspaceSlug.toString());
 
   const [selectedTab, setSelectedTab] = useState(tabId || ANALYTICS_TABS[0]?.key);
@@ -63,7 +63,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   // Handle tab change
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
-    router.push(`/${currentWorkspace?.slug}/analytics/${value}`);
+    router.push(`/analytics/${value}`);
   };
 
   return (

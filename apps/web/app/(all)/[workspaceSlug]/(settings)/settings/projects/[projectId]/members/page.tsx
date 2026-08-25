@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -24,7 +25,8 @@ import { MembersProjectSettingsHeader } from "./header";
 
 function MembersSettingsPage({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = params;
+  const { workspaceSlug } = useParams();
+  const { projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks

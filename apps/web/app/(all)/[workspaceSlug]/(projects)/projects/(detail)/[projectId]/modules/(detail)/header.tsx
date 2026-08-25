@@ -135,12 +135,12 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+              <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
                     label="Modules"
-                    href={`/${workspaceSlug}/projects/${projectId}/modules/`}
+                    href={`/projects/${projectId}/modules/`}
                     icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                     isLast
                   />
@@ -153,7 +153,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                     selectedItem={moduleId?.toString() ?? ""}
                     navigationItems={switcherOptions}
                     onChange={(value: string) => {
-                      router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
+                      router.push(`/projects/${projectId}/modules/${value}`);
                     }}
                     title={moduleDetails?.name}
                     icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-tertiary" />}

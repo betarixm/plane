@@ -14,8 +14,6 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 
 type TCreateIssueToastActionItems = {
-  workspaceSlug: string;
-  projectId: string;
   issueId: string;
   isEpic?: boolean;
 };
@@ -23,7 +21,7 @@ type TCreateIssueToastActionItems = {
 export const CreateIssueToastActionItems = observer(function CreateIssueToastActionItems(
   props: TCreateIssueToastActionItems
 ) {
-  const { workspaceSlug, issueId, isEpic = false } = props;
+  const { issueId, isEpic = false } = props;
   // state
   const [copied, setCopied] = useState(false);
   // store hooks
@@ -39,7 +37,6 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
   if (!issue) return null;
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug,
     projectId: issue?.project_id,
     issueId,
     projectIdentifier,

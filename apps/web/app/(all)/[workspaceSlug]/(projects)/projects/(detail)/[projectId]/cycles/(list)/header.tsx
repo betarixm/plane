@@ -26,7 +26,7 @@ import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 export const CyclesListHeader = observer(function CyclesListHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { projectId } = useParams();
 
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
@@ -43,12 +43,12 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
                 label="Cycles"
-                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/cycles/`}
+                href={`/projects/${currentProjectDetails?.id}/cycles/`}
                 icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                 isLast
               />

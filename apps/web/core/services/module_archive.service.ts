@@ -16,16 +16,16 @@ export class ModuleArchiveService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getArchivedModules(workspaceSlug: string, projectId: string): Promise<IModule[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-modules/`)
+  async getArchivedModules(projectId: string): Promise<IModule[]> {
+    return this.get(`/api/workspace/projects/${projectId}/archived-modules/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getArchivedModuleDetails(workspaceSlug: string, projectId: string, moduleId: string): Promise<IModule> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-modules/${moduleId}/`)
+  async getArchivedModuleDetails(projectId: string, moduleId: string): Promise<IModule> {
+    return this.get(`/api/workspace/projects/${projectId}/archived-modules/${moduleId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -33,21 +33,20 @@ export class ModuleArchiveService extends APIService {
   }
 
   async archiveModule(
-    workspaceSlug: string,
     projectId: string,
     moduleId: string
   ): Promise<{
     archived_at: string;
   }> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/archive/`)
+    return this.post(`/api/workspace/projects/${projectId}/modules/${moduleId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async restoreModule(workspaceSlug: string, projectId: string, moduleId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/archive/`)
+  async restoreModule(projectId: string, moduleId: string): Promise<void> {
+    return this.delete(`/api/workspace/projects/${projectId}/modules/${moduleId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

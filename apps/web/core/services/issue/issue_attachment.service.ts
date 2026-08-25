@@ -26,13 +26,12 @@ export class IssueAttachmentService extends APIService {
   }
 
   private async updateIssueAttachmentUploadStatus(
-    workspaceSlug: string,
     projectId: string,
     issueId: string,
     attachmentId: string
   ): Promise<void> {
     return this.patch(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/attachments/${attachmentId}/`
+      `/api/assets/v2/workspace/projects/${projectId}/${this.serviceType}/${issueId}/attachments/${attachmentId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -41,7 +40,6 @@ export class IssueAttachmentService extends APIService {
   }
 
   async uploadIssueAttachment(
-    workspaceSlug: string,
     projectId: string,
     issueId: string,
     file: File,
@@ -49,7 +47,7 @@ export class IssueAttachmentService extends APIService {
   ): Promise<TIssueAttachment> {
     const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/attachments/`,
+      `/api/assets/v2/workspace/projects/${projectId}/${this.serviceType}/${issueId}/attachments/`,
       fileMetaData
     )
       .then(async (response) => {
@@ -60,7 +58,7 @@ export class IssueAttachmentService extends APIService {
           fileUploadPayload,
           uploadProgressHandler
         );
-        await this.updateIssueAttachmentUploadStatus(workspaceSlug, projectId, issueId, signedURLResponse.asset_id);
+        await this.updateIssueAttachmentUploadStatus(projectId, issueId, signedURLResponse.asset_id);
         return signedURLResponse.attachment;
       })
       .catch((error) => {
@@ -68,24 +66,17 @@ export class IssueAttachmentService extends APIService {
       });
   }
 
-  async getIssueAttachments(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueAttachment[]> {
-    return this.get(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/attachments/`
-    )
+  async getIssueAttachments(projectId: string, issueId: string): Promise<TIssueAttachment[]> {
+    return this.get(`/api/assets/v2/workspace/projects/${projectId}/${this.serviceType}/${issueId}/attachments/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteIssueAttachment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    assetId: string
-  ): Promise<TIssueAttachment> {
+  async deleteIssueAttachment(projectId: string, issueId: string, assetId: string): Promise<TIssueAttachment> {
     return this.delete(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/attachments/${assetId}/`
+      `/api/assets/v2/workspace/projects/${projectId}/${this.serviceType}/${issueId}/attachments/${assetId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

@@ -148,14 +148,9 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
             }}
             fetchHandlers={{
               listDescriptionVersions: (issueId) =>
-                workItemVersionService.listDescriptionVersions(
-                  workspaceSlug,
-                  issue.project_id?.toString() ?? "",
-                  issueId
-                ),
+                workItemVersionService.listDescriptionVersions(issue.project_id?.toString() ?? "", issueId),
               retrieveDescriptionVersion: (issueId, versionId) =>
                 workItemVersionService.retrieveDescriptionVersion(
-                  workspaceSlug,
                   issue.project_id?.toString() ?? "",
                   issueId,
                   versionId

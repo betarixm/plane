@@ -6,6 +6,7 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
@@ -35,7 +36,8 @@ import type { Route } from "./+types/page";
 export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, workItem } = params;
+  const { workItem } = params;
+  const { workspaceSlug } = useParams();
   // hooks
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -87,7 +89,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
 
   useEffect(() => {
     if (data?.is_intake) {
-      router.push(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
+      router.push(`/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
     }
   }, [workspaceSlug, data, router]);
 
@@ -99,7 +101,7 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
         description={t("issue.empty_state.issue_detail.description")}
         primaryButton={{
           text: t("issue.empty_state.issue_detail.primary_button.text"),
-          onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
+          onClick: () => router.push(`/workspace-views/all-issues/`),
         }}
       />
     );

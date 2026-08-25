@@ -14,7 +14,6 @@ import { LinkIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 
 type Props = {
-  workspaceSlug: string;
   project: {
     id: string;
   };
@@ -26,7 +25,6 @@ type Props = {
 };
 
 export function ProjectActionsMenu({
-  workspaceSlug,
   project,
   isAdmin,
   isAuthorized,
@@ -82,7 +80,7 @@ export function ProjectActionsMenu({
       {isAuthorized && (
         <CustomMenu.MenuItem
           onClick={() => {
-            navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
+            navigate(`/projects/${project?.id}/archives/issues`);
           }}
         >
           <div className="flex cursor-pointer items-center justify-start gap-2">
@@ -93,7 +91,7 @@ export function ProjectActionsMenu({
       )}
       <CustomMenu.MenuItem
         onClick={() => {
-          navigate(`/${workspaceSlug}/settings/projects/${project?.id}`);
+          navigate(`/settings/projects/${project?.id}`);
         }}
       >
         <div className="flex cursor-pointer items-center justify-start gap-2">

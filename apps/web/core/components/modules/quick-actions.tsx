@@ -53,7 +53,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
     projectId
   );
 
-  const moduleLink = `${workspaceSlug}/projects/${projectId}/modules/${moduleId}`;
+  const moduleLink = `/projects/${projectId}/modules/${moduleId}`;
   const handleCopyText = () =>
     copyUrlToClipboard(moduleLink).then(() => {
       setToast({
@@ -62,7 +62,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
         message: "Module link copied to clipboard.",
       });
     });
-  const handleOpenInNewTab = () => window.open(`/${moduleLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(moduleLink, "_blank");
 
   const handleRestoreModule = async () => {
     try {
@@ -72,7 +72,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
         title: "Restore success",
         message: "Your module can be found in project modules.",
       });
-      router.push(`/${workspaceSlug}/projects/${projectId}/archives/modules`);
+      router.push(`/projects/${projectId}/archives/modules`);
     } catch (_error) {
       setToast({
         type: TOAST_TYPE.ERROR,

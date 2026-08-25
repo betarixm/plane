@@ -113,13 +113,13 @@ export class IssueReactionStore implements IIssueReactionStore {
 
   // actions
   fetchReactions = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const response = await this.issueReactionService.listIssueReactions(workspaceSlug, projectId, issueId);
+    const response = await this.issueReactionService.listIssueReactions(projectId, issueId);
     this.addReactions(issueId, response);
     return response;
   };
 
   createReaction = async (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => {
-    const response = await this.issueReactionService.createIssueReaction(workspaceSlug, projectId, issueId, {
+    const response = await this.issueReactionService.createIssueReaction(projectId, issueId, {
       reaction,
     });
 
@@ -153,7 +153,7 @@ export class IssueReactionStore implements IIssueReactionStore {
       });
     }
 
-    const response = await this.issueReactionService.deleteIssueReaction(workspaceSlug, projectId, issueId, reaction);
+    const response = await this.issueReactionService.deleteIssueReaction(projectId, issueId, reaction);
 
     // fetching activity
     this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);

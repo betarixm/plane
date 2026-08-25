@@ -4,20 +4,22 @@
  * See the LICENSE file for details.
  */
 
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 /**
  * Custom hook to detect different workspace paths
  * @returns Object containing boolean flags for different workspace paths
  */
 export const useWorkspacePaths = () => {
-  const { workspaceSlug } = useParams();
   const pathname = usePathname();
 
-  const isSettingsPath = pathname.includes(`/${workspaceSlug}/settings`);
-  const isAiPath = pathname.includes(`/${workspaceSlug}/pi-chat`);
-  const isProjectsPath = pathname.includes(`/${workspaceSlug}/`) && !isAiPath && !isSettingsPath;
-  const isNotificationsPath = pathname.includes(`/${workspaceSlug}/notifications`);
+  const isAiPath = pathname.startsWith("/pi-chat");
+  const isSettingsPath = pathname.startsWith("/settings") && !pathname.startsWith("/settings/profile");
+  const isProjectsPath =
+    /^\/(active-cycles|analytics|browse|drafts|notifications|profile|projects|stickies|workspace-views)(\/|$)/.test(
+      pathname
+    );
+  const isNotificationsPath = pathname.startsWith("/notifications");
 
   return {
     isSettingsPath,

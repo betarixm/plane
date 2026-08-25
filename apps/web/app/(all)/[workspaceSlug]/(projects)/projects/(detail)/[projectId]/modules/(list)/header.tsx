@@ -27,7 +27,7 @@ import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { projectId } = useParams();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
@@ -47,12 +47,12 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Modules"
-                  href={`/${workspaceSlug}/projects/${projectId}/modules/`}
+                  href={`/projects/${projectId}/modules/`}
                   icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />

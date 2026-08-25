@@ -50,7 +50,7 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
             {t("close")}
           </Button>
           <Link
-            href={`/${workspaceSlug}/projects/${projectId}/issues`}
+            href={`/projects/${projectId}/issues`}
             onClick={onClose}
             className={getButtonStyling("primary", "lg")}
             // oxlint-disable-next-line jsx-a11y/tabindex-no-positive

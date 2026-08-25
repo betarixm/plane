@@ -16,16 +16,16 @@ export class CycleArchiveService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getArchivedCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-cycles/`)
+  async getArchivedCycles(projectId: string): Promise<ICycle[]> {
+    return this.get(`/api/workspace/projects/${projectId}/archived-cycles/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getArchivedCycleDetails(workspaceSlug: string, projectId: string, cycleId: string): Promise<ICycle> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-cycles/${cycleId}/`)
+  async getArchivedCycleDetails(projectId: string, cycleId: string): Promise<ICycle> {
+    return this.get(`/api/workspace/projects/${projectId}/archived-cycles/${cycleId}/`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -33,21 +33,20 @@ export class CycleArchiveService extends APIService {
   }
 
   async archiveCycle(
-    workspaceSlug: string,
     projectId: string,
     cycleId: string
   ): Promise<{
     archived_at: string;
   }> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/archive/`)
+    return this.post(`/api/workspace/projects/${projectId}/cycles/${cycleId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async restoreCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/archive/`)
+  async restoreCycle(projectId: string, cycleId: string): Promise<void> {
+    return this.delete(`/api/workspace/projects/${projectId}/cycles/${cycleId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

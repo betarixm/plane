@@ -120,7 +120,6 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
                 description={t(`${featureItem.key}_description`)}
                 control={
                   <ProjectFeatureToggle
-                    workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     featureItem={featureItem}
                     value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}

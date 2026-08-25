@@ -10,7 +10,6 @@ import { observer } from "mobx-react";
 import { InboxIssueListItem } from "./inbox-list-item";
 
 export type InboxIssueListProps = {
-  workspaceSlug: string;
   projectId: string;
   projectIdentifier?: string;
   inboxIssueIds: string[];
@@ -18,7 +17,7 @@ export type InboxIssueListProps = {
 };
 
 export const InboxIssueList = observer(function InboxIssueList(props: InboxIssueListProps) {
-  const { workspaceSlug, projectId, projectIdentifier, inboxIssueIds, setIsMobileSidebar } = props;
+  const { projectId, projectIdentifier, inboxIssueIds, setIsMobileSidebar } = props;
 
   return (
     <>
@@ -26,7 +25,6 @@ export const InboxIssueList = observer(function InboxIssueList(props: InboxIssue
         <Fragment key={inboxIssueId}>
           <InboxIssueListItem
             setIsMobileSidebar={setIsMobileSidebar}
-            workspaceSlug={workspaceSlug}
             projectId={projectId}
             projectIdentifier={projectIdentifier}
             inboxIssueId={inboxIssueId}

@@ -69,7 +69,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
     projectPreferences.showLimitedProjects && joinedProjects.length > projectPreferences.limitedProjectsCount;
 
   const handleCopyText = (projectId: string) => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
+    copyUrlToClipboard(`/projects/${projectId}/issues`).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("link_copied"),

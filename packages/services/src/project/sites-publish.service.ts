@@ -37,13 +37,12 @@ export class SitesProjectPublishService extends APIService {
 
   /**
    * Retrieves publish settings for a specific project.
-   * @param {string} workspaceSlug - The workspace slug
    * @param {string} projectID - The project identifier
    * @returns {Promise<TProjectPublishSettings>} The publish settings
    * @throws {Error} If the API request fails
    */
-  async retrieveSettingsByProjectId(workspaceSlug: string, projectID: string): Promise<TProjectPublishSettings> {
-    return this.get(`/api/public/workspaces/${workspaceSlug}/projects/${projectID}/anchor/`)
+  async retrieveSettingsByProjectId(projectID: string): Promise<TProjectPublishSettings> {
+    return this.get(`/api/public/workspace/projects/${projectID}/anchor/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

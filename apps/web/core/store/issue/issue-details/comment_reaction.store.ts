@@ -105,7 +105,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
   // actions
   fetchCommentReactions = async (workspaceSlug: string, projectId: string, commentId: string) => {
     try {
-      const response = await this.issueReactionService.listIssueCommentReactions(workspaceSlug, projectId, commentId);
+      const response = await this.issueReactionService.listIssueCommentReactions(projectId, commentId);
 
       const groupedReactions = groupReactions(response || [], "reaction");
 
@@ -148,7 +148,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
 
   createCommentReaction = async (workspaceSlug: string, projectId: string, commentId: string, reaction: string) => {
     try {
-      const response = await this.issueReactionService.createIssueCommentReaction(workspaceSlug, projectId, commentId, {
+      const response = await this.issueReactionService.createIssueCommentReaction(projectId, commentId, {
         reaction,
       });
 
@@ -186,12 +186,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
         });
       }
 
-      const response = await this.issueReactionService.deleteIssueCommentReaction(
-        workspaceSlug,
-        projectId,
-        commentId,
-        reaction
-      );
+      const response = await this.issueReactionService.deleteIssueCommentReaction(projectId, commentId, reaction);
 
       return response;
     } catch (error) {

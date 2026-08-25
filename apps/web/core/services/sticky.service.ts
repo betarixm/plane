@@ -15,8 +15,8 @@ export class StickyService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createSticky(workspaceSlug: string, payload: Partial<TSticky>) {
-    return this.post(`/api/workspaces/${workspaceSlug}/stickies/`, payload)
+  async createSticky(payload: Partial<TSticky>) {
+    return this.post(`/api/workspace/stickies/`, payload)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -24,12 +24,11 @@ export class StickyService extends APIService {
   }
 
   async getStickies(
-    workspaceSlug: string,
     cursor: string,
     query?: string,
     per_page?: number
   ): Promise<{ results: TSticky[]; total_pages: number }> {
-    return this.get(`/api/workspaces/${workspaceSlug}/stickies/`, {
+    return this.get(`/api/workspace/stickies/`, {
       params: {
         cursor,
         per_page: per_page || STICKIES_PER_PAGE,
@@ -42,24 +41,24 @@ export class StickyService extends APIService {
       });
   }
 
-  async getSticky(workspaceSlug: string, id: string) {
-    return this.get(`/api/workspaces/${workspaceSlug}/stickies/${id}`)
+  async getSticky(id: string) {
+    return this.get(`/api/workspace/stickies/${id}`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
       });
   }
 
-  async updateSticky(workspaceSlug: string, id: string, data: Partial<TSticky>) {
-    return await this.patch(`/api/workspaces/${workspaceSlug}/stickies/${id}/`, data)
+  async updateSticky(id: string, data: Partial<TSticky>) {
+    return await this.patch(`/api/workspace/stickies/${id}/`, data)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
       });
   }
 
-  async deleteSticky(workspaceSlug: string, id: string) {
-    return await this.delete(`/api/workspaces/${workspaceSlug}/stickies/${id}`)
+  async deleteSticky(id: string) {
+    return await this.delete(`/api/workspace/stickies/${id}`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

@@ -73,7 +73,7 @@ export const IssueParentSelectRoot = observer(function IssueParentSelectRoot(pro
     }
   };
 
-  const workItemLink = `/${workspaceSlug}/projects/${parentIssue?.project_id}/issues/${parentIssue?.id}`;
+  const workItemLink = `/projects/${parentIssue?.project_id}/issues/${parentIssue?.id}`;
 
   if (!issue) return <></>;
 

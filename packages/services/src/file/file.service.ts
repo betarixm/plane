@@ -42,14 +42,13 @@ export class FileService extends APIService {
 
   /**
    * Deletes an old editor asset
-   * @param {string} workspaceId - The workspace identifier
    * @param {string} src - The asset source
    * @returns {Promise<any>} Promise resolving to void
    * @throws {Error} If the request fails
    */
-  async deleteOldEditorAsset(workspaceId: string, src: string): Promise<any> {
+  async deleteOldEditorAsset(src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
-    return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
+    return this.delete(`/api/workspace/file-assets/${assetKey}/`)
       .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;
@@ -58,14 +57,13 @@ export class FileService extends APIService {
 
   /**
    * Restores an old editor asset
-   * @param {string} workspaceId - The workspace identifier
    * @param {string} src - The asset source
    * @returns {Promise<void>} Promise resolving to void
    * @throws {Error} If the request fails
    */
-  async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
+  async restoreOldEditorAsset(src: string): Promise<void> {
     const assetKey = getAssetIdFromUrl(src);
-    return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
+    return this.post(`/api/workspace/file-assets/${assetKey}/restore/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -74,13 +72,12 @@ export class FileService extends APIService {
 
   /**
    * Duplicates assets
-   * @param {string} workspaceSlug - The workspace slug
    * @param {TDuplicateAssetData} data - The data for the duplicate assets
    * @returns {Promise<TDuplicateAssetResponse>} Promise resolving to a record of asset IDs
    * @throws {Error} If the request fails
    */
-  async duplicateAssets(workspaceSlug: string, data: TDuplicateAssetData): Promise<TDuplicateAssetResponse> {
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/`, data)
+  async duplicateAssets(data: TDuplicateAssetData): Promise<TDuplicateAssetResponse> {
+    return this.post(`/api/assets/v2/workspace/duplicate-assets/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

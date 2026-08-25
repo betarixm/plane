@@ -19,34 +19,24 @@ export class IssueReactionService extends APIService {
     this.serviceType = serviceType;
   }
 
-  async createIssueReaction(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<TIssueReaction>
-  ): Promise<any> {
-    return this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/reactions/`,
-      data
-    )
+  async createIssueReaction(projectId: string, issueId: string, data: Partial<TIssueReaction>): Promise<any> {
+    return this.post(`/api/workspace/projects/${projectId}/${this.serviceType}/${issueId}/reactions/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async listIssueReactions(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueReaction[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/reactions/`)
+  async listIssueReactions(projectId: string, issueId: string): Promise<TIssueReaction[]> {
+    return this.get(`/api/workspace/projects/${projectId}/${this.serviceType}/${issueId}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteIssueReaction(workspaceSlug: string, projectId: string, issueId: string, reaction: string): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/reactions/${reaction}/`
-    )
+  async deleteIssueReaction(projectId: string, issueId: string, reaction: string): Promise<any> {
+    return this.delete(`/api/workspace/projects/${projectId}/${this.serviceType}/${issueId}/reactions/${reaction}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -54,39 +44,27 @@ export class IssueReactionService extends APIService {
   }
 
   async createIssueCommentReaction(
-    workspaceSlug: string,
     projectId: string,
     commentId: string,
     data: Partial<TIssueCommentReaction>
   ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`, data)
+    return this.post(`/api/workspace/projects/${projectId}/comments/${commentId}/reactions/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async listIssueCommentReactions(
-    workspaceSlug: string,
-    projectId: string,
-    commentId: string
-  ): Promise<TIssueCommentReaction[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/`)
+  async listIssueCommentReactions(projectId: string, commentId: string): Promise<TIssueCommentReaction[]> {
+    return this.get(`/api/workspace/projects/${projectId}/comments/${commentId}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteIssueCommentReaction(
-    workspaceSlug: string,
-    projectId: string,
-    commentId: string,
-    reaction: string
-  ): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/comments/${commentId}/reactions/${reaction}/`
-    )
+  async deleteIssueCommentReaction(projectId: string, commentId: string, reaction: string): Promise<any> {
+    return this.delete(`/api/workspace/projects/${projectId}/comments/${commentId}/reactions/${reaction}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -71,7 +71,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
     setIsSearching(true);
     projectService
-      .projectIssuesSearch(workspaceSlug.toString(), projectId.toString(), {
+      .projectIssuesSearch(projectId.toString(), {
         search: debouncedSearchTerm,
         workspace_search: false,
       })

@@ -67,11 +67,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
   };
 
   fetchSubscriptions = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    const subscription = await this.issueService.getIssueNotificationSubscriptionStatus(
-      workspaceSlug,
-      projectId,
-      issueId
-    );
+    const subscription = await this.issueService.getIssueNotificationSubscriptionStatus(projectId, issueId);
     this.addSubscription(issueId, subscription?.subscribed);
     return subscription?.subscribed;
   };
@@ -85,7 +81,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
         set(this.subscriptionMap, [issueId, currentUserId], true);
       });
 
-      await this.issueService.subscribeToIssueNotifications(workspaceSlug, projectId, issueId);
+      await this.issueService.subscribeToIssueNotifications(projectId, issueId);
     } catch (error) {
       this.fetchSubscriptions(workspaceSlug, projectId, issueId);
       throw error;
@@ -101,7 +97,7 @@ export class IssueSubscriptionStore implements IIssueSubscriptionStore {
         set(this.subscriptionMap, [issueId, currentUserId], false);
       });
 
-      await this.issueService.unsubscribeFromIssueNotifications(workspaceSlug, projectId, issueId);
+      await this.issueService.unsubscribeFromIssueNotifications(projectId, issueId);
     } catch (error) {
       this.fetchSubscriptions(workspaceSlug, projectId, issueId);
       throw error;

@@ -4,13 +4,14 @@
  * See the LICENSE file for details.
  */
 
+import { useParams } from "next/navigation";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { WorkspaceDraftIssuesRoot } from "@/components/issues/workspace-draft";
 import type { Route } from "./+types/page";
 
-function WorkspaceDraftPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug } = params;
+function WorkspaceDraftPage(_props: Route.ComponentProps) {
+  const { workspaceSlug } = useParams();
   const pageTitle = "Workspace Draft";
 
   return (

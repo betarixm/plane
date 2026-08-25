@@ -109,19 +109,13 @@ export class EditorAssetStore implements IEditorAssetStore {
         });
       });
       if (projectId) {
-        const response = await this.fileService.uploadProjectAsset(
-          workspaceSlug,
-          projectId,
-          data,
-          file,
-          (progressEvent) => {
-            const progressPercentage = Math.round((progressEvent.progress ?? 0) * 100);
-            this.debouncedUpdateProgress(blockId, progressPercentage);
-          }
-        );
+        const response = await this.fileService.uploadProjectAsset(projectId, data, file, (progressEvent) => {
+          const progressPercentage = Math.round((progressEvent.progress ?? 0) * 100);
+          this.debouncedUpdateProgress(blockId, progressPercentage);
+        });
         return response;
       } else {
-        const response = await this.fileService.uploadWorkspaceAsset(workspaceSlug, data, file, (progressEvent) => {
+        const response = await this.fileService.uploadWorkspaceAsset(data, file, (progressEvent) => {
           const progressPercentage = Math.round((progressEvent.progress ?? 0) * 100);
           this.debouncedUpdateProgress(blockId, progressPercentage);
         });
@@ -138,7 +132,7 @@ export class EditorAssetStore implements IEditorAssetStore {
   };
   duplicateEditorAsset: IEditorAssetStore["duplicateEditorAsset"] = async (args) => {
     const { assetId, entityId, entityType, projectId, workspaceSlug } = args;
-    const { asset_id } = await this.fileService.duplicateAsset(workspaceSlug, assetId, {
+    const { asset_id } = await this.fileService.duplicateAsset(assetId, {
       entity_id: entityId,
       entity_type: entityType,
       project_id: projectId,

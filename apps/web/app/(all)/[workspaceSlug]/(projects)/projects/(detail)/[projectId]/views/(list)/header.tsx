@@ -21,7 +21,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
 
 export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
-  const { workspaceSlug, projectId } = useParams();
+  const { projectId } = useParams();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { loader } = useProject();
@@ -31,12 +31,12 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
       <Header>
         <Header.LeftItem>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Views"
-                  href={`/${workspaceSlug}/projects/${projectId}/views/`}
+                  href={`/projects/${projectId}/views/`}
                   icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
