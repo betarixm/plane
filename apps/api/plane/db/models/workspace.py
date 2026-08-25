@@ -106,6 +106,12 @@ def get_default_display_properties():
     }
 
 
+# Kept for compatibility with historical migrations that serialize this
+# callable. The corresponding field is no longer part of the current model.
+def get_issue_props():
+    return {"subscribed": True, "assigned": True, "created": True, "all_issues": True}
+
+
 def slug_validator(value):
     if value in RESTRICTED_WORKSPACE_SLUGS:
         raise ValidationError("Slug is not valid")

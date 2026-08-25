@@ -17,6 +17,32 @@ from plane.db.models import FileAsset
 from ..mixins import TimeAuditModel
 
 
+# Kept for compatibility with historical migrations that serialize these
+# callables. The corresponding fields are no longer part of the current model.
+def get_default_onboarding():
+    return {
+        "profile_complete": False,
+        "workspace_join": False,
+    }
+
+
+def get_mobile_default_onboarding():
+    return {
+        "profile_complete": False,
+        "workspace_join": False,
+    }
+
+
+def get_default_product_tour():
+    return {
+        "work_items": False,
+        "cycles": False,
+        "modules": False,
+        "intake": False,
+        "pages": False,
+    }
+
+
 class User(models.Model):
     """Local projection of a person owned by the active identity source."""
 
