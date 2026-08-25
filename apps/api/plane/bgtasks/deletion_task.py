@@ -104,12 +104,6 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
         instance.deleted_at = timezone.now()
         instance.save()
 
-
-# @shared_task
-def restore_related_objects(app_label, model_name, instance_pk, using=None):
-    pass
-
-
 @shared_task
 def hard_delete():
     from plane.db.models import (

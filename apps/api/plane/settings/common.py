@@ -93,7 +93,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.staticfiles",
     # Inhouse apps
-    "plane.analytics",
     "plane.app",
     "plane.space",
     "plane.bgtasks",
@@ -299,19 +298,6 @@ CELERY_IMPORTS = (
 )
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
-
-# Unsplash Access key
-UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
-# Github Access Token
-GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
-
-# Analytics
-ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
-ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
-
-# Posthog settings
-POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
-POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 

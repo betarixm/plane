@@ -14,23 +14,18 @@ django-cors-headers==4.9.0
 # celery
 celery==5.5.3
 django_celery_beat==2.9.0
-django-celery-results==2.6.0
 # file serve
 whitenoise==6.12.0
 # fake data
 faker==25.0.0
 # filters
 django-filter==25.2
-# json model
-jsonmodels==2.7.0
 # storage
 django-storages==1.14.6
 # user management
 django-crum==0.7.9
 # web server
 uvicorn==0.29.0
-# sockets
-channels==4.3.2
 # ai
 openai==1.63.2
 # apm
@@ -41,8 +36,6 @@ openpyxl==3.1.2
 python-json-logger==4.0.0
 # html parser
 beautifulsoup4==4.12.3
-# analytics
-posthog==3.5.0
 # crypto
 cryptography==50.0.0
 # html validator

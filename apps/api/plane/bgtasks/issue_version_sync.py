@@ -3,7 +3,6 @@
 # See the LICENSE file for details.
 
 # Python imports
-import json
 from typing import Optional, List, Dict
 from uuid import UUID
 from itertools import groupby
@@ -28,40 +27,6 @@ from plane.db.models import (
     IssueLabel,
 )
 from plane.utils.exception_logger import log_exception
-
-
-@shared_task
-def issue_task(updated_issue, issue_id, user_id):
-    try:
-        current_issue = json.loads(updated_issue) if updated_issue else {}
-        issue = Issue.objects.get(id=issue_id)
-
-        updated_current_issue = {}
-        for key, value in current_issue.items():
-            if getattr(issue, key) != value:
-                updated_current_issue[key] = value
-
-        if updated_current_issue:
-            issue_version = IssueVersion.objects.filter(issue_id=issue_id).order_by("-last_saved_at").first()
-
-            if (
-                issue_version
-                and str(issue_version.owned_by) == str(user_id)
-                and (timezone.now() - issue_version.last_saved_at).total_seconds() <= 600
-            ):
-                for key, value in updated_current_issue.items():
-                    setattr(issue_version, key, value)
-                issue_version.last_saved_at = timezone.now()
-                issue_version.save(update_fields=list(updated_current_issue.keys()) + ["last_saved_at"])
-            else:
-                IssueVersion.log_issue_version(issue, user_id)
-
-        return
-    except Issue.DoesNotExist:
-        return
-    except Exception as e:
-        log_exception(e)
-        return
 
 
 def get_owner_id(issue: Issue) -> Optional[int]:
