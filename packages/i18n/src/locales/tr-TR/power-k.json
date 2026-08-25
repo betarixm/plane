@@ -48,26 +48,10 @@
         "copy_url": "URL'yi kopyala",
         "copy_url_toast_success": "Modül URL'si panoya kopyalandı.",
         "copy_url_toast_error": "Modül URL'si panoya kopyalanırken bir hata oluştu."
-      },
-      "page": {
-        "title": "Sayfa eylemleri",
-        "indicator": "Sayfa",
-        "lock": "Kilitle",
-        "unlock": "Kilidi aç",
-        "make_private": "Özel yap",
-        "make_public": "Herkese açık yap",
-        "archive": "Arşivle",
-        "restore": "Geri yükle",
-        "add_to_favorites": "Favorilere ekle",
-        "remove_from_favorites": "Favorilerden kaldır",
-        "copy_url": "URL'yi kopyala",
-        "copy_url_toast_success": "Sayfa URL'si panoya kopyalandı.",
-        "copy_url_toast_error": "Sayfa URL'si panoya kopyalanırken bir hata oluştu."
       }
     },
     "creation_actions": {
       "create_work_item": "Yeni iş öğesi",
-      "create_page": "Yeni sayfa",
       "create_view": "Yeni görünüm",
       "create_cycle": "Yeni döngü",
       "create_module": "Yeni modül",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Modüllere git",
       "open_project_view": "Bir proje görünümü aç",
       "nav_project_views": "Proje görünümlerine git",
-      "nav_project_pages": "Sayfalara git",
       "nav_project_intake": "Talebe git",
       "nav_project_archives": "Proje arşivlerine git",
       "open_project_setting": "Bir proje ayarı aç",

@@ -36,14 +36,12 @@
       "title": "Zuletzt verwendet",
       "empty": {
         "project": "Ihre kürzlich aufgerufenen Projekte erscheinen hier, nachdem Sie sie geöffnet haben.",
-        "page": "Ihre kürzlich aufgerufenen Seiten erscheinen hier, nachdem Sie sie geöffnet haben.",
         "issue": "Ihre kürzlich aufgerufenen Arbeitselemente erscheinen hier, nachdem Sie sie geöffnet haben.",
         "default": "Sie haben noch keine kürzlichen Elemente."
       },
       "filters": {
         "all": "Alle",
         "projects": "Projekte",
-        "pages": "Seiten",
         "issues": "Arbeitselemente"
       }
     },

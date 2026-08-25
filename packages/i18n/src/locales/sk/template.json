@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Šablóny",
-      "description": "Ušetríte 80% času stráveného vytváraním projektov, pracovných položiek a stránok, keď použijete šablóny.",
       "new_project_template": "Nová šablóna projektu",
       "new_work_item_template": "Nová šablóna pracovnej položky",
-      "new_page_template": "Nová šablóna stránky",
       "options": {
         "project": {
           "label": "Šablóny projektov"
         },
         "work_item": {
           "label": "Šablóny pracovných položiek"
-        },
-        "page": {
-          "label": "Šablóny stránok"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Vytvoriť šablónu pracovnej položky",
             "update": "Aktualizovať šablónu pracovnej položky"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Pomenujte svoju šablónu stránky.",
-              "validation": {
-                "required": "Názov šablóny je povinný",
-                "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
-              }
-            },
-            "description": {
-              "placeholder": "Popíšte, kedy a ako použiť túto šablónu."
-            }
-          },
-          "name": {
-            "placeholder": "Neznáma stránka",
-            "validation": {
-              "maxLength": "Názov stránky by nemal presiahnuť 255 znakov"
-            }
-          },
-          "button": {
-            "create": "Vytvoriť šablónu stránky",
-            "update": "Aktualizovať šablónu stránky"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Šablóny",
-        "description": "S projektmi, pracovnými položkami a stránkami v Plane, nemusíte vytvárať projekty od začiatku alebo nastavovať vlastnosti pracovných položiek ručne.",
         "sub_description": "Ušetríte 80% času, keď použijete šablóny."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Ešte nemáte pod-pracovné položky. Pridajte jednu, aby ste lepšie struktúrovali svoju prácu."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Neexistujú žiadne šablóny, ku ktorým máte prístup.",
-          "description": "Prosím, vytvorte šablónu"
-        },
-        "no_results": {
-          "title": "To sa nezhoduje so žiadnou šablónou.",
-          "description": "Skúste hľadať pomocou iných výrazov."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Pridať novú šablónu"
       },
       "label": {
-        "project": "Vybrať šablónu projektu",
-        "page": "Vybrať šablónu"
+        "project": "Vybrať šablónu projektu"
       },
       "tooltip": {
         "work_item": "Vybrať šablónu pracovnej položky"

@@ -48,26 +48,10 @@
         "copy_url": "Sao chép URL",
         "copy_url_toast_success": "Đã sao chép URL mô-đun vào bảng tạm.",
         "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL mô-đun vào bảng tạm."
-      },
-      "page": {
-        "title": "Hành động trang",
-        "indicator": "Trang",
-        "lock": "Khóa",
-        "unlock": "Mở khóa",
-        "make_private": "Chuyển thành riêng tư",
-        "make_public": "Chuyển thành công khai",
-        "archive": "Lưu trữ",
-        "restore": "Khôi phục",
-        "add_to_favorites": "Thêm vào mục yêu thích",
-        "remove_from_favorites": "Xóa khỏi mục yêu thích",
-        "copy_url": "Sao chép URL",
-        "copy_url_toast_success": "Đã sao chép URL trang vào bảng tạm.",
-        "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL trang vào bảng tạm."
       }
     },
     "creation_actions": {
       "create_work_item": "Mục công việc mới",
-      "create_page": "Trang mới",
       "create_view": "Chế độ xem mới",
       "create_cycle": "Chu kỳ mới",
       "create_module": "Mô-đun mới",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Đi đến mô-đun",
       "open_project_view": "Mở một chế độ xem dự án",
       "nav_project_views": "Đi đến chế độ xem dự án",
-      "nav_project_pages": "Đi đến trang",
       "nav_project_intake": "Đi đến thu thập",
       "nav_project_archives": "Đi đến lưu trữ dự án",
       "open_project_setting": "Mở một cài đặt dự án",

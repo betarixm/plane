@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "모든 필터 지우기"
         }
-      },
-      "public": {
-        "title": "아직 공개 페이지가 없습니다",
-        "description": "프로젝트의 모든 사람과 공유된 페이지를 여기에서 확인하세요.",
-        "primary_button": {
-          "text": "첫 번째 페이지 생성"
-        }
-      },
-      "archived": {
-        "title": "아직 아카이브된 페이지가 없습니다",
-        "description": "레이더에 없는 페이지를 아카이브하세요. 필요할 때 여기에서 접근하세요."
-      },
-      "shared": {
-        "title": "아직 공유된 페이지가 없습니다",
-        "description": "다른 사람이 공유한 페이지가 여기에 표시됩니다."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "메모, 문서 또는 전체 지식 기반을 작성하세요. Galileo, Plane의 AI 도우미가 시작을 도와줍니다",
-        "description": "페이지는 Plane에서 생각을 정리하는 공간입니다. 회의 메모를 작성하고, 쉽게 형식을 지정하고, 작업 항목을 포함하고, 구성 요소 라이브러리를 사용하여 레이아웃을 작성하고, 모든 것을 프로젝트의 맥락에서 유지하세요. 문서를 빠르게 작성하려면 단축키나 버튼 클릭으로 Galileo, Plane의 AI를 호출하세요.",
-        "primary_button": {
-          "text": "첫 번째 페이지 생성"
-        }
-      },
-      "private": {
-        "title": "비공개 페이지 없음",
-        "description": "비공개 생각을 여기에 보관하세요. 공유할 준비가 되면 팀이 클릭 한 번으로 접근할 수 있습니다.",
-        "primary_button": {
-          "text": "첫 번째 페이지 생성"
-        }
-      },
-      "public": {
-        "title": "공개 페이지 없음",
-        "description": "프로젝트의 모든 사람과 공유된 페이지를 여기에서 확인하세요.",
-        "primary_button": {
-          "text": "첫 번째 페이지 생성"
-        }
-      },
-      "archived": {
-        "title": "아카이브된 페이지 없음",
-        "description": "레이더에 없는 페이지를 아카이브하세요. 필요할 때 여기에서 접근하세요."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "프로젝트에 모듈이 활성화되지 않았습니다.",
         "description": "모듈은 프로젝트의 구성 요소입니다. 프로젝트 설정에서 모듈을 활성화하여 사용하세요.",
-        "primary_button": {
-          "text": "기능 관리"
-        }
-      },
-      "page": {
-        "title": "프로젝트에 페이지가 활성화되지 않았습니다.",
-        "description": "페이지는 프로젝트의 구성 요소입니다. 프로젝트 설정에서 페이지를 활성화하여 사용하세요.",
         "primary_button": {
           "text": "기능 관리"
         }

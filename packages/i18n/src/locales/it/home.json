@@ -36,14 +36,12 @@
       "title": "Recenti",
       "empty": {
         "project": "I tuoi progetti recenti appariranno qui una volta visitati.",
-        "page": "Le tue pagine recenti appariranno qui una volta visitate.",
         "issue": "I tuoi elementi di lavoro recenti appariranno qui una volta visitati.",
         "default": "Non hai ancora elementi recenti."
       },
       "filters": {
         "all": "Tutti",
         "projects": "Progetti",
-        "pages": "Pagine",
         "issues": "Elementi di lavoro"
       }
     },

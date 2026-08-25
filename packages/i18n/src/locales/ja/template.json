@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "テンプレート",
-      "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成に費やす時間を80％節約できます。",
       "new_project_template": "新しいプロジェクトテンプレート",
       "new_work_item_template": "新しい作業項目テンプレート",
-      "new_page_template": "新しいページテンプレート",
       "options": {
         "project": {
           "label": "プロジェクトテンプレート"
         },
         "work_item": {
           "label": "作業項目テンプレート"
-        },
-        "page": {
-          "label": "ページテンプレート"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "作業項目テンプレートを作成",
             "update": "作業項目テンプレートを更新"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "ページテンプレートに名前を付けてください。",
-              "validation": {
-                "required": "テンプレート名は必須です",
-                "maxLength": "テンプレート名は255文字未満にしてください"
-              }
-            },
-            "description": {
-              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
-            }
-          },
-          "name": {
-            "placeholder": "未命名のページ",
-            "validation": {
-              "maxLength": "ページ名は255文字未満にしてください"
-            }
-          },
-          "button": {
-            "create": "ページテンプレートを作成",
-            "update": "ページテンプレートを更新"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "テンプレート",
-        "description": "Planeのプロジェクト、作業項目、ページテンプレートを使用すれば、ゼロからプロジェクトを作成したり、作業項目のプロパティを手動で設定したりする必要はありません。",
         "sub_description": "テンプレートを使用すると、管理時間の80％を取り戻せます。"
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "まだサブ作業項目がありません。1つ追加して、より良い構造にしてください。"
-      },
-      "page": {
-        "no_templates": {
-          "title": "アクセス可能なテンプレートがありません。",
-          "description": "テンプレートを作成してください"
-        },
-        "no_results": {
-          "title": "テンプレートと一致しませんでした。",
-          "description": "他の用語で検索してみてください。"
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "新しいテンプレートを追加"
       },
       "label": {
-        "project": "プロジェクトテンプレートを選択",
-        "page": "テンプレートから選択"
+        "project": "プロジェクトテンプレートを選択"
       },
       "tooltip": {
         "work_item": "作業項目テンプレートを選択"

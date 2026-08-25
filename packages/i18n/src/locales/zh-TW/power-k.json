@@ -48,26 +48,10 @@
         "copy_url": "複製 URL",
         "copy_url_toast_success": "模組 URL 已複製到剪貼簿。",
         "copy_url_toast_error": "複製模組 URL 至剪貼簿時發生錯誤。"
-      },
-      "page": {
-        "title": "頁面操作",
-        "indicator": "頁面",
-        "lock": "鎖定",
-        "unlock": "解鎖",
-        "make_private": "設為私人",
-        "make_public": "設為公開",
-        "archive": "封存",
-        "restore": "還原",
-        "add_to_favorites": "加入我的最愛",
-        "remove_from_favorites": "從我的最愛移除",
-        "copy_url": "複製 URL",
-        "copy_url_toast_success": "頁面 URL 已複製到剪貼簿。",
-        "copy_url_toast_error": "複製頁面 URL 至剪貼簿時發生錯誤。"
       }
     },
     "creation_actions": {
       "create_work_item": "新工作事項",
-      "create_page": "新頁面",
       "create_view": "新檢視",
       "create_cycle": "新週期",
       "create_module": "新模組",
@@ -99,7 +83,6 @@
       "nav_project_modules": "前往模組",
       "open_project_view": "開啟專案檢視",
       "nav_project_views": "前往專案檢視",
-      "nav_project_pages": "前往頁面",
       "nav_project_intake": "前往進件",
       "nav_project_archives": "前往專案封存",
       "open_project_setting": "開啟專案設定",

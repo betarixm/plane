@@ -77,15 +77,6 @@
       "description": "您目前的篩選器未傳回任何結果。請嘗試變更篩選器。",
       "cta_primary": "新增工作項"
     },
-    "pages": {
-      "title": "記錄一切 — 從筆記到 PRD",
-      "description": "頁面讓您在一個地方擷取和組織資訊。撰寫會議筆記、專案文件和 PRD,嵌入工作項,並使用現成的元件進行結構化。",
-      "cta_primary": "建立您的第一個頁面"
-    },
-    "archive_pages": {
-      "title": "暫無已封存頁面",
-      "description": "封存不在您關注範圍內的頁面。需要時在此處存取它們。"
-    },
     "intake_sidebar": {
       "title": "記錄接收請求",
       "description": "提交新請求以在專案工作流程中進行審查、優先順序排序和追蹤。",
@@ -185,11 +176,6 @@
       "title": "使用儀表板視覺化您的進度",
       "description": "建構可自訂的儀表板以追蹤指標、衡量成果並有效呈現見解。",
       "cta_primary": "建立新儀表板"
-    },
-    "wiki": {
-      "title": "撰寫筆記、文件或完整的知識庫。",
-      "description": "頁面是 Plane 中的思想捕捉空間。記錄會議筆記,輕鬆格式化,嵌入工作項,使用元件庫進行配置,並將它們全部保留在專案上下文中。",
-      "cta_primary": "建立您的頁面"
     },
     "project_overview_state_sidebar": {
       "title": "啟用專案狀態",

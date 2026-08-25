@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Şablonlar",
-      "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmak için harcanan zamanın %80'ini tasarruf edin.",
       "new_project_template": "Yeni proje şablonu",
       "new_work_item_template": "Yeni iş öğesi şablonu",
-      "new_page_template": "Yeni sayfa şablonu",
       "options": {
         "project": {
           "label": "Proje şablonları"
         },
         "work_item": {
           "label": "İş öğesi şablonları"
-        },
-        "page": {
-          "label": "Sayfa şablonları"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "İş-öğesi şablonu oluştur",
             "update": "İş-öğesi şablonunu güncelle"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Sayfa şablonunuzu adlandırın.",
-              "validation": {
-                "required": "Şablon adı gereklidir",
-                "maxLength": "Şablon adı 255 karakterden az olmalıdır"
-              }
-            },
-            "description": {
-              "placeholder": "Bu şablonun ne zaman ve nasıl kullanılacağını açıklayın."
-            }
-          },
-          "name": {
-            "placeholder": "Başlıksız sayfa",
-            "validation": {
-              "maxLength": "Sayfa adı 255 karakterden az olmalıdır"
-            }
-          },
-          "button": {
-            "create": "Sayfa şablonu oluştur",
-            "update": "Sayfa şablonunu güncelle"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Şablonlar",
-        "description": "Plane'deki proje, iş-öğesi ve sayfa şablonlarıyla, bir projeyi sıfırdan oluşturmanız veya iş öğesi özelliklerini manuel olarak ayarlamanız gerekmez.",
         "sub_description": "Şablonları kullandığınızda admin zamanınızın %80'ini geri kazanın."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Henüz alt iş öğesi yok. Bir tane ekleyin, işinizi daha iyi yapılandırın."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Erişiminiz olan şablon yok.",
-          "description": "Lütfen bir şablon oluşturun"
-        },
-        "no_results": {
-          "title": "Bu bir şablonla eşleşmedi.",
-          "description": "Başka terimlerle arama yapmayı deneyin."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Yeni şablon ekle"
       },
       "label": {
-        "project": "Bir proje şablonu seçin",
-        "page": "Şablon seç"
+        "project": "Bir proje şablonu seçin"
       },
       "tooltip": {
         "work_item": "Bir iş öğesi şablonu seçin"

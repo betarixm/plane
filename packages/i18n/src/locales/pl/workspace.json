@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Napisz notatkę, dokument lub pełną bazę wiedzy. Niech Galileo, asystent AI Plane, pomoże Ci zacząć",
-        "description": "Strony to przestrzeń do przechowywania myśli w Plane. Sporządzaj notatki ze spotkań, formatuj je łatwo, osadzaj elementy pracy, układaj je za pomocą biblioteki komponentów i trzymaj je wszystkie w kontekście projektu. Aby szybko wykonać dowolny dokument, wywołaj Galileo, AI Plane, za pomocą skrótu lub kliknięcia przycisku.",
-        "primary_button": {
-          "text": "Utwórz swoją pierwszą stronę"
-        }
-      },
-      "private": {
-        "title": "Brak prywatnych stron",
-        "description": "Zachowaj swoje prywatne myśli tutaj. Kiedy będziesz gotowy do udostępnienia, zespół jest tylko o kliknięcie dalej.",
-        "primary_button": {
-          "text": "Utwórz swoją pierwszą stronę"
-        }
-      },
-      "public": {
-        "title": "Brak stron obszaru roboczego",
-        "description": "Zobacz strony udostępniane wszystkim w Twojej przestrzeni roboczej właśnie tutaj.",
-        "primary_button": {
-          "text": "Utwórz swoją pierwszą stronę"
-        }
-      },
-      "archived": {
-        "title": "Brak zarchiwizowanych stron",
-        "description": "Archiwizuj strony, których nie masz na radarze. Dostęp do nich tutaj, gdy potrzeba."
-      },
-      "shared": {
-        "title": "Brak udostępnionych stron",
-        "description": "Strony, które inni Ci udostępnili, pojawią się tutaj."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

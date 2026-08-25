@@ -77,15 +77,6 @@
       "description": "Váš aktuálny filter nevrátil žiadne výsledky. Skúste zmeniť filtre.",
       "cta_primary": "Pridať pracovnú položku"
     },
-    "pages": {
-      "title": "Dokumentujte všetko — od poznámok po PRD",
-      "description": "Stránky vám umožňujú zachytiť a organizovať informácie na jednom mieste. Píšte poznámky zo stretnutí, projektovú dokumentáciu a PRD, vkladajte pracovné položky a štruktúrujte ich pomocou pripravených komponentov.",
-      "cta_primary": "Vytvorte svoju prvú stránku"
-    },
-    "archive_pages": {
-      "title": "Zatiaľ žiadne archivované stránky",
-      "description": "Archivujte stránky, ktoré nie sú na vašom radare. Pristúpte k nim tu, keď budete potrebovať."
-    },
     "intake_sidebar": {
       "title": "Zaznamenajte príchodzí požiadavky",
       "description": "Odosielajte nové požiadavky na preskúmanie, stanovenie priorít a sledovanie v rámci pracovného postupu vášho projektu.",
@@ -185,11 +176,6 @@
       "title": "Vizualizujte svoj pokrok pomocou prehľadov",
       "description": "Vytvárajte prispôsobiteľné prehľady na sledovanie metrík, meranie výsledkov a efektívnu prezentáciu poznatkov.",
       "cta_primary": "Vytvoriť nový prehľad"
-    },
-    "wiki": {
-      "title": "Napíšte poznámku, dokument alebo celú vedomostnú bázu.",
-      "description": "Stránky sú priestorom pre zachytenie myšlienok v Plane. Robte poznámky zo stretnutí, jednoducho ich formátujte, vkladajte pracovné položky, usporiadajte ich pomocou knižnice komponentov a udržujte všetko v kontexte vášho projektu.",
-      "cta_primary": "Vytvorte svoju stránku"
     },
     "project_overview_state_sidebar": {
       "title": "Povoliť stavy projektu",

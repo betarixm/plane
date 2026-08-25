@@ -339,13 +339,6 @@
         "toggle_title": "Povolit zobrazení",
         "toggle_description": "Členové projektu budou moci vytvářet a upravovat zobrazení."
       },
-      "pages": {
-        "title": "Stránky",
-        "short_title": "Stránky",
-        "description": "Vytvářejte a upravujte volný obsah: poznámky, dokumenty, cokoliv.",
-        "toggle_title": "Povolit stránky",
-        "toggle_description": "Členové projektu budou moci vytvářet a upravovat stránky."
-      },
       "intake": {
         "intake_responsibility": "Odpovědnost za příjem",
         "intake_sources": "Zdroje příjmu",

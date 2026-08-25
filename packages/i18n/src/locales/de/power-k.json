@@ -48,26 +48,10 @@
         "copy_url": "URL kopieren",
         "copy_url_toast_success": "Modul-URL in die Zwischenablage kopiert.",
         "copy_url_toast_error": "Fehler beim Kopieren der Modul-URL in die Zwischenablage."
-      },
-      "page": {
-        "title": "Seiten-Aktionen",
-        "indicator": "Seite",
-        "lock": "Sperren",
-        "unlock": "Entsperren",
-        "make_private": "Privat machen",
-        "make_public": "Öffentlich machen",
-        "archive": "Archivieren",
-        "restore": "Wiederherstellen",
-        "add_to_favorites": "Zu Favoriten hinzufügen",
-        "remove_from_favorites": "Aus Favoriten entfernen",
-        "copy_url": "URL kopieren",
-        "copy_url_toast_success": "Seiten-URL in die Zwischenablage kopiert.",
-        "copy_url_toast_error": "Fehler beim Kopieren der Seiten-URL in die Zwischenablage."
       }
     },
     "creation_actions": {
       "create_work_item": "Neues Arbeitselement",
-      "create_page": "Neue Seite",
       "create_view": "Neue Ansicht",
       "create_cycle": "Neuer Zyklus",
       "create_module": "Neues Modul",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Zu Modulen",
       "open_project_view": "Projektansicht öffnen",
       "nav_project_views": "Zu Projektansichten",
-      "nav_project_pages": "Zu Seiten",
       "nav_project_intake": "Zum Intake",
       "nav_project_archives": "Zu Projektarchiven",
       "open_project_setting": "Projekteinstellung öffnen",

@@ -339,13 +339,6 @@
         "toggle_title": "Habilitar vistas",
         "toggle_description": "Los miembros del proyecto podrán crear y editar vistas."
       },
-      "pages": {
-        "title": "Páginas",
-        "short_title": "Páginas",
-        "description": "Crea y edita contenido libre: notas, documentos, cualquier cosa.",
-        "toggle_title": "Habilitar páginas",
-        "toggle_description": "Los miembros del proyecto podrán crear y editar páginas."
-      },
       "intake": {
         "intake_responsibility": "Responsabilidad de ingreso",
         "intake_sources": "Fuentes de ingreso",

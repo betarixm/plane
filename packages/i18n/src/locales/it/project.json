@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "Cancella tutti i filtri"
         }
-      },
-      "public": {
-        "title": "Nessuna pagina pubblica ancora",
-        "description": "Visualizza qui le pagine condivise con tutti nel tuo progetto.",
-        "primary_button": {
-          "text": "Crea la tua prima pagina"
-        }
-      },
-      "archived": {
-        "title": "Nessuna pagina archiviata ancora",
-        "description": "Archivia le pagine che non sono più di tuo interesse. Potrai accedervi quando necessario."
-      },
-      "shared": {
-        "title": "Nessuna pagina condivisa ancora",
-        "description": "Le pagine che altri hanno condiviso con te appariranno qui."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "Scrivi una nota, un documento o una vera e propria base di conoscenza. Fai partire Galileo, l'assistente AI di Plane, per aiutarti a iniziare",
-        "description": "Le pagine sono spazi per appunti in Plane. Prendi note durante le riunioni, formattale facilmente, inserisci elementi di lavoro, disponili usando una libreria di componenti e tienili tutti nel contesto del tuo progetto. Per velocizzare qualsiasi documento, invoca Galileo, l'IA di Plane, con una scorciatoia o con il clic di un pulsante.",
-        "primary_button": {
-          "text": "Crea la tua prima pagina"
-        }
-      },
-      "private": {
-        "title": "Nessuna pagina privata ancora",
-        "description": "Tieni qui i tuoi appunti privati. Quando sarai pronto a condividerli, il team sarà a portata di clic.",
-        "primary_button": {
-          "text": "Crea la tua prima pagina"
-        }
-      },
-      "public": {
-        "title": "Nessuna pagina pubblica ancora",
-        "description": "Visualizza qui le pagine condivise con tutti nel tuo progetto.",
-        "primary_button": {
-          "text": "Crea la tua prima pagina"
-        }
-      },
-      "archived": {
-        "title": "Nessuna pagina archiviata ancora",
-        "description": "Archivia le pagine che non sono più di tuo interesse. Potrai accedervi quando necessario."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "I moduli non sono abilitati per il progetto.",
         "description": "I moduli sono i blocchi costitutivi del tuo progetto. Abilita i moduli dalle impostazioni del progetto per iniziare a usarli.",
-        "primary_button": {
-          "text": "Gestisci funzionalità"
-        }
-      },
-      "page": {
-        "title": "Le pagine non sono abilitate per il progetto.",
-        "description": "Le pagine sono i blocchi costitutivi del tuo progetto. Abilita le pagine dalle impostazioni del progetto per iniziare a usarle.",
         "primary_button": {
           "text": "Gestisci funzionalità"
         }

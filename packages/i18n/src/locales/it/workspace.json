@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Scrivi una nota, un documento o una base di conoscenza completa. Fai partire Galileo, l'assistente AI di Plane, per aiutarti a iniziare",
-        "description": "Le pagine sono spazi di pensiero in Plane. Prendi appunti durante le riunioni, formattali facilmente, incorpora elementi di lavoro, disponili utilizzando una libreria di componenti e mantienili tutti nel contesto del tuo progetto. Per semplificare qualsiasi documento, invoca Galileo, l'AI di Plane, con una scorciatoia o con un clic di un pulsante.",
-        "primary_button": {
-          "text": "Crea la tua prima pagina"
-        }
-      },
-      "private": {
-        "title": "Nessuna pagina privata ancora",
-        "description": "Tieni qui i tuoi pensieri privati. Quando sei pronto a condividere, il team è a un clic di distanza.",
-        "primary_button": {
-          "text": "Crea la tua prima pagina"
-        }
-      },
-      "public": {
-        "title": "Nessuna pagina dello spazio di lavoro ancora",
-        "description": "Vedi le pagine condivise con tutti nel tuo spazio di lavoro proprio qui.",
-        "primary_button": {
-          "text": "Crea la tua prima pagina"
-        }
-      },
-      "archived": {
-        "title": "Nessuna pagina archiviata ancora",
-        "description": "Archivia le pagine che non sono nella tua lista di priorità. Accedile qui quando necessario."
-      },
-      "shared": {
-        "title": "Nessuna pagina condivisa ancora",
-        "description": "Le pagine che altri hanno condiviso con te appariranno qui."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

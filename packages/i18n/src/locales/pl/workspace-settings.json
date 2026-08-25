@@ -3,7 +3,7 @@
     "label": "Ustawienia przestrzeni roboczej",
     "page_label": "{workspace} - Ustawienia ogólne",
     "key_created": "Klucz utworzony",
-    "copy_key": "Skopiuj i zapisz ten klucz w Plane Pages. Po zamknięciu nie będzie widoczny ponownie. Plik CSV z kluczem został pobrany.",
+    "copy_key": "Skopiuj ten tajny klucz i zapisz go w bezpiecznym miejscu. Po zamknięciu nie będzie można go ponownie wyświetlić. Plik CSV z kluczem został pobrany.",
     "token_copied": "Token skopiowano do schowka.",
     "settings": {
       "general": {
@@ -450,7 +450,6 @@
         "write": "Zapis",
         "scope_description": {
           "projects": "Dostęp do projektów i wszystkich powiązanych encji",
-          "wiki": "Dostęp do wiki i wszystkich powiązanych encji",
           "workspaces": "Dostęp do obszarów roboczych i wszystkich powiązanych encji",
           "stickies": "Dostęp do notatek i wszystkich powiązanych encji",
           "profile": "Dostęp do informacji o profilu użytkownika",

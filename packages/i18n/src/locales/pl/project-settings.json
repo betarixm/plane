@@ -339,13 +339,6 @@
         "toggle_title": "Włącz widoki",
         "toggle_description": "Członkowie projektu będą mogli tworzyć i edytować widoki."
       },
-      "pages": {
-        "title": "Strony",
-        "short_title": "Strony",
-        "description": "Twórz i edytuj dowolne treści: notatki, dokumenty, cokolwiek.",
-        "toggle_title": "Włącz strony",
-        "toggle_description": "Członkowie projektu będą mogli tworzyć i edytować strony."
-      },
       "intake": {
         "intake_responsibility": "Odpowiedzialność za przyjęcie",
         "intake_sources": "Źródła przyjęć",

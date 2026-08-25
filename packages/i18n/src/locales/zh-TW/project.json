@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "清除所有篩選器"
         }
-      },
-      "public": {
-        "title": "尚無公開頁面",
-        "description": "在此檢視與專案中所有人共享的頁面。",
-        "primary_button": {
-          "text": "建立您的第一個頁面"
-        }
-      },
-      "archived": {
-        "title": "尚無已封存的頁面",
-        "description": "封存不在您雷達上的頁面。需要時在此處存取。"
-      },
-      "shared": {
-        "title": "尚無共享頁面",
-        "description": "其他人與您共享的頁面會顯示在這裡。"
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "撰寫筆記、文件或完整的知識庫。讓 Galileo（Plane 的 AI 助手）協助您開始",
-        "description": "頁面是 Plane 中的思考筆記空間。記下會議筆記，輕鬆格式化，嵌入工作事項，使用元件庫排版，並將它們全部保留在專案的上下文中。若要快速完成任何文件，可以使用快速鍵或按鈕來呼叫 Plane 的 AI Galileo。",
-        "primary_button": {
-          "text": "建立您的第一個頁面"
-        }
-      },
-      "private": {
-        "title": "尚無私人頁面",
-        "description": "在這裡保留您的私人想法。當您準備好分享時，團隊只需點選一下即可。",
-        "primary_button": {
-          "text": "建立您的第一個頁面"
-        }
-      },
-      "public": {
-        "title": "尚無公開頁面",
-        "description": "在這裡檢視與專案中所有人分享的頁面。",
-        "primary_button": {
-          "text": "建立您的第一個頁面"
-        }
-      },
-      "archived": {
-        "title": "尚無已封存的頁面",
-        "description": "封存不在您雷達上的頁面。需要時在這裡存取它們。"
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "模組未啟用於此專案。",
         "description": "模組是專案的基本組成部分。從專案設定啟用模組以開始使用。",
-        "primary_button": {
-          "text": "管理功能"
-        }
-      },
-      "page": {
-        "title": "頁面未啟用於此專案。",
-        "description": "頁面是專案的基本組成部分。從專案設定啟用頁面以開始使用。",
         "primary_button": {
           "text": "管理功能"
         }

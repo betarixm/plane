@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Napište poznámku, dokument nebo celou znalostní bázi. Získejte pomoc od Galilea, AI asistenta Plane, abyste začali",
-        "description": "Stránky jsou prostor pro myšlenky v Plane. Zaznamenejte si poznámky z jednání, snadno je naformátujte, vložte pracovní položky, uspořádejte je pomocí knihovny komponent a udržujte je všechny v kontextu vašeho projektu. Abychom usnadnili práci s jakýmkoli dokumentem, vyvolejte Galilea, AI Plane, pomocí zkratky nebo kliknutím na tlačítko.",
-        "primary_button": {
-          "text": "Vytvořit svou první stránku"
-        }
-      },
-      "private": {
-        "title": "Zatím žádné soukromé stránky",
-        "description": "Udržujte své soukromé myšlenky zde. Až budete připraveni sdílet, tým je jen na kliknutí daleko.",
-        "primary_button": {
-          "text": "Vytvořit svou první stránku"
-        }
-      },
-      "public": {
-        "title": "Zatím žádné stránky pracovního prostoru",
-        "description": "Zde uvidíte stránky sdílené se všemi ve vašem pracovním prostoru.",
-        "primary_button": {
-          "text": "Vytvořit svou první stránku"
-        }
-      },
-      "archived": {
-        "title": "Zatím žádné archivované stránky",
-        "description": "Archivujte stránky, které nejsou na vašem radaru. Zde k nim získáte přístup, když je potřebujete."
-      },
-      "shared": {
-        "title": "Zatím žádné sdílené stránky",
-        "description": "Stránky, které s vámi ostatní sdíleli, se objeví zde."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

@@ -339,13 +339,6 @@
         "toggle_title": "Ativar visualizações",
         "toggle_description": "Os membros do projeto poderão criar e editar visualizações."
       },
-      "pages": {
-        "title": "Páginas",
-        "short_title": "Páginas",
-        "description": "Crie e edite conteúdo livre: notas, documentos, qualquer coisa.",
-        "toggle_title": "Ativar páginas",
-        "toggle_description": "Os membros do projeto poderão criar e editar páginas."
-      },
       "intake": {
         "intake_responsibility": "Responsabilidade de recebimento",
         "intake_sources": "Fontes de recebimento",

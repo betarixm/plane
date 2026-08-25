@@ -77,15 +77,6 @@
       "description": "Bộ lọc hiện tại của bạn không trả về kết quả nào. Hãy thử thay đổi bộ lọc.",
       "cta_primary": "Thêm mục công việc"
     },
-    "pages": {
-      "title": "Ghi chép mọi thứ — từ ghi chú đến PRD",
-      "description": "Các trang cho phép bạn ghi lại và tổ chức thông tin ở một nơi. Viết ghi chú cuộc họp, tài liệu dự án và PRD, nhúng các mục công việc và cấu trúc chúng với các thành phần sẵn sàng sử dụng.",
-      "cta_primary": "Tạo Trang đầu tiên của bạn"
-    },
-    "archive_pages": {
-      "title": "Chưa có trang được lưu trữ",
-      "description": "Lưu trữ các trang không nằm trong tầm quan sát của bạn. Truy cập chúng ở đây khi cần."
-    },
     "intake_sidebar": {
       "title": "Ghi lại yêu cầu Tiếp nhận",
       "description": "Gửi các yêu cầu mới để được xem xét, ưu tiên và theo dõi trong quy trình làm việc của dự án.",
@@ -185,11 +176,6 @@
       "title": "Trực quan hóa tiến độ của bạn với bảng điều khiển",
       "description": "Xây dựng bảng điều khiển có thể tùy chỉnh để theo dõi số liệu, đo lường kết quả và trình bày thông tin hiệu quả.",
       "cta_primary": "Tạo bảng điều khiển mới"
-    },
-    "wiki": {
-      "title": "Viết một ghi chú, một tài liệu hoặc một cơ sở kiến thức đầy đủ.",
-      "description": "Các trang là không gian ghi lại suy nghĩ trong Plane. Ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng các mục công việc, bố trí chúng bằng thư viện các thành phần và giữ chúng tất cả trong bối cảnh dự án của bạn.",
-      "cta_primary": "Tạo trang của bạn"
     },
     "project_overview_state_sidebar": {
       "title": "Kích hoạt trạng thái dự án",

@@ -36,14 +36,12 @@
       "title": "Terbaru",
       "empty": {
         "project": "Proyek terbaru Anda akan muncul di sini setelah Anda mengunjunginya.",
-        "page": "Halaman terbaru Anda akan muncul di sini setelah Anda mengunjunginya.",
         "issue": "Item kerja terbaru Anda akan muncul di sini setelah Anda mengunjunginya.",
         "default": "Anda belum memiliki yang terbaru."
       },
       "filters": {
         "all": "Semua",
         "projects": "Proyek",
-        "pages": "Halaman",
         "issues": "Item kerja"
       }
     },

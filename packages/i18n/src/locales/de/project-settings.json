@@ -339,13 +339,6 @@
         "toggle_title": "Ansichten aktivieren",
         "toggle_description": "Projektmitglieder können Ansichten erstellen und bearbeiten."
       },
-      "pages": {
-        "title": "Seiten",
-        "short_title": "Seiten",
-        "description": "Erstellen und bearbeiten Sie freie Inhalte: Notizen, Dokumente, alles.",
-        "toggle_title": "Seiten aktivieren",
-        "toggle_description": "Projektmitglieder können Seiten erstellen und bearbeiten."
-      },
       "intake": {
         "intake_responsibility": "Intake-Verantwortung",
         "intake_sources": "Intake-Quellen",

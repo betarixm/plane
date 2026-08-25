@@ -36,14 +36,12 @@
       "title": "Récents",
       "empty": {
         "project": "Vos projets récents apparaîtront ici une fois que vous en aurez visité un.",
-        "page": "Vos pages récentes apparaîtront ici une fois que vous en aurez visité une.",
         "issue": "Vos éléments de travail récents apparaîtront ici une fois que vous en aurez visité un.",
         "default": "Vous n’avez pas encore d’éléments récents."
       },
       "filters": {
         "all": "Tous",
         "projects": "Projets",
-        "pages": "Pages",
         "issues": "Éléments de travail"
       }
     },

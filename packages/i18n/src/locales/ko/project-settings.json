@@ -339,13 +339,6 @@
         "toggle_title": "보기 활성화",
         "toggle_description": "프로젝트 멤버가 보기를 생성하고 편집할 수 있습니다."
       },
-      "pages": {
-        "title": "페이지",
-        "short_title": "페이지",
-        "description": "자유 형식 콘텐츠를 생성하고 편집합니다: 메모, 문서, 무엇이든.",
-        "toggle_title": "페이지 활성화",
-        "toggle_description": "프로젝트 멤버가 페이지를 생성하고 편집할 수 있습니다."
-      },
       "intake": {
         "intake_responsibility": "인테이크 책임",
         "intake_sources": "인테이크 소스",

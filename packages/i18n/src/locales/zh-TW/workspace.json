@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "寫一個筆記、文檔或完整的知識庫。讓 Galileo，Plane 的 AI 助手，幫助您開始",
-        "description": "頁面是 Plane 中的思想沉澱空間。記下會議筆記，輕鬆格式化，嵌入工作項目，使用組件庫佈局，並將它們全部保存在您的專案上下文中。要快速完成任何文檔，使用快捷方式或點擊按鈕來調用 Galileo，Plane 的 AI。",
-        "primary_button": {
-          "text": "創建您的第一個頁面"
-        }
-      },
-      "private": {
-        "title": "還沒有私人頁面",
-        "description": "在這裡保留您的私人想法。當您準備好分享時，團隊只需點擊一下即可。",
-        "primary_button": {
-          "text": "創建您的第一個頁面"
-        }
-      },
-      "public": {
-        "title": "還沒有工作空間頁面",
-        "description": "在這裡查看與工作空間中的每個人共享的頁面。",
-        "primary_button": {
-          "text": "創建您的第一個頁面"
-        }
-      },
-      "archived": {
-        "title": "還沒有歸檔的頁面",
-        "description": "歸檔不在您雷達上的頁面。需要時在這裡訪問它們。"
-      },
-      "shared": {
-        "title": "尚無共享頁面",
-        "description": "其他人與您共享的頁面會顯示在這裡。"
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

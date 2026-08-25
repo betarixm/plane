@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "模板",
-      "description": "使用模板可以节省80%创建项目、工作项和页面的时间。",
       "new_project_template": "新建项目模板",
       "new_work_item_template": "新建工作项模板",
-      "new_page_template": "新建页面模板",
       "options": {
         "project": {
           "label": "项目模板"
         },
         "work_item": {
           "label": "工作项模板"
-        },
-        "page": {
-          "label": "页面模板"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "创建工作项模板",
             "update": "更新工作项模板"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "为您的页面模板命名。",
-              "validation": {
-                "required": "模板名称是必填项",
-                "maxLength": "模板名称应少于255个字符"
-              }
-            },
-            "description": {
-              "placeholder": "描述何时以及如何使用此模板。"
-            }
-          },
-          "name": {
-            "placeholder": "未命名页面",
-            "validation": {
-              "maxLength": "页面名称应少于255个字符"
-            }
-          },
-          "button": {
-            "create": "创建页面模板",
-            "update": "更新页面模板"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "模板",
-        "description": "使用Plane中的项目、工作项和页面模板，您无需从头开始创建项目或手动设置工作项属性。",
         "sub_description": "使用模板可以收回80%的管理时间。"
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "还没有子工作项。添加一个以更好地组织您的工作。"
-      },
-      "page": {
-        "no_templates": {
-          "title": "您没有访问任何模板。",
-          "description": "请创建一个模板"
-        },
-        "no_results": {
-          "title": "没有找到模板。",
-          "description": "尝试使用其他术语搜索。"
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "添加新模板"
       },
       "label": {
-        "project": "选择项目模板",
-        "page": "从模板中选择"
+        "project": "选择项目模板"
       },
       "tooltip": {
         "work_item": "选择工作项模板"

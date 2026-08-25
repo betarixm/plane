@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "Șterge toate filtrele"
         }
-      },
-      "public": {
-        "title": "Nicio pagină publică încă",
-        "description": "Vezi paginile distribuite cu toată lumea din proiectul tău chiar aici.",
-        "primary_button": {
-          "text": "Creează prima ta pagină"
-        }
-      },
-      "archived": {
-        "title": "Nicio pagină arhivată încă",
-        "description": "Arhivează paginile care nu îți sunt pe radar. Accesează-le aici când ai nevoie."
-      },
-      "shared": {
-        "title": "Nicio pagină partajată încă",
-        "description": "Paginile pe care alții le-au partajat cu tine vor apărea aici."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "Scrie o notiță, un document sau o bază completă de cunoștințe. Folosește-l pe Galileo, Inteligența Artificială a Plane, ca să te ajute să începi",
-        "description": "Documentația e spațiul în care îți notezi gândurile în Plane. Ia notițe de la ședințe, formatează-le ușor, inserează activități, așază-le folosind o bibliotecă de componente și păstrează-le pe toate în contextul proiectului tău. Pentru a redacta rapid orice document, apelează la Galileo, Inteligența Artificială a Plane, cu un shortcut sau un click.",
-        "primary_button": {
-          "text": "Creează primul tău document"
-        }
-      },
-      "private": {
-        "title": "Niciun document privată încă",
-        "description": "Păstrează-ți gândurile private aici. Când ești gata să le împarți, echipa e la un click distanță.",
-        "primary_button": {
-          "text": "Creează primul tău document"
-        }
-      },
-      "public": {
-        "title": "Niciun document public încă",
-        "description": "Vezi aici documentele distribuite cu toată echipa ta din proiect.",
-        "primary_button": {
-          "text": "Creează primul tău document"
-        }
-      },
-      "archived": {
-        "title": "Niciun document arhivat încă",
-        "description": "Arhivează documentele de care nu mai ai nevoie. Le poți accesa de aici oricând."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "Funcția Module nu este activată pentru proiect.",
         "description": "Modulele sunt componentele de bază ale proiectului tău. Activează modulele din setările proiectului pentru a începe să le folosești.",
-        "primary_button": {
-          "text": "Gestionează funcțiile"
-        }
-      },
-      "page": {
-        "title": "Funcția Documentație nu este activată pentru proiect.",
-        "description": "Paginile sunt componentele de bază ale proiectului tău. Activează paginile din setările proiectului pentru a începe să le folosești.",
         "primary_button": {
           "text": "Gestionează funcțiile"
         }

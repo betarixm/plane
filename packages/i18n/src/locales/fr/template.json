@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Modèles",
-      "description": "Économisez 80% du temps consacré à la création de projets, d'éléments de travail et de pages lorsque vous utilisez des modèles.",
       "new_project_template": "Nouveau modèle de projet",
       "new_work_item_template": "Nouveau modèle d’élément de travail",
-      "new_page_template": "Nouveau modèle de page",
       "options": {
         "project": {
           "label": "Modèles de projet"
         },
         "work_item": {
           "label": "Modèles d'éléments de travail"
-        },
-        "page": {
-          "label": "Modèles de page"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Créer un modèle d'élément de travail",
             "update": "Mettre à jour le modèle d'élément de travail"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Nommez votre modèle de page.",
-              "validation": {
-                "required": "Le nom du modèle est requis",
-                "maxLength": "Le nom du modèle doit comporter moins de 255 caractères"
-              }
-            },
-            "description": {
-              "placeholder": "Décrivez quand et comment utiliser ce modèle."
-            }
-          },
-          "name": {
-            "placeholder": "Page sans titre",
-            "validation": {
-              "maxLength": "Le nom de la page doit comporter moins de 255 caractères"
-            }
-          },
-          "button": {
-            "create": "Créer un modèle de page",
-            "update": "Mettre à jour le modèle de page"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Modèles",
-        "description": "Avec les modèles de projet, d'élément de travail et de page dans Plane, vous n'avez pas à créer un projet à partir de zéro ou à définir manuellement les propriétés des éléments de travail.",
         "sub_description": "Récupérez 80% de votre temps d'administration lorsque vous utilisez des modèles."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Aucun sous-élément de travail pour le moment. Ajoutez-en un pour structurer votre travail mieux."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Il n'y a aucun modèle auquel vous avez accès.",
-          "description": "Veuillez créer un modèle"
-        },
-        "no_results": {
-          "title": "Cela ne correspond à aucun modèle.",
-          "description": "Essayez de rechercher avec d'autres termes."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Ajouter un nouveau modèle"
       },
       "label": {
-        "project": "Choisir un modèle de projet",
-        "page": "Choisir à partir du modèle"
+        "project": "Choisir un modèle de projet"
       },
       "tooltip": {
         "work_item": "Choisir un modèle d'élément de travail"

@@ -48,26 +48,10 @@
         "copy_url": "Копировать URL",
         "copy_url_toast_success": "URL модуля скопирован в буфер обмена.",
         "copy_url_toast_error": "Произошла ошибка при копировании URL модуля в буфер обмена."
-      },
-      "page": {
-        "title": "Действия со страницей",
-        "indicator": "Страница",
-        "lock": "Заблокировать",
-        "unlock": "Разблокировать",
-        "make_private": "Сделать приватной",
-        "make_public": "Сделать публичной",
-        "archive": "Архивировать",
-        "restore": "Восстановить",
-        "add_to_favorites": "Добавить в избранное",
-        "remove_from_favorites": "Удалить из избранного",
-        "copy_url": "Копировать URL",
-        "copy_url_toast_success": "URL страницы скопирован в буфер обмена.",
-        "copy_url_toast_error": "Произошла ошибка при копировании URL страницы в буфер обмена."
       }
     },
     "creation_actions": {
       "create_work_item": "Новый рабочий элемент",
-      "create_page": "Новая страница",
       "create_view": "Новое представление",
       "create_cycle": "Новый цикл",
       "create_module": "Новый модуль",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Перейти к модулям",
       "open_project_view": "Открыть представление проекта",
       "nav_project_views": "Перейти к представлениям проекта",
-      "nav_project_pages": "Перейти к страницам",
       "nav_project_intake": "Перейти к предложениям",
       "nav_project_archives": "Перейти в архивы проекта",
       "open_project_setting": "Открыть настройку проекта",

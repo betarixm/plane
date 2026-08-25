@@ -339,13 +339,6 @@
         "toggle_title": "ビューを有効にする",
         "toggle_description": "プロジェクトメンバーはビューを作成および編集できるようになります。"
       },
-      "pages": {
-        "title": "ページ",
-        "short_title": "ページ",
-        "description": "自由形式のコンテンツを作成および編集します：メモ、ドキュメント、何でも。",
-        "toggle_title": "ページを有効にする",
-        "toggle_description": "プロジェクトメンバーはページを作成および編集できるようになります。"
-      },
       "intake": {
         "intake_responsibility": "受付責任",
         "intake_sources": "受付ソース",

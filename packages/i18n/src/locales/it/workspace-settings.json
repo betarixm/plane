@@ -3,7 +3,7 @@
     "label": "Impostazioni dello spazio di lavoro",
     "page_label": "{workspace} - Impostazioni generali",
     "key_created": "Chiave creata",
-    "copy_key": "Copia e salva questa chiave segreta in Plane Pages. Non potrai vederla dopo aver cliccato Chiudi. È stato scaricato un file CSV contenente la chiave.",
+    "copy_key": "Copia e conserva questa chiave segreta in un luogo sicuro. Non potrai più visualizzarla dopo aver fatto clic su Chiudi. È stato scaricato un file CSV contenente la chiave.",
     "token_copied": "Token copiato negli appunti.",
     "settings": {
       "general": {
@@ -450,7 +450,6 @@
         "write": "Scrittura",
         "scope_description": {
           "projects": "Accesso ai progetti e a tutte le entità correlate ai progetti",
-          "wiki": "Accesso al wiki e a tutte le entità correlate al wiki",
           "workspaces": "Accesso agli spazi di lavoro e a tutte le entità correlate",
           "stickies": "Accesso alle note adesive e a tutte le entità correlate",
           "profile": "Accesso alle informazioni del profilo utente",

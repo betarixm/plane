@@ -77,15 +77,6 @@
       "description": "Votre filtre actuel n’a renvoyé aucun résultat. Essayez de modifier les filtres.",
       "cta_primary": "Ajouter un élément de travail"
     },
-    "pages": {
-      "title": "Documentez tout — des notes aux PRD",
-      "description": "Les pages vous permettent de capturer et d’organiser des informations en un seul endroit. Rédigez des notes de réunion, de la documentation de projet et des PRD, intégrez des éléments de travail et structurez-les avec des composants prêts à l'emploi.",
-      "cta_primary": "Créer votre première Page"
-    },
-    "archive_pages": {
-      "title": "Aucune page archivée pour le moment",
-      "description": "Archivez les pages qui ne sont pas sur votre radar. Accédez-y ici si nécessaire."
-    },
     "intake_sidebar": {
       "title": "Enregistrer les demandes d’Intake",
       "description": "Soumettez de nouvelles demandes à examiner, prioriser et suivre dans le flux de travail de votre projet.",
@@ -185,11 +176,6 @@
       "title": "Visualisez votre progression avec des tableaux de bord",
       "description": "Créez des tableaux de bord personnalisables pour suivre les métriques, mesurer les résultats et présenter efficacement les insights.",
       "cta_primary": "Créer un nouveau tableau de bord"
-    },
-    "wiki": {
-      "title": "Écrivez une note, un document ou une base de connaissances complète.",
-      "description": "Les pages sont un espace de repérage de pensées dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des éléments de travail, organisez-les à l'aide d'une bibliothèque de composants, et gardez-les tous dans le contexte de votre projet.",
-      "cta_primary": "Créer votre page"
     },
     "project_overview_state_sidebar": {
       "title": "Activer les états du projet",

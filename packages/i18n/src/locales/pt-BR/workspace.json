@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Escreva uma nota, um documento ou uma base de conhecimento completa. Obtenha ajuda do Galileo, o assistente de IA do Plane, para começar",
-        "description": "Páginas são espaços para desenvolver pensamentos no Plane. Anote notas de reunião, formate-as facilmente, incorpore itens de trabalho, organize-os usando uma biblioteca de componentes e mantenha tudo no contexto do seu projeto. Para facilitar qualquer documento, invoque o Galileo, a IA do Plane, com um atalho ou clique de um botão.",
-        "primary_button": {
-          "text": "Crie sua primeira página"
-        }
-      },
-      "private": {
-        "title": "Ainda não há páginas privadas",
-        "description": "Mantenha seus pensamentos privados aqui. Quando estiver pronto para compartilhar, a equipe está a apenas um clique de distância.",
-        "primary_button": {
-          "text": "Crie sua primeira página"
-        }
-      },
-      "public": {
-        "title": "Ainda não há páginas do espaço de trabalho",
-        "description": "Veja páginas compartilhadas com todos em seu espaço de trabalho aqui mesmo.",
-        "primary_button": {
-          "text": "Crie sua primeira página"
-        }
-      },
-      "archived": {
-        "title": "Ainda não há páginas arquivadas",
-        "description": "Arquive páginas fora do seu radar. Acesse-as aqui quando necessário."
-      },
-      "shared": {
-        "title": "Ainda não há páginas compartilhadas",
-        "description": "As páginas que outros compartilharam com você aparecerão aqui."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

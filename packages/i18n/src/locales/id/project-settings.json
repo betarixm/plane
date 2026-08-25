@@ -339,13 +339,6 @@
         "toggle_title": "Aktifkan tampilan",
         "toggle_description": "Anggota proyek akan dapat membuat dan mengedit tampilan."
       },
-      "pages": {
-        "title": "Halaman",
-        "short_title": "Halaman",
-        "description": "Buat dan edit konten bebas: catatan, dokumen, apa saja.",
-        "toggle_title": "Aktifkan halaman",
-        "toggle_description": "Anggota proyek akan dapat membuat dan mengedit halaman."
-      },
       "intake": {
         "intake_responsibility": "Tanggung jawab penerimaan",
         "intake_sources": "Sumber penerimaan",

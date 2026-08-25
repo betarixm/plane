@@ -339,13 +339,6 @@
         "toggle_title": "啟用檢視",
         "toggle_description": "專案成員將能夠建立和編輯檢視。"
       },
-      "pages": {
-        "title": "頁面",
-        "short_title": "頁面",
-        "description": "建立和編輯自由格式的內容：筆記、文件、任何內容。",
-        "toggle_title": "啟用頁面",
-        "toggle_description": "專案成員將能夠建立和編輯頁面。"
-      },
       "intake": {
         "intake_responsibility": "接收責任",
         "intake_sources": "接收來源",

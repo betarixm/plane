@@ -339,13 +339,6 @@
         "toggle_title": "Activați vizualizările",
         "toggle_description": "Membrii proiectului vor putea crea și edita vizualizări."
       },
-      "pages": {
-        "title": "Pagini",
-        "short_title": "Pagini",
-        "description": "Creați și editați conținut liber: note, documente, orice.",
-        "toggle_title": "Activați paginile",
-        "toggle_description": "Membrii proiectului vor putea crea și edita pagini."
-      },
       "intake": {
         "intake_responsibility": "Responsabilitate de primire",
         "intake_sources": "Surse de primire",

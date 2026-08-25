@@ -48,26 +48,10 @@
         "copy_url": "Copia URL",
         "copy_url_toast_success": "URL del modulo copiato negli appunti.",
         "copy_url_toast_error": "Si è verificato un errore durante la copia dell'URL del modulo negli appunti."
-      },
-      "page": {
-        "title": "Azioni pagina",
-        "indicator": "Pagina",
-        "lock": "Blocca",
-        "unlock": "Sblocca",
-        "make_private": "Rendi privato",
-        "make_public": "Rendi pubblico",
-        "archive": "Archivia",
-        "restore": "Ripristina",
-        "add_to_favorites": "Aggiungi ai preferiti",
-        "remove_from_favorites": "Rimuovi dai preferiti",
-        "copy_url": "Copia URL",
-        "copy_url_toast_success": "URL della pagina copiato negli appunti.",
-        "copy_url_toast_error": "Si è verificato un errore durante la copia dell'URL della pagina negli appunti."
       }
     },
     "creation_actions": {
       "create_work_item": "Nuovo elemento di lavoro",
-      "create_page": "Nuova pagina",
       "create_view": "Nuova visualizzazione",
       "create_cycle": "Nuovo ciclo",
       "create_module": "Nuovo modulo",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Vai ai moduli",
       "open_project_view": "Apri una visualizzazione del progetto",
       "nav_project_views": "Vai alle visualizzazioni del progetto",
-      "nav_project_pages": "Vai alle pagine",
       "nav_project_intake": "Vai all'intake",
       "nav_project_archives": "Vai agli archivi del progetto",
       "open_project_setting": "Apri un'impostazione del progetto",

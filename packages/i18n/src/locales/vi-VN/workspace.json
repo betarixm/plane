@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Viết ghi chú, tài liệu, hoặc cơ sở kiến thức đầy đủ. Nhờ Galileo, trợ lý AI của Plane, giúp bạn bắt đầu",
-        "description": "Trang là không gian lưu trữ ý tưởng trong Plane. Ghi lại ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng mục công việc, bố trí chúng bằng thư viện các thành phần, và giữ tất cả trong ngữ cảnh dự án của bạn. Để làm ngắn gọn bất kỳ tài liệu nào, gọi Galileo, AI của Plane, bằng phím tắt hoặc nhấp vào nút.",
-        "primary_button": {
-          "text": "Tạo trang đầu tiên của bạn"
-        }
-      },
-      "private": {
-        "title": "Chưa có trang riêng tư",
-        "description": "Giữ suy nghĩ riêng tư của bạn ở đây. Khi bạn sẵn sàng chia sẻ, nhóm chỉ cách một cú nhấp chuột.",
-        "primary_button": {
-          "text": "Tạo trang đầu tiên của bạn"
-        }
-      },
-      "public": {
-        "title": "Chưa có trang không gian làm việc",
-        "description": "Xem các trang được chia sẻ với mọi người trong không gian làm việc của bạn ngay tại đây.",
-        "primary_button": {
-          "text": "Tạo trang đầu tiên của bạn"
-        }
-      },
-      "archived": {
-        "title": "Chưa có trang đã lưu trữ",
-        "description": "Lưu trữ các trang không nằm trong tầm nhìn của bạn. Truy cập chúng ở đây khi cần thiết."
-      },
-      "shared": {
-        "title": "Chưa có trang được chia sẻ",
-        "description": "Các trang mà người khác đã chia sẻ với bạn sẽ xuất hiện ở đây."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Plantillas",
-      "description": "Ahorra un 80% del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando utilizas plantillas.",
       "new_project_template": "Nueva plantilla de proyecto",
       "new_work_item_template": "Nueva plantilla de elemento de trabajo",
-      "new_page_template": "Nueva plantilla de página",
       "options": {
         "project": {
           "label": "Plantillas de proyecto"
         },
         "work_item": {
           "label": "Plantillas de elementos de trabajo"
-        },
-        "page": {
-          "label": "Plantillas de página"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Crear plantilla de elemento de trabajo",
             "update": "Actualizar plantilla de elemento de trabajo"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Nombra tu plantilla de página.",
-              "validation": {
-                "required": "El nombre de la plantilla es obligatorio",
-                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
-              }
-            },
-            "description": {
-              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
-            }
-          },
-          "name": {
-            "placeholder": "Página sin título",
-            "validation": {
-              "maxLength": "El nombre de la página debe tener menos de 255 caracteres"
-            }
-          },
-          "button": {
-            "create": "Crear plantilla de página",
-            "update": "Actualizar plantilla de página"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Plantillas",
-        "description": "Con las plantillas de proyectos, elementos de trabajo y páginas en Plane, no tienes que crear un proyecto desde cero ni configurar manualmente las propiedades de los elementos de trabajo.",
         "sub_description": "Recupera el 80% de tu tiempo de administración cuando utilizas Plantillas."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "No hay sub-elementos de trabajo aún. Añade uno para estructurar tu trabajo mejor."
-      },
-      "page": {
-        "no_templates": {
-          "title": "No hay plantillas a las que tengas acceso.",
-          "description": "Por favor, crea una plantilla"
-        },
-        "no_results": {
-          "title": "Eso no coincide con ninguna plantilla.",
-          "description": "Intenta buscar con otros términos."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Agregar nueva plantilla"
       },
       "label": {
-        "project": "Seleccionar una plantilla de proyecto",
-        "page": "Elegir desde plantilla"
+        "project": "Seleccionar una plantilla de proyecto"
       },
       "tooltip": {
         "work_item": "Seleccionar una plantilla de elemento de trabajo"

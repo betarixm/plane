@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Šablony",
-      "description": "Ušetřete 80 % času stráveného vytvářením projektů, pracovních položek a stránek, když používáte šablony.",
       "new_project_template": "Nová šablona projektu",
       "new_work_item_template": "Nová šablona pracovní položky",
-      "new_page_template": "Nová šablona stránky",
       "options": {
         "project": {
           "label": "Šablony projektů"
         },
         "work_item": {
           "label": "Šablony pracovních položek"
-        },
-        "page": {
-          "label": "Šablony stránek"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Vytvořit šablonu pracovní položky",
             "update": "Aktualizovat šablonu pracovní položky"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Pojmenujte svou šablonu stránky.",
-              "validation": {
-                "required": "Název šablony je povinný",
-                "maxLength": "Název šablony by měl být kratší než 255 znaků"
-              }
-            },
-            "description": {
-              "placeholder": "Popište, kdy a jak tuto šablonu použít."
-            }
-          },
-          "name": {
-            "placeholder": "Neznámá stránka",
-            "validation": {
-              "maxLength": "Název stránky by měl být kratší než 255 znaků"
-            }
-          },
-          "button": {
-            "create": "Vytvořit šablonu stránky",
-            "update": "Aktualizovat šablonu stránky"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Šablony",
-        "description": "S šablonami projektů, pracovních položek a stránek v Plane nemusíte vytvářet projekt od nuly nebo nastavovat vlastnosti pracovních položek ručně.",
         "sub_description": "Získejte 80 % svého administrativního času zpět, když používáte šablony."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Zatím žádné podpracovní položky. Přidejte jednu, abyste strukturovali svou práci lépe."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Neexistují žádné šablony, ke kterým máte přístup.",
-          "description": "Prosím vytvořte šablonu"
-        },
-        "no_results": {
-          "title": "To neodpovídá žádné šabloně.",
-          "description": "Zkuste hledat s jinými termíny."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Přidat novou šablonu"
       },
       "label": {
-        "project": "Vybrat šablonu projektu",
-        "page": "Vybrat šablonu"
+        "project": "Vybrat šablonu projektu"
       },
       "tooltip": {
         "work_item": "Vybrat šablonu pracovní položky"

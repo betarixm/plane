@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "Alle Filter löschen"
         }
-      },
-      "public": {
-        "title": "Noch keine öffentlichen Seiten",
-        "description": "Sehen Sie hier Seiten, die mit allen in Ihrem Projekt geteilt wurden.",
-        "primary_button": {
-          "text": "Ihre erste Seite erstellen"
-        }
-      },
-      "archived": {
-        "title": "Noch keine archivierten Seiten",
-        "description": "Archivieren Sie Seiten, die nicht auf Ihrem Radar sind. Greifen Sie hier bei Bedarf darauf zu."
-      },
-      "shared": {
-        "title": "Noch keine geteilten Seiten",
-        "description": "Seiten, die andere mit Ihnen geteilt haben, werden hier angezeigt."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "Notieren Sie Ideen, Dokumente oder Wissensdatenbanken. Nutzen Sie AI Galileo.",
-        "description": "Seiten sind Orte für Ihre Gedanken. Schreiben, formatieren, fügen Sie Arbeitselemente ein und verwenden Sie Komponenten.",
-        "primary_button": {
-          "text": "Erste Seite erstellen"
-        }
-      },
-      "private": {
-        "title": "Keine privaten Seiten",
-        "description": "Bewahren Sie private Gedanken auf. Teilen Sie sie, wenn Sie bereit sind.",
-        "primary_button": {
-          "text": "Seite erstellen"
-        }
-      },
-      "public": {
-        "title": "Keine öffentlichen Seiten",
-        "description": "Hier sehen Sie die im Projekt geteilten Seiten.",
-        "primary_button": {
-          "text": "Seite erstellen"
-        }
-      },
-      "archived": {
-        "title": "Keine archivierten Seiten",
-        "description": "Archivieren Sie Seiten für den späteren Zugriff."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "Module sind nicht aktiviert",
         "description": "Aktivieren Sie Module in den Projekteinstellungen.",
-        "primary_button": {
-          "text": "Funktionen verwalten"
-        }
-      },
-      "page": {
-        "title": "Seiten sind nicht aktiviert",
-        "description": "Aktivieren Sie Seiten in den Projekteinstellungen.",
         "primary_button": {
           "text": "Funktionen verwalten"
         }

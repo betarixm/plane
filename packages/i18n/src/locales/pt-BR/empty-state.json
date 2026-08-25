@@ -77,15 +77,6 @@
       "description": "Seu filtro atual não retornou nenhum resultado. Tente alterar os filtros.",
       "cta_primary": "Adicionar item de trabalho"
     },
-    "pages": {
-      "title": "Documente tudo — de notas a PRDs",
-      "description": "As páginas permitem que você capture e organize informações em um só lugar. Escreva notas de reuniões, documentação de projetos e PRDs, incorpore itens de trabalho e estruture-os com componentes prontos para uso.",
-      "cta_primary": "Criar sua primeira Página"
-    },
-    "archive_pages": {
-      "title": "Ainda não há páginas arquivadas",
-      "description": "Arquive páginas que não estão no seu radar. Acesse-as aqui quando necessário."
-    },
     "intake_sidebar": {
       "title": "Registrar solicitações de Entrada",
       "description": "Envie novas solicitações para serem revisadas, priorizadas e rastreadas dentro do fluxo de trabalho do seu projeto.",
@@ -185,11 +176,6 @@
       "title": "Visualize seu progresso com painéis",
       "description": "Crie painéis personalizáveis para rastrear métricas, medir resultados e apresentar insights de forma eficaz.",
       "cta_primary": "Criar novo painel"
-    },
-    "wiki": {
-      "title": "Escreva uma nota, um documento ou uma base de conhecimento completa.",
-      "description": "As páginas são espaço para capturar pensamentos no Plane. Anote notas de reuniões, formate-as facilmente, incorpore itens de trabalho, organize-as usando uma biblioteca de componentes e mantenha todas no contexto do seu projeto.",
-      "cta_primary": "Criar sua página"
     },
     "project_overview_state_sidebar": {
       "title": "Ativar estados do projeto",

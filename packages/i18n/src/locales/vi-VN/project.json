@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "Xóa tất cả bộ lọc"
         }
-      },
-      "public": {
-        "title": "Chưa có trang công khai",
-        "description": "Xem các trang được chia sẻ với mọi người trong dự án của bạn tại đây.",
-        "primary_button": {
-          "text": "Tạo trang đầu tiên của bạn"
-        }
-      },
-      "archived": {
-        "title": "Chưa có trang đã lưu trữ",
-        "description": "Lưu trữ các trang không còn trong tầm nhìn của bạn. Truy cập chúng ở đây khi cần."
-      },
-      "shared": {
-        "title": "Chưa có trang được chia sẻ",
-        "description": "Các trang mà người khác đã chia sẻ với bạn sẽ xuất hiện ở đây."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "Viết ghi chú, tài liệu hoặc cơ sở kiến thức đầy đủ. Để trợ lý AI Galileo của Plane giúp bạn bắt đầu",
-        "description": "Trang là không gian ghi lại suy nghĩ trong Plane. Ghi lại các ghi chú cuộc họp, định dạng dễ dàng, nhúng mục công việc, sử dụng thư viện thành phần để bố cục và lưu tất cả trong ngữ cảnh dự án. Để hoàn thành nhanh bất kỳ tài liệu nào, bạn có thể gọi AI Galileo của Plane thông qua phím tắt hoặc nhấp nút.",
-        "primary_button": {
-          "text": "Tạo trang đầu tiên của bạn"
-        }
-      },
-      "private": {
-        "title": "Chưa có trang riêng tư",
-        "description": "Lưu ý riêng tư của bạn ở đây. Khi sẵn sàng chia sẻ, nhóm của bạn chỉ cách một cú nhấp chuột.",
-        "primary_button": {
-          "text": "Tạo trang đầu tiên của bạn"
-        }
-      },
-      "public": {
-        "title": "Chưa có trang công khai",
-        "description": "Xem các trang được chia sẻ với mọi người trong dự án tại đây.",
-        "primary_button": {
-          "text": "Tạo trang đầu tiên của bạn"
-        }
-      },
-      "archived": {
-        "title": "Chưa có trang đã lưu trữ",
-        "description": "Lưu trữ các trang không còn trong tầm nhìn của bạn. Truy cập chúng ở đây khi cần."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "Dự án chưa bật tính năng mô-đun.",
         "description": "Mô-đun là khối xây dựng cơ bản của dự án. Bật mô-đun từ cài đặt dự án để bắt đầu sử dụng chúng.",
-        "primary_button": {
-          "text": "Quản lý tính năng"
-        }
-      },
-      "page": {
-        "title": "Dự án chưa bật tính năng trang.",
-        "description": "Trang là khối xây dựng cơ bản của dự án. Bật trang từ cài đặt dự án để bắt đầu sử dụng chúng.",
         "primary_button": {
           "text": "Quản lý tính năng"
         }

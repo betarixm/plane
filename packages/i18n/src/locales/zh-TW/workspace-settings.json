@@ -3,7 +3,7 @@
     "label": "工作區設定",
     "page_label": "{workspace} - 一般設定",
     "key_created": "金鑰已建立",
-    "copy_key": "複製並儲存此金鑰到 Plane Pages。關閉後您將無法看到此金鑰。已下載包含金鑰的 CSV 檔案。",
+    "copy_key": "複製此密鑰並將其保存在安全的位置。關閉後您將無法再次查看。包含密鑰的 CSV 檔案已下載。",
     "token_copied": "權杖已複製到剪貼簿。",
     "settings": {
       "general": {
@@ -450,7 +450,6 @@
         "write": "寫入",
         "scope_description": {
           "projects": "存取專案及所有專案相關實體",
-          "wiki": "存取 Wiki 及所有 Wiki 相關實體",
           "workspaces": "存取工作區及所有工作區相關實體",
           "stickies": "存取便利貼及所有便利貼相關實體",
           "profile": "存取使用者個人資料資訊",

@@ -48,26 +48,10 @@
         "copy_url": "Kopírovať URL",
         "copy_url_toast_success": "URL modulu bola skopírovaná do schránky.",
         "copy_url_toast_error": "Pri kopírovaní URL modulu do schránky sa vyskytla chyba."
-      },
-      "page": {
-        "title": "Akcie pre stránku",
-        "indicator": "Stránka",
-        "lock": "Uzamknúť",
-        "unlock": "Odomknúť",
-        "make_private": "Nastaviť ako súkromnú",
-        "make_public": "Nastaviť ako verejnú",
-        "archive": "Archivovať",
-        "restore": "Obnoviť",
-        "add_to_favorites": "Pridať do obľúbených",
-        "remove_from_favorites": "Odstrániť z obľúbených",
-        "copy_url": "Kopírovať URL",
-        "copy_url_toast_success": "URL stránky bola skopírovaná do schránky.",
-        "copy_url_toast_error": "Pri kopírovaní URL stránky do schránky sa vyskytla chyba."
       }
     },
     "creation_actions": {
       "create_work_item": "Nová pracovná položka",
-      "create_page": "Nová stránka",
       "create_view": "Nový pohľad",
       "create_cycle": "Nový cyklus",
       "create_module": "Nový modul",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Prejsť na moduly",
       "open_project_view": "Otvoriť pohľad projektu",
       "nav_project_views": "Prejsť na pohľady projektu",
-      "nav_project_pages": "Prejsť na stránky",
       "nav_project_intake": "Prejsť na príjem",
       "nav_project_archives": "Prejsť na archívy projektu",
       "open_project_setting": "Otvoriť nastavenie projektu",

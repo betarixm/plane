@@ -77,15 +77,6 @@
       "description": "Twój aktualny filtr nie zwrócił żadnych wyników. Spróbuj zmienić filtry.",
       "cta_primary": "Dodaj element roboczy"
     },
-    "pages": {
-      "title": "Dokumentuj wszystko — od notatek po PRD",
-      "description": "Strony pozwalają przechwytywać i organizować informacje w jednym miejscu. Pisz notatki ze spotkań, dokumentację projektu i PRD, osadzaj elementy robocze i strukturyzuj je za pomocą gotowych komponentów.",
-      "cta_primary": "Utwórz swoją pierwszą Stronę"
-    },
-    "archive_pages": {
-      "title": "Jeszcze brak zarchiwizowanych stron",
-      "description": "Archiwizuj strony, które nie są na Twoim radarze. Uzyskaj do nich dostęp tutaj, gdy będzie to potrzebne."
-    },
     "intake_sidebar": {
       "title": "Rejestruj zgłoszenia przyjmowane",
       "description": "Przesyłaj nowe zgłoszenia do przeglądu, ustalania priorytetów i śledzenia w ramach przepływu pracy Twojego projektu.",
@@ -185,11 +176,6 @@
       "title": "Wizualizuj swój postęp za pomocą pulpitów nawigacyjnych",
       "description": "Twórz konfigurowalne pulpity nawigacyjne do śledzenia metryk, mierzenia wyników i efektywnego prezentowania spostrzeżeń.",
       "cta_primary": "Utwórz nowy pulpit nawigacyjny"
-    },
-    "wiki": {
-      "title": "Napisz notatkę, dokument lub pełną bazę wiedzy.",
-      "description": "Strony to przestrzeń do wychwytywania myśli w Plane. Zapisuj notatki ze spotkań, łatwo je formatuj, osadzaj elementy robocze, układaj je za pomocą biblioteki komponentów i zachowuj wszystkie w kontekście projektu.",
-      "cta_primary": "Utwórz swoją stronę"
     },
     "project_overview_state_sidebar": {
       "title": "Włącz stany projektu",

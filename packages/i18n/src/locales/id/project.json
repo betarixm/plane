@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "Hapus semua filter"
         }
-      },
-      "public": {
-        "title": "Belum ada halaman publik",
-        "description": "Lihat halaman yang dibagikan dengan semua orang di proyek Anda tepat di sini.",
-        "primary_button": {
-          "text": "Buat halaman pertama Anda"
-        }
-      },
-      "archived": {
-        "title": "Belum ada halaman yang diarsipkan",
-        "description": "Arsipkan halaman yang tidak ada dalam radar Anda. Akses di sini saat diperlukan."
-      },
-      "shared": {
-        "title": "Belum ada halaman yang dibagikan",
-        "description": "Halaman yang dibagikan orang lain kepada Anda akan muncul di sini."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "Tulis catatan, dokumen, atau seluruh basis pengetahuan. Dapatkan Galileo, asisten AI Plane, untuk membantu Anda memulai",
-        "description": "Halaman adalah ruang pemikiran di Plane. Catat notul rapat, format dengan mudah, sertakan item kerja, tata letak menggunakan perpustakaan komponen, dan simpan semua di dalam konteks proyek Anda. Untuk menyelesaikan dokumen dengan cepat, panggil Galileo, AI Plane, dengan pintasan atau dengan mengklik tombol.",
-        "primary_button": {
-          "text": "Buat halaman pertama Anda"
-        }
-      },
-      "private": {
-        "title": "Belum ada halaman pribadi",
-        "description": "Simpan pemikiran pribadi Anda di sini. Ketika Anda sudah siap untuk berbagi, tim hanya seklik jarak.",
-        "primary_button": {
-          "text": "Buat halaman pertama Anda"
-        }
-      },
-      "public": {
-        "title": "Belum ada halaman publik",
-        "description": "Lihat halaman yang dibagikan dengan semua orang di proyek Anda tepat di sini.",
-        "primary_button": {
-          "text": "Buat halaman pertama Anda"
-        }
-      },
-      "archived": {
-        "title": "Belum ada halaman yang diarsipkan",
-        "description": "Arsipkan halaman yang tidak ada dalam radar Anda. Akses di sini saat diperlukan."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "Modul tidak diaktifkan untuk proyek ini.",
         "description": "Modul adalah blok bangunan dari proyek Anda. Aktifkan modul dari pengaturan proyek untuk mulai menggunakannya.",
-        "primary_button": {
-          "text": "Kelola fitur"
-        }
-      },
-      "page": {
-        "title": "Halaman tidak diaktifkan untuk proyek ini.",
-        "description": "Halaman adalah blok bangunan dari proyek Anda. Aktifkan halaman dari pengaturan proyek untuk mulai menggunakannya.",
         "primary_button": {
           "text": "Kelola fitur"
         }

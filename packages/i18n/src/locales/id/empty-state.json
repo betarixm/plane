@@ -77,15 +77,6 @@
       "description": "Filter Anda saat ini tidak mengembalikan hasil apapun. Coba ubah filter.",
       "cta_primary": "Tambahkan item kerja"
     },
-    "pages": {
-      "title": "Dokumentasikan segalanya — dari catatan hingga PRD",
-      "description": "Halaman memungkinkan Anda menangkap dan mengorganisir informasi di satu tempat. Tulis catatan rapat, dokumentasi proyek, dan PRD, sematkan item kerja, dan strukturkan dengan komponen siap pakai.",
-      "cta_primary": "Buat Halaman pertama Anda"
-    },
-    "archive_pages": {
-      "title": "Belum ada halaman yang diarsipkan",
-      "description": "Arsipkan halaman yang tidak ada dalam radar Anda. Akses di sini saat dibutuhkan."
-    },
     "intake_sidebar": {
       "title": "Catat permintaan Masuk",
       "description": "Kirim permintaan baru untuk ditinjau, diprioritaskan, dan dilacak dalam alur kerja proyek Anda.",
@@ -185,11 +176,6 @@
       "title": "Visualisasikan kemajuan Anda dengan dasbor",
       "description": "Bangun dasbor yang dapat disesuaikan untuk melacak metrik, mengukur hasil, dan menyajikan wawasan secara efektif.",
       "cta_primary": "Buat dasbor baru"
-    },
-    "wiki": {
-      "title": "Tulis catatan, dokumen, atau basis pengetahuan lengkap.",
-      "description": "Halaman adalah ruang penangkapan pemikiran di Plane. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda.",
-      "cta_primary": "Buat halaman Anda"
     },
     "project_overview_state_sidebar": {
       "title": "Aktifkan status proyek",

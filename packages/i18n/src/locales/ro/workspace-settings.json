@@ -3,7 +3,7 @@
     "label": "Setări spațiu de lucru",
     "page_label": "{workspace} - Setări generale",
     "key_created": "Cheie creată",
-    "copy_key": "Copiază și salvează această cheie secretă în Plane Documentație. Nu vei mai putea vedea această cheie după ce închizi. Un fișier CSV care conține cheia a fost descărcat.",
+    "copy_key": "Copiază și păstrează această cheie secretă într-un loc sigur. Nu o vei mai putea vedea după ce închizi. A fost descărcat un fișier CSV care conține cheia.",
     "token_copied": "Token-ul a fost copiat în memoria temporară.",
     "settings": {
       "general": {
@@ -340,7 +340,7 @@
         },
         "app_available_description": "Conectează un workspace al Plane pentru a începe să folosesti",
         "client_id_and_secret": "ID-ul clientului și Secretul",
-        "client_id_and_secret_description": "Copiază și salvează această cheie secretă în Pagini. Nu poți vedea această cheie din nou după ce închizi.",
+        "client_id_and_secret_description": "Copiază și păstrează această cheie secretă într-un loc sigur.",
         "client_id_and_secret_download": "Poți descărca un fișier CSV cu cheia de aici.",
         "application_id": "ID-ul aplicației",
         "client_id": "ID-ul clientului",
@@ -450,7 +450,6 @@
         "write": "Scriere",
         "scope_description": {
           "projects": "Acces la proiecte și toate entitățile legate de proiecte",
-          "wiki": "Acces la wiki și toate entitățile legate de wiki",
           "workspaces": "Acces la spații de lucru și toate entitățile legate",
           "stickies": "Acces la stickies și toate entitățile legate",
           "profile": "Acces la informațiile profilului utilizatorului",

@@ -36,14 +36,12 @@
       "title": "Recente",
       "empty": {
         "project": "Proiectele vizitate recent vor apărea aici.",
-        "page": "Documentele din Documentație vizitate recent vor apărea aici.",
         "issue": "Activitățile vizitate recent vor apărea aici.",
         "default": "Nu ai nimic recent încă."
       },
       "filters": {
         "all": "Toate",
         "projects": "Proiecte",
-        "pages": "Documentație",
         "issues": "Activități"
       }
     },

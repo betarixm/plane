@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "Wyczyść wszystkie filtry"
         }
-      },
-      "public": {
-        "title": "Brak publicznych stron",
-        "description": "Zobacz strony udostępnione wszystkim w Twoim projekcie tutaj.",
-        "primary_button": {
-          "text": "Utwórz pierwszą stronę"
-        }
-      },
-      "archived": {
-        "title": "Brak zarchiwizowanych stron",
-        "description": "Archiwizuj strony, które nie są już na Twoim radarze. Uzyskaj do nich dostęp tutaj, gdy będą potrzebne."
-      },
-      "shared": {
-        "title": "Brak udostępnionych stron",
-        "description": "Strony, które inni Ci udostępnili, pojawią się tutaj."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "Notuj, dokumentuj lub twórz bazę wiedzy. Użyj AI Galileo.",
-        "description": "Strony to obszar na Twoje myśli. Pisz, formatuj, osadzaj elementy i używaj komponentów.",
-        "primary_button": {
-          "text": "Utwórz pierwszą stronę"
-        }
-      },
-      "private": {
-        "title": "Brak prywatnych stron",
-        "description": "Przechowuj prywatne notatki. Udostępnij je później, gdy będziesz gotowy.",
-        "primary_button": {
-          "text": "Utwórz stronę"
-        }
-      },
-      "public": {
-        "title": "Brak publicznych stron",
-        "description": "Tutaj zobaczysz strony udostępnione w projekcie.",
-        "primary_button": {
-          "text": "Utwórz stronę"
-        }
-      },
-      "archived": {
-        "title": "Brak zarchiwizowanych stron",
-        "description": "Archiwizuj strony do późniejszego użytku."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "Moduły nie są włączone",
         "description": "Włącz moduły w ustawieniach projektu.",
-        "primary_button": {
-          "text": "Zarządzaj funkcjami"
-        }
-      },
-      "page": {
-        "title": "Strony nie są włączone",
-        "description": "Włącz strony w ustawieniach projektu.",
         "primary_button": {
           "text": "Zarządzaj funkcjami"
         }

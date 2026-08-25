@@ -48,26 +48,10 @@
         "copy_url": "URLをコピー",
         "copy_url_toast_success": "モジュールのURLをクリップボードにコピーしました。",
         "copy_url_toast_error": "モジュールのURLのコピー中にエラーが発生しました。"
-      },
-      "page": {
-        "title": "ページのアクション",
-        "indicator": "ページ",
-        "lock": "ロック",
-        "unlock": "ロック解除",
-        "make_private": "プライベートにする",
-        "make_public": "公開する",
-        "archive": "アーカイブ",
-        "restore": "復元",
-        "add_to_favorites": "お気に入りに追加",
-        "remove_from_favorites": "お気に入りから削除",
-        "copy_url": "URLをコピー",
-        "copy_url_toast_success": "ページのURLをクリップボードにコピーしました。",
-        "copy_url_toast_error": "ページのURLのコピー中にエラーが発生しました。"
       }
     },
     "creation_actions": {
       "create_work_item": "新規作業項目",
-      "create_page": "新規ページ",
       "create_view": "新規ビュー",
       "create_cycle": "新規サイクル",
       "create_module": "新規モジュール",
@@ -99,7 +83,6 @@
       "nav_project_modules": "モジュールに移動",
       "open_project_view": "プロジェクトのビューを開く",
       "nav_project_views": "プロジェクトのビューに移動",
-      "nav_project_pages": "ページに移動",
       "nav_project_intake": "インテークに移動",
       "nav_project_archives": "プロジェクトのアーカイブに移動",
       "open_project_setting": "プロジェクトの設定を開く",

@@ -3,7 +3,7 @@
     "label": "Workspace settings",
     "page_label": "{workspace} - General settings",
     "key_created": "Key created",
-    "copy_key": "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
+    "copy_key": "Copy and save this secret key in a secure place. You can't see it again after you hit Close. A CSV file containing the key has been downloaded.",
     "token_copied": "Token copied to clipboard.",
     "settings": {
       "general": {
@@ -340,7 +340,7 @@
         },
         "app_available_description": "Connect a Plane workspace to start using it",
         "client_id_and_secret": "Client ID and Secret",
-        "client_id_and_secret_description": "Copy and save this secret key in Pages. You can't see this key again after you hit Close.",
+        "client_id_and_secret_description": "Copy and save this secret key in a secure place.",
         "client_id_and_secret_download": "You can download a CSV with the key from here.",
         "application_id": "Application ID",
         "client_id": "Client ID",
@@ -450,7 +450,6 @@
         "write": "Write",
         "scope_description": {
           "projects": "Access to projects, and all project related entities",
-          "wiki": "Access to wiki, and all wiki related entities",
           "workspaces": "Access to workspaces, and all workspace related entities",
           "stickies": "Access to stickies, and all sticky related entities",
           "profile": "Access to user profile information",

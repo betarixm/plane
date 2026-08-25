@@ -339,13 +339,6 @@
         "toggle_title": "Activer les vues",
         "toggle_description": "Les membres du projet pourront créer et modifier des vues."
       },
-      "pages": {
-        "title": "Pages",
-        "short_title": "Pages",
-        "description": "Créez et modifiez du contenu libre : notes, documents, n'importe quoi.",
-        "toggle_title": "Activer les pages",
-        "toggle_description": "Les membres du projet pourront créer et modifier des pages."
-      },
       "intake": {
         "intake_responsibility": "Responsabilité d'ingestion",
         "intake_sources": "Sources d'ingestion",

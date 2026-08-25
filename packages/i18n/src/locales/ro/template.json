@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Șabloane",
-      "description": "Economisește 80% din timpul petrecut pentru crearea proiectelor, a elementelor de lucru și a paginilor când folosești șabloane.",
       "new_project_template": "Șablon de proiect nou",
       "new_work_item_template": "Șablon de activitate nou",
-      "new_page_template": "Șablon de pagină nou",
       "options": {
         "project": {
           "label": "Șabloane de proiect"
         },
         "work_item": {
           "label": "Șabloane de elemente de lucru"
-        },
-        "page": {
-          "label": "Șabloane de pagină"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Creează șablon de element de lucru",
             "update": "Actualizează șablon de element de lucru"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Numele șablonului paginii.",
-              "validation": {
-                "required": "Numele șablonului este obligatoriu",
-                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
-              }
-            },
-            "description": {
-              "placeholder": "Descrie când și cum să folosești acest șablon."
-            }
-          },
-          "name": {
-            "placeholder": "Pagina fără nume",
-            "validation": {
-              "maxLength": "Numele paginii trebuie să fie mai mic de 255 de caractere"
-            }
-          },
-          "button": {
-            "create": "Creează șablon de pagină",
-            "update": "Actualizează șablon de pagină"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Șabloane",
-        "description": "Cu șabloane de proiect, element de lucru și pagină în Plane, nu trebuie să creezi un proiect de la zero sau să setezi manual proprietățile elementelor de lucru.",
         "sub_description": "Recuperează 80% din timpul tău administrativ când folosești Șabloane."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Nu există sub-elemente de lucru încă. Adaugă unul pentru a structura mai bine munca ta."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Nu există șabloane la care aveți acces.",
-          "description": "Vă rugăm să creați un șablon"
-        },
-        "no_results": {
-          "title": "Aceasta nu se potrivește cu un șablon.",
-          "description": "Încercați să căutați cu alți termeni."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Adaugă șablon nou"
       },
       "label": {
-        "project": "Alege un șablon de proiect",
-        "page": "Alege un șablon"
+        "project": "Alege un șablon de proiect"
       },
       "tooltip": {
         "work_item": "Alege un șablon de element de lucru"

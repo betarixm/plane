@@ -3,7 +3,7 @@
     "label": "Configurações do espaço de trabalho",
     "page_label": "{workspace} - Configurações gerais",
     "key_created": "Chave criada",
-    "copy_key": "Copie e salve esta chave secreta no Páginas do Plane. Você não pode ver esta chave depois de clicar em Fechar. Um arquivo CSV contendo a chave foi baixado.",
+    "copy_key": "Copie e guarde esta chave secreta em um local seguro. Você não poderá vê-la novamente depois de clicar em Fechar. Um arquivo CSV contendo a chave foi baixado.",
     "token_copied": "Token copiado para a área de transferência.",
     "settings": {
       "general": {
@@ -340,7 +340,7 @@
         },
         "app_available_description": "Conecte um workspace do Plane para começar a usar",
         "client_id_and_secret": "ID do cliente e chave secreta",
-        "client_id_and_secret_description": "Copie e salve esta chave secreta em Páginas. Você não poderá ver esta chave novamente após fechar.",
+        "client_id_and_secret_description": "Copie e guarde esta chave secreta em um local seguro.",
         "client_id_and_secret_download": "Você pode baixar um CSV com a chave aqui.",
         "application_id": "ID da aplicação",
         "client_id": "ID do cliente",
@@ -450,7 +450,6 @@
         "write": "Gravação",
         "scope_description": {
           "projects": "Acesso a projetos e todas as entidades relacionadas a projetos",
-          "wiki": "Acesso ao wiki e todas as entidades relacionadas ao wiki",
           "workspaces": "Acesso a workspaces e todas as entidades relacionadas",
           "stickies": "Acesso a stickies e todas as entidades relacionadas a stickies",
           "profile": "Acesso às informações do perfil do usuário",

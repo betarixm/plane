@@ -3,7 +3,7 @@
     "label": "Paramètres de l’espace de travail",
     "page_label": "{workspace} - Paramètres généraux",
     "key_created": "Clé créée",
-    "copy_key": "Copiez et sauvegardez cette clé secrète dans Plane Pages. Vous ne pourrez plus voir cette clé après avoir cliqué sur Fermer. Un fichier CSV contenant la clé a été téléchargé.",
+    "copy_key": "Copiez et conservez cette clé secrète dans un endroit sûr. Vous ne pourrez plus la voir après avoir cliqué sur Fermer. Un fichier CSV contenant la clé a été téléchargé.",
     "token_copied": "Jeton copié dans le presse-papiers.",
     "settings": {
       "general": {
@@ -450,7 +450,6 @@
         "write": "Écriture",
         "scope_description": {
           "projects": "Accès aux projets et à toutes les entités liées aux projets",
-          "wiki": "Accès au wiki et à toutes les entités liées au wiki",
           "workspaces": "Accès aux espaces de travail et à toutes les entités liées",
           "stickies": "Accès aux stickies et à toutes les entités liées",
           "profile": "Accès aux informations du profil utilisateur",

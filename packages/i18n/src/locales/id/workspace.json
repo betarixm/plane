@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Tulis catatan, dokumen, atau basis pengetahuan lengkap. Dapatkan Galileo, asisten AI Plane, untuk membantu Anda memulai",
-        "description": "Halaman adalah ruang pemikiran di Plane. Catat catatan rapat, format dengan mudah, sematkan item kerja, tata menggunakan perpustakaan komponen, dan simpan semuanya dalam konteks proyek Anda. Untuk mempersingkat pekerjaan dokumen apa pun, panggil Galileo, AI Plane, dengan pintasan atau klik tombol.",
-        "primary_button": {
-          "text": "Buat halaman pertama Anda"
-        }
-      },
-      "private": {
-        "title": "Belum ada halaman pribadi",
-        "description": "Simpan pikiran pribadi Anda di sini. Ketika Anda siap berbagi, tim hanya berjarak satu klik.",
-        "primary_button": {
-          "text": "Buat halaman pertama Anda"
-        }
-      },
-      "public": {
-        "title": "Belum ada halaman ruang kerja",
-        "description": "Lihat halaman yang dibagikan dengan semua orang di ruang kerja Anda di sini.",
-        "primary_button": {
-          "text": "Buat halaman pertama Anda"
-        }
-      },
-      "archived": {
-        "title": "Belum ada halaman yang diarsipkan",
-        "description": "Arsipkan halaman yang tidak di radar Anda. Akses di sini saat diperlukan."
-      },
-      "shared": {
-        "title": "Belum ada halaman yang dibagikan",
-        "description": "Halaman yang dibagikan orang lain kepada Anda akan muncul di sini."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

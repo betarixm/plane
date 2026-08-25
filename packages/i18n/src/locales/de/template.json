@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Vorlagen",
-      "description": "Sparen Sie 80% der Zeit, die für die Erstellung von Projekten, Arbeitsaufgaben und Seiten aufgewendet wird, wenn Sie Vorlagen verwenden.",
       "new_project_template": "Neue Projektvorlage",
       "new_work_item_template": "Neue Arbeitselementvorlage",
-      "new_page_template": "Neue Seitenvorlage",
       "options": {
         "project": {
           "label": "Projektvorlagen"
         },
         "work_item": {
           "label": "Arbeitsaufgabenvorlagen"
-        },
-        "page": {
-          "label": "Seitenvorlagen"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Arbeitsaufgabenvorlage erstellen",
             "update": "Arbeitsaufgabenvorlage aktualisieren"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Benennen Sie Ihre Seitenvorlage.",
-              "validation": {
-                "required": "Vorlagenname ist erforderlich",
-                "maxLength": "Vorlagenname sollte weniger als 255 Zeichen enthalten"
-              }
-            },
-            "description": {
-              "placeholder": "Beschreiben Sie, wann und wie diese Vorlage verwendet werden soll."
-            }
-          },
-          "name": {
-            "placeholder": "Unbenannte Seite",
-            "validation": {
-              "maxLength": "Seitentitel sollte weniger als 255 Zeichen enthalten"
-            }
-          },
-          "button": {
-            "create": "Seitenvorlage erstellen",
-            "update": "Seitenvorlage aktualisieren"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Vorlagen",
-        "description": "Mit Projekt-, Arbeitsaufgaben- und Seitenvorlagen in Plane müssen Sie kein Projekt von Grund auf neu erstellen oder Arbeitsaufgabeneigenschaften manuell festlegen.",
         "sub_description": "Sparen Sie 80% Ihrer Administrationszeit, wenn Sie Vorlagen verwenden."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Noch keine Unterarbeitsaufgaben. Fügen Sie eine hinzu, um Ihre Arbeit besser zu strukturieren."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Es gibt keine Vorlagen, auf die Sie Zugriff haben.",
-          "description": "Bitte erstellen Sie eine Vorlage"
-        },
-        "no_results": {
-          "title": "Das entspricht keiner Vorlage.",
-          "description": "Versuchen Sie es mit anderen Suchbegriffen."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Neue Vorlage hinzufügen"
       },
       "label": {
-        "project": "Projektvorlage auswählen",
-        "page": "Aus Vorlage wählen"
+        "project": "Projektvorlage auswählen"
       },
       "tooltip": {
         "work_item": "Arbeitselement-Vorlage auswählen"

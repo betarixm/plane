@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Szablony",
-      "description": "Zaoszczędź 80% czasu spędzonego na tworzeniu projektów, elementów pracy i stron, korzystając z szablonów.",
       "new_project_template": "Nowy szablon projektu",
       "new_work_item_template": "Nowy szablon elementu pracy",
-      "new_page_template": "Nowy szablon strony",
       "options": {
         "project": {
           "label": "Szablony projektów"
         },
         "work_item": {
           "label": "Szablony elementów pracy"
-        },
-        "page": {
-          "label": "Szablony stron"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Utwórz szablon elementu pracy",
             "update": "Aktualizuj szablon elementu pracy"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Nazwij swój szablon strony.",
-              "validation": {
-                "required": "Nazwa szablonu jest wymagana",
-                "maxLength": "Nazwa szablonu powinna mieć mniej niż 255 znaków"
-              }
-            },
-            "description": {
-              "placeholder": "Opisz kiedy i jak korzystać z tego szablonu."
-            }
-          },
-          "name": {
-            "placeholder": "Niezidentyfikowana strona",
-            "validation": {
-              "maxLength": "Nazwa strony powinna mieć mniej niż 255 znaków"
-            }
-          },
-          "button": {
-            "create": "Utwórz szablon strony",
-            "update": "Aktualizuj szablon strony"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Szablony",
-        "description": "Dzięki szablonom projektów, elementów pracy i stron w Plane nie musisz tworzyć projektu od podstaw ani ręcznie ustawiać właściwości elementów pracy.",
         "sub_description": "Odzyskaj 80% czasu administracyjnego, korzystając z Szablonów."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Brak pod-elementów pracy. Dodaj jeden, aby lepiej zorganizować swoją pracę."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Nie ma szablonów, do których masz dostęp.",
-          "description": "Proszę utwórz szablon"
-        },
-        "no_results": {
-          "title": "To nie pasuje do żadnego szablonu.",
-          "description": "Spróbuj wyszukać innymi terminami."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Dodaj nowy szablon"
       },
       "label": {
-        "project": "Wybierz szablon projektu",
-        "page": "Wybierz szablon"
+        "project": "Wybierz szablon projektu"
       },
       "tooltip": {
         "work_item": "Wybierz szablon elementu pracy"

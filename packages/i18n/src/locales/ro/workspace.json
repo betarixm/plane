@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Scrie o notă, un document sau o bază de cunoștințe completă. Obține ajutorul lui Galileo, asistentul AI al Plane, pentru a începe",
-        "description": "Paginile sunt spații de gândire în Plane. Notează notițe de întâlnire, formatează-le ușor, încorporează elemente de lucru, aranjează-le folosind o bibliotecă de componente și păstrează-le toate în contextul proiectului tău. Pentru a face o muncă scurtă din orice document, invocă Galileo, AI-ul Plane, cu o scurtătură sau click pe un buton.",
-        "primary_button": {
-          "text": "Creează prima ta pagină"
-        }
-      },
-      "private": {
-        "title": "Încă nu există pagini private",
-        "description": "Păstrează-ți gândurile private aici. Când ești gata să le împărtășești, echipa este la doar un click distanță.",
-        "primary_button": {
-          "text": "Creează prima ta pagină"
-        }
-      },
-      "public": {
-        "title": "Încă nu există pagini spațiu de lucru",
-        "description": "Vezi paginile împărtășite cu toată lumea din spațiul tău de lucru chiar aici.",
-        "primary_button": {
-          "text": "Creează prima ta pagină"
-        }
-      },
-      "archived": {
-        "title": "Încă nu există pagini arhivate",
-        "description": "Arhivează paginile care nu sunt pe radarul tău. Accesează-le aici când ai nevoie."
-      },
-      "shared": {
-        "title": "Nicio pagină partajată încă",
-        "description": "Paginile pe care alții le-au partajat cu tine vor apărea aici."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

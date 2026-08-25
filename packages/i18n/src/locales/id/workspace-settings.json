@@ -3,7 +3,7 @@
     "label": "Pengaturan ruang kerja",
     "page_label": "{workspace} - Pengaturan Umum",
     "key_created": "Kunci dibuat",
-    "copy_key": "Salin dan simpan kunci rahasia ini di Halaman Plane. Anda tidak dapat melihat kunci ini setelah Anda menekan Tutup. File CSV yang berisi kunci telah diunduh.",
+    "copy_key": "Salin dan simpan kunci rahasia ini di tempat yang aman. Anda tidak dapat melihatnya lagi setelah menekan Tutup. File CSV yang berisi kunci telah diunduh.",
     "token_copied": "Token disalin ke clipboard.",
     "settings": {
       "general": {
@@ -340,7 +340,7 @@
         },
         "app_available_description": "Hubungkan workspace Plane untuk mulai menggunakannya",
         "client_id_and_secret": "ID klien dan Rahasia",
-        "client_id_and_secret_description": "Salin dan simpan kunci rahasia ini di Pages. Anda tidak dapat melihat kunci ini lagi setelah Anda menutupnya.",
+        "client_id_and_secret_description": "Salin dan simpan kunci rahasia ini di tempat yang aman.",
         "client_id_and_secret_download": "Anda dapat mengunduh CSV dengan kunci dari sini.",
         "application_id": "ID Aplikasi",
         "client_id": "ID Klien",
@@ -450,7 +450,6 @@
         "write": "Tulis",
         "scope_description": {
           "projects": "Akses ke proyek dan semua entitas terkait proyek",
-          "wiki": "Akses ke wiki dan semua entitas terkait wiki",
           "workspaces": "Akses ke workspace dan semua entitas terkait workspace",
           "stickies": "Akses ke stickies dan semua entitas terkait sticky",
           "profile": "Akses ke informasi profil pengguna",

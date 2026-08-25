@@ -48,26 +48,10 @@
         "copy_url": "Kopiuj URL",
         "copy_url_toast_success": "URL modułu skopiowano do schowka.",
         "copy_url_toast_error": "Wystąpił błąd podczas kopiowania URL modułu do schowka."
-      },
-      "page": {
-        "title": "Akcje strony",
-        "indicator": "Strona",
-        "lock": "Zablokuj",
-        "unlock": "Odblokuj",
-        "make_private": "Ustaw jako prywatne",
-        "make_public": "Ustaw jako publiczne",
-        "archive": "Archiwizuj",
-        "restore": "Przywróć",
-        "add_to_favorites": "Dodaj do ulubionych",
-        "remove_from_favorites": "Usuń z ulubionych",
-        "copy_url": "Kopiuj URL",
-        "copy_url_toast_success": "URL strony skopiowano do schowka.",
-        "copy_url_toast_error": "Wystąpił błąd podczas kopiowania URL strony do schowka."
       }
     },
     "creation_actions": {
       "create_work_item": "Nowy element pracy",
-      "create_page": "Nowa strona",
       "create_view": "Nowy widok",
       "create_cycle": "Nowy cykl",
       "create_module": "Nowy moduł",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Przejdź do modułów",
       "open_project_view": "Otwórz widok projektu",
       "nav_project_views": "Przejdź do widoków projektu",
-      "nav_project_pages": "Przejdź do stron",
       "nav_project_intake": "Przejdź do zgłoszeń",
       "nav_project_archives": "Przejdź do archiwów projektu",
       "open_project_setting": "Otwórz ustawienie projektu",

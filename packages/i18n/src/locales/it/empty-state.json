@@ -77,15 +77,6 @@
       "description": "Il filtro attuale non ha restituito risultati. Prova a modificare i filtri.",
       "cta_primary": "Aggiungi elemento di lavoro"
     },
-    "pages": {
-      "title": "Documenta tutto — dalle note ai PRD",
-      "description": "Le pagine ti permettono di catturare e organizzare informazioni in un unico posto. Scrivi note di riunioni, documentazione di progetto e PRD, incorpora elementi di lavoro e strutturali con componenti pronti all'uso.",
-      "cta_primary": "Crea la tua prima Pagina"
-    },
-    "archive_pages": {
-      "title": "Nessuna pagina archiviata ancora",
-      "description": "Archivia le pagine non nel tuo radar. Accedi a esse qui quando necessario."
-    },
     "intake_sidebar": {
       "title": "Registra richieste di Intake",
       "description": "Invia nuove richieste da rivedere, dare priorità e tracciare all'interno del flusso di lavoro del tuo progetto.",
@@ -185,11 +176,6 @@
       "title": "Visualizza i tuoi progressi con le dashboard",
       "description": "Crea dashboard personalizzabili per tracciare metriche, misurare risultati e presentare intuizioni in modo efficace.",
       "cta_primary": "Crea nuova dashboard"
-    },
-    "wiki": {
-      "title": "Scrivi una nota, un documento o un'intera base di conoscenza.",
-      "description": "Le pagine sono spazi per catturare pensieri in Plane. Prendi note di riunioni, formattale facilmente, incorpora elementi di lavoro, organizzali usando una libreria di componenti e mantienili tutti nel contesto del tuo progetto.",
-      "cta_primary": "Crea la tua pagina"
     },
     "project_overview_state_sidebar": {
       "title": "Abilita stati del progetto",

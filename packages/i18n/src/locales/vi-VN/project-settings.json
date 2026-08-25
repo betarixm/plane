@@ -339,13 +339,6 @@
         "toggle_title": "Bật chế độ xem",
         "toggle_description": "Thành viên dự án sẽ có thể tạo và chỉnh sửa chế độ xem."
       },
-      "pages": {
-        "title": "Trang",
-        "short_title": "Trang",
-        "description": "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
-        "toggle_title": "Bật trang",
-        "toggle_description": "Thành viên dự án sẽ có thể tạo và chỉnh sửa trang."
-      },
       "intake": {
         "intake_responsibility": "Trách nhiệm tiếp nhận",
         "intake_sources": "Nguồn tiếp nhận",

@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Templates",
-      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates.",
       "new_project_template": "New project template",
       "new_work_item_template": "New work item template",
-      "new_page_template": "New page template",
       "options": {
         "project": {
           "label": "Project templates"
         },
         "work_item": {
           "label": "Work item templates"
-        },
-        "page": {
-          "label": "Page templates"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Create work-item template",
             "update": "Update work-item template"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Name your page template.",
-              "validation": {
-                "required": "Template name is required",
-                "maxLength": "Template name should be less than 255 characters"
-              }
-            },
-            "description": {
-              "placeholder": "Describe when and how to use this template."
-            }
-          },
-          "name": {
-            "placeholder": "Untitled page",
-            "validation": {
-              "maxLength": "Page name should be less than 255 characters"
-            }
-          },
-          "button": {
-            "create": "Create page template",
-            "update": "Update page template"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Templates",
-        "description": "With project, work-item, and page templates in Plane, you don't have to create a project from scratch or set work item props manually.",
         "sub_description": "Get 80% of your admin time back when you use Templates."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "No sub-work items yet. Add one to structure your work better."
-      },
-      "page": {
-        "no_templates": {
-          "title": "There are no templates you have access to.",
-          "description": "Please create a template"
-        },
-        "no_results": {
-          "title": "That didn't match a template.",
-          "description": "Try searching by other terms."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Add new template"
       },
       "label": {
-        "project": "Pick a project template",
-        "page": "Choose from template"
+        "project": "Pick a project template"
       },
       "tooltip": {
         "work_item": "Pick a work item template"

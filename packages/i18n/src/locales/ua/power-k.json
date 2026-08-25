@@ -48,26 +48,10 @@
         "copy_url": "Скопіювати URL",
         "copy_url_toast_success": "URL модуля скопійовано в буфер обміну.",
         "copy_url_toast_error": "Під час копіювання URL модуля в буфер обміну сталася помилка."
-      },
-      "page": {
-        "title": "Дії сторінки",
-        "indicator": "Сторінка",
-        "lock": "Заблокувати",
-        "unlock": "Розблокувати",
-        "make_private": "Зробити приватною",
-        "make_public": "Зробити публічною",
-        "archive": "Заархівувати",
-        "restore": "Відновити",
-        "add_to_favorites": "Додати у вибране",
-        "remove_from_favorites": "Вилучити з вибраного",
-        "copy_url": "Скопіювати URL",
-        "copy_url_toast_success": "URL сторінки скопійовано в буфер обміну.",
-        "copy_url_toast_error": "Під час копіювання URL сторінки в буфер обміну сталася помилка."
       }
     },
     "creation_actions": {
       "create_work_item": "Нова робоча одиниця",
-      "create_page": "Нова сторінка",
       "create_view": "Нове подання",
       "create_cycle": "Новий цикл",
       "create_module": "Новий модуль",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Перейти до модулів",
       "open_project_view": "Відкрити подання проєкту",
       "nav_project_views": "Перейти до подань проєкту",
-      "nav_project_pages": "Перейти до сторінок",
       "nav_project_intake": "Перейти до надходжень",
       "nav_project_archives": "Перейти до архівів проєкту",
       "open_project_setting": "Відкрити налаштування проєкту",

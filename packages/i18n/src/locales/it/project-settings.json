@@ -339,13 +339,6 @@
         "toggle_title": "Abilita viste",
         "toggle_description": "I membri del progetto potranno creare e modificare viste."
       },
-      "pages": {
-        "title": "Pagine",
-        "short_title": "Pagine",
-        "description": "Crea e modifica contenuti liberi: note, documenti, qualsiasi cosa.",
-        "toggle_title": "Abilita pagine",
-        "toggle_description": "I membri del progetto potranno creare e modificare pagine."
-      },
       "intake": {
         "intake_responsibility": "Responsabilità di accettazione",
         "intake_sources": "Fonti di accettazione",

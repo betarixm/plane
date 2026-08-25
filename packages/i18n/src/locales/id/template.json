@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Template",
-      "description": "Hemat 80% waktu yang dihabiskan untuk membuat proyek, item kerja, dan halaman ketika Anda menggunakan template.",
       "new_project_template": "Template proyek baru",
       "new_work_item_template": "Template item kerja baru",
-      "new_page_template": "Template halaman baru",
       "options": {
         "project": {
           "label": "Template proyek"
         },
         "work_item": {
           "label": "Template item kerja"
-        },
-        "page": {
-          "label": "Template halaman"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Buat template item kerja",
             "update": "Perbarui template item kerja"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Beri nama template halaman Anda.",
-              "validation": {
-                "required": "Nama template diperlukan",
-                "maxLength": "Nama template harus kurang dari 255 karakter"
-              }
-            },
-            "description": {
-              "placeholder": "Jelaskan kapan dan bagaimana menggunakan template ini."
-            }
-          },
-          "name": {
-            "placeholder": "Halaman tidak berjudul",
-            "validation": {
-              "maxLength": "Nama halaman harus kurang dari 255 karakter"
-            }
-          },
-          "button": {
-            "create": "Buat template halaman",
-            "update": "Perbarui template halaman"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Template",
-        "description": "Dengan template proyek, item kerja, dan halaman di Plane, Anda tidak perlu membuat proyek dari awal atau mengatur properti item kerja secara manual.",
         "sub_description": "Dapatkan kembali 80% waktu administrasi Anda saat menggunakan Template."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Belum ada sub-item kerja. Tambahkan satu untuk membantu mengatur pekerjaan Anda lebih baik."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Tidak ada template yang dapat Anda akses.",
-          "description": "Silakan buat template"
-        },
-        "no_results": {
-          "title": "Itu tidak cocok dengan template.",
-          "description": "Coba cari dengan istilah lain."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Tambah template baru"
       },
       "label": {
-        "project": "Pilih template proyek",
-        "page": "Pilih template"
+        "project": "Pilih template proyek"
       },
       "tooltip": {
         "work_item": "Pilih template item kerja"

@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "Zrušiť všetky filtre"
         }
-      },
-      "public": {
-        "title": "Zatiaľ žiadne verejné stránky",
-        "description": "Stránky zdieľané so všetkými vo vašom projekte uvidíte tu.",
-        "primary_button": {
-          "text": "Vytvorte svoju prvú stránku"
-        }
-      },
-      "archived": {
-        "title": "Zatiaľ žiadne archivované stránky",
-        "description": "Archivujte stránky, ktoré nepotrebujete. Prístup k nim máte tu, keď ich budete potrebovať."
-      },
-      "shared": {
-        "title": "Zatiaľ žiadne zdieľané stránky",
-        "description": "Stránky, ktoré s vami zdieľali iní, sa zobrazia tu."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "Píšte poznámky, dokumenty alebo znalostnú bázu. Využite AI Galileo.",
-        "description": "Stránky sú priestorom pre myšlienky. Píšte, formátujte, vkladajte položky a používajte komponenty.",
-        "primary_button": {
-          "text": "Vytvoriť prvú stránku"
-        }
-      },
-      "private": {
-        "title": "Žiadne súkromné stránky",
-        "description": "Uchovávajte súkromné myšlienky. Zdieľajte ich, až budete pripravení.",
-        "primary_button": {
-          "text": "Vytvoriť stránku"
-        }
-      },
-      "public": {
-        "title": "Žiadne verejné stránky",
-        "description": "Tu uvidíte stránky zdieľané v projekte.",
-        "primary_button": {
-          "text": "Vytvoriť stránku"
-        }
-      },
-      "archived": {
-        "title": "Žiadne archivované stránky",
-        "description": "Archivujte stránky pre neskorší prístup."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "Moduly nie sú povolené",
         "description": "Aktivujte moduly v nastaveniach projektu.",
-        "primary_button": {
-          "text": "Spravovať funkcie"
-        }
-      },
-      "page": {
-        "title": "Stránky nie sú povolené",
-        "description": "Aktivujte stránky v nastaveniach projektu.",
         "primary_button": {
           "text": "Spravovať funkcie"
         }

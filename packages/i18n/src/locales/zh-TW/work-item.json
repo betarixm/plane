@@ -234,7 +234,6 @@
     },
     "pages": {
       "link_pages": "連結頁面",
-      "show_wiki_pages": "顯示 Wiki 頁面",
       "link_pages_to": "連結頁面至",
       "linked_pages": "已連結的頁面",
       "no_description": "這是一個空白頁面。何不在裡面寫點什麼，就像這個佔位符一樣顯示在這裡",

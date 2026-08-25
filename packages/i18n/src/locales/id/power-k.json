@@ -48,26 +48,10 @@
         "copy_url": "Salin URL",
         "copy_url_toast_success": "URL modul disalin ke clipboard.",
         "copy_url_toast_error": "Terjadi kesalahan saat menyalin URL modul ke clipboard."
-      },
-      "page": {
-        "title": "Aksi halaman",
-        "indicator": "Halaman",
-        "lock": "Kunci",
-        "unlock": "Buka kunci",
-        "make_private": "Jadikan pribadi",
-        "make_public": "Jadikan publik",
-        "archive": "Arsipkan",
-        "restore": "Pulihkan",
-        "add_to_favorites": "Tambah ke favorit",
-        "remove_from_favorites": "Hapus dari favorit",
-        "copy_url": "Salin URL",
-        "copy_url_toast_success": "URL halaman disalin ke clipboard.",
-        "copy_url_toast_error": "Terjadi kesalahan saat menyalin URL halaman ke clipboard."
       }
     },
     "creation_actions": {
       "create_work_item": "Item kerja baru",
-      "create_page": "Halaman baru",
       "create_view": "Tampilan baru",
       "create_cycle": "Siklus baru",
       "create_module": "Modul baru",
@@ -99,7 +83,6 @@
       "nav_project_modules": "Ke modul",
       "open_project_view": "Buka tampilan proyek",
       "nav_project_views": "Ke tampilan proyek",
-      "nav_project_pages": "Ke halaman",
       "nav_project_intake": "Ke intake",
       "nav_project_archives": "Ke arsip proyek",
       "open_project_setting": "Buka pengaturan proyek",

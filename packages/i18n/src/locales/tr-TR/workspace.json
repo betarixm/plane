@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Bir not, bir belge veya tam bir bilgi tabanı yazın. Başlamanıza yardımcı olması için Plane'in yapay zeka asistanı Galileo'yu alın",
-        "description": "Sayfalar, Plane'deki düşünce saksı alanıdır. Toplantı notları alın, bunları kolayca biçimlendirin, iş öğelerini gömin, bunları bir bileşen kitaplığı kullanarak düzenleyin ve hepsini projenizin bağlamında tutun. Herhangi bir belgeyi kısa sürede yapmak için, Plane'in yapay zekası Galileo'yu bir kısayolla veya bir düğmeye tıklayarak çağırın.",
-        "primary_button": {
-          "text": "İlk sayfanızı oluşturun"
-        }
-      },
-      "private": {
-        "title": "Henüz özel sayfa yok",
-        "description": "Özel düşüncelerinizi burada saklayın. Paylaşmaya hazır olduğunuzda, ekip sadece bir tık uzaklıkta.",
-        "primary_button": {
-          "text": "İlk sayfanızı oluşturun"
-        }
-      },
-      "public": {
-        "title": "Henüz çalışma alanı sayfası yok",
-        "description": "Çalışma alanınızdaki herkesle paylaşılan sayfaları burada görün.",
-        "primary_button": {
-          "text": "İlk sayfanızı oluşturun"
-        }
-      },
-      "archived": {
-        "title": "Henüz arşivlenmiş sayfa yok",
-        "description": "Radarınızda olmayan sayfaları arşivleyin. Gerektiğinde bunlara buradan erişin."
-      },
-      "shared": {
-        "title": "Henüz paylaşılan sayfa yok",
-        "description": "Başkalarının sizinle paylaştığı sayfalar burada görünecek."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

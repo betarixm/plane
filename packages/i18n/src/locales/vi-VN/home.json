@@ -36,14 +36,12 @@
       "title": "Gần đây",
       "empty": {
         "project": "Sau khi truy cập dự án, các dự án gần đây của bạn sẽ xuất hiện ở đây.",
-        "page": "Sau khi truy cập trang, các trang gần đây của bạn sẽ xuất hiện ở đây.",
         "issue": "Sau khi truy cập mục công việc, các mục công việc gần đây của bạn sẽ xuất hiện ở đây.",
         "default": "Bạn chưa có dự án gần đây nào."
       },
       "filters": {
         "all": "Tất cả",
         "projects": "Dự án",
-        "pages": "Trang",
         "issues": "Mục công việc"
       }
     },

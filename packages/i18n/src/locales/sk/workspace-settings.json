@@ -3,7 +3,7 @@
     "label": "Nastavenia pracovného priestoru",
     "page_label": "{workspace} - Všeobecné nastavenia",
     "key_created": "Kľúč vytvorený",
-    "copy_key": "Skopírujte a uložte tento kľúč do Plane Pages. Po zatvorení ho neuvidíte. CSV súbor s kľúčom bol stiahnutý.",
+    "copy_key": "Skopírujte a uložte tento tajný kľúč na bezpečné miesto. Po zatvorení ho už neuvidíte. CSV súbor s kľúčom bol stiahnutý.",
     "token_copied": "Token skopírovaný do schránky.",
     "settings": {
       "general": {
@@ -450,7 +450,6 @@
         "write": "Zápis",
         "scope_description": {
           "projects": "Prístup k projektom a všetkým súvisiacim entitám",
-          "wiki": "Prístup k wiki a všetkým súvisiacim entitám",
           "workspaces": "Prístup k pracovným priestorom a všetkým súvisiacim entitám",
           "stickies": "Prístup k poznámkam a všetkým súvisiacim entitám",
           "profile": "Prístup k informáciám o profile používateľa",

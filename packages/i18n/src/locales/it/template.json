@@ -2,19 +2,14 @@
   "templates": {
     "settings": {
       "title": "Modelli",
-      "description": "Risparmia l'80% del tempo dedicato alla creazione di progetti, elementi di lavoro e pagine quando utilizzi i modelli.",
       "new_project_template": "Nuovo modello di progetto",
       "new_work_item_template": "Nuovo modello di elemento di lavoro",
-      "new_page_template": "Nuovo modello di pagina",
       "options": {
         "project": {
           "label": "Modelli di progetto"
         },
         "work_item": {
           "label": "Modelli di elementi di lavoro"
-        },
-        "page": {
-          "label": "Modelli di pagina"
         }
       },
       "create_template": {
@@ -93,30 +88,6 @@
           "button": {
             "create": "Crea modello di elemento di lavoro",
             "update": "Aggiorna modello di elemento di lavoro"
-          }
-        },
-        "page": {
-          "template": {
-            "name": {
-              "placeholder": "Nome il tuo modello di pagina.",
-              "validation": {
-                "required": "Il nome del modello è obbligatorio",
-                "maxLength": "Il nome del modello deve contenere meno di 255 caratteri"
-              }
-            },
-            "description": {
-              "placeholder": "Descrivi quando e come utilizzare questo modello."
-            }
-          },
-          "name": {
-            "placeholder": "Pagina senza titolo",
-            "validation": {
-              "maxLength": "Il nome della pagina deve contenere meno di 255 caratteri"
-            }
-          },
-          "button": {
-            "create": "Crea modello di pagina",
-            "update": "Aggiorna modello di pagina"
           }
         },
         "publish": {
@@ -227,7 +198,6 @@
     "empty_state": {
       "upgrade": {
         "title": "Modelli",
-        "description": "Con i modelli di progetto, elemento di lavoro e pagina in Plane, non devi creare un progetto da zero o impostare manualmente le proprietà degli elementi di lavoro.",
         "sub_description": "Recupera l'80% del tuo tempo di amministrazione quando utilizzi i Modelli."
       },
       "no_templates": {
@@ -244,16 +214,6 @@
       },
       "no_sub_work_items": {
         "description": "Nessun sotto-elemento di lavoro ancora. Aggiungi uno per strutturare il tuo lavoro meglio."
-      },
-      "page": {
-        "no_templates": {
-          "title": "Non ci sono modelli a cui hai accesso.",
-          "description": "Per favore crea un modello"
-        },
-        "no_results": {
-          "title": "Questo non corrisponde a nessun modello.",
-          "description": "Prova a cercare con altri termini."
-        }
       }
     },
     "toasts": {
@@ -318,8 +278,7 @@
         "project": "Aggiungi nuovo modello"
       },
       "label": {
-        "project": "Scegli un modello di progetto",
-        "page": "Scegli dal modello"
+        "project": "Scegli un modello di progetto"
       },
       "tooltip": {
         "work_item": "Scegli un modello di elemento di lavoro"

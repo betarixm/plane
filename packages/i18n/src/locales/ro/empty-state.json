@@ -77,15 +77,6 @@
       "description": "Filtrul dvs. curent nu a returnat niciun rezultat. Încercați să modificați filtrele.",
       "cta_primary": "Adăugați element de lucru"
     },
-    "pages": {
-      "title": "Documentați totul — de la notițe la PRD-uri",
-      "description": "Paginile vă permit să capturați și să organizați informații într-un singur loc. Scrieți note de întâlnire, documentație de proiect și PRD-uri, încorporați elemente de lucru și structurați-le cu componente gata de utilizat.",
-      "cta_primary": "Creați prima dvs. Pagină"
-    },
-    "archive_pages": {
-      "title": "Încă nu există pagini arhivate",
-      "description": "Arhivați paginile care nu sunt în radar-ul dvs. Accesați-le aici când este necesar."
-    },
     "intake_sidebar": {
       "title": "Înregistrați solicitări de Admitere",
       "description": "Trimiteți solicitări noi pentru a fi revizuite, prioritizate și urmărite în cadrul fluxului de lucru al proiectului dvs.",
@@ -185,11 +176,6 @@
       "title": "Vizualizați progresul dvs. cu tablouri de bord",
       "description": "Construiți tablouri de bord personalizabile pentru a urmări metricile, a măsura rezultatele și a prezenta informații eficient.",
       "cta_primary": "Creați tablou de bord nou"
-    },
-    "wiki": {
-      "title": "Scrieți o notă, un document sau o bază de cunoștințe completă.",
-      "description": "Paginile sunt spațiu de captare a gândurilor în Plane. Notați note de întâlnire, formatați-le cu ușurință, încorporați elemente de lucru, aranjați-le folosind o bibliotecă de componente și păstrați-le toate în contextul proiectului dvs.",
-      "cta_primary": "Creați pagina dvs."
     },
     "project_overview_state_sidebar": {
       "title": "Activați stările proiectului",

@@ -36,14 +36,12 @@
       "title": "Nedávné",
       "empty": {
         "project": "Vaše nedávné projekty se zde zobrazí po návštěvě.",
-        "page": "Vaše nedávné stránky se zde zobrazí po návštěvě.",
         "issue": "Vaše nedávné pracovní položky se zde zobrazí po návštěvě.",
         "default": "Zatím nemáte žádné nedávné položky."
       },
       "filters": {
         "all": "Vše",
         "projects": "Projekty",
-        "pages": "Stránky",
         "issues": "Úkoly"
       }
     },

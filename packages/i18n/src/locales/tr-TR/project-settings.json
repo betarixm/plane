@@ -339,13 +339,6 @@
         "toggle_title": "Görünümleri etkinleştir",
         "toggle_description": "Proje üyeleri görünümler oluşturabilir ve düzenleyebilir."
       },
-      "pages": {
-        "title": "Sayfalar",
-        "short_title": "Sayfalar",
-        "description": "Serbest biçimli içerik oluşturun ve düzenleyin: notlar, belgeler, herhangi bir şey.",
-        "toggle_title": "Sayfaları etkinleştir",
-        "toggle_description": "Proje üyeleri sayfalar oluşturabilir ve düzenleyebilir."
-      },
       "intake": {
         "intake_responsibility": "Alım sorumluluğu",
         "intake_sources": "Alım kaynakları",

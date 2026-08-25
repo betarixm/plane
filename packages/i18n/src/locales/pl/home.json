@@ -36,14 +36,12 @@
       "title": "Ostatnie",
       "empty": {
         "project": "Twoje ostatnio odwiedzone projekty pojawią się tutaj.",
-        "page": "Twoje ostatnio odwiedzone strony pojawią się tutaj.",
         "issue": "Twoje ostatnio odwiedzone elementy pracy pojawią się tutaj.",
         "default": "Nie masz jeszcze żadnych ostatnich pozycji."
       },
       "filters": {
         "all": "Wszystkie",
         "projects": "Projekty",
-        "pages": "Strony",
         "issues": "Elementy pracy"
       }
     },

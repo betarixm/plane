@@ -165,21 +165,6 @@
         "secondary_button": {
           "text": "Tüm filtreleri temizle"
         }
-      },
-      "public": {
-        "title": "Henüz genel sayfa yok",
-        "description": "Projenizdeki herkesle paylaşılan sayfaları burada görün.",
-        "primary_button": {
-          "text": "İlk sayfanızı oluşturun"
-        }
-      },
-      "archived": {
-        "title": "Henüz arşivlenmiş sayfa yok",
-        "description": "Radarınızda olmayan sayfaları arşivleyin. İhtiyaç duyduğunuzda buradan erişin."
-      },
-      "shared": {
-        "title": "Henüz paylaşılan sayfa yok",
-        "description": "Başkalarının sizinle paylaştığı sayfalar burada görünecek."
       }
     },
     "delete_view": {
@@ -268,35 +253,6 @@
       }
     }
   },
-  "project_page": {
-    "empty_state": {
-      "general": {
-        "title": "Bir not, belge veya tam bir bilgi bankası yazın. Plane'in AI asistanı Galileo'nun başlamanıza yardımcı olmasını sağlayın",
-        "description": "Sayfalar Plane'de düşüncelerinizi döktüğünüz alanlardır. Toplantı notları alın, kolayca biçimlendirin, iş öğelerini yerleştirin, bir bileşen kitaplığı kullanarak düzenleyin ve hepsini proje bağlamınızda tutun. Herhangi bir belgeyi hızlıca tamamlamak için bir kısayol veya düğme ile Plane'in AI'sı Galileo'yu çağırın.",
-        "primary_button": {
-          "text": "İlk sayfanızı oluşturun"
-        }
-      },
-      "private": {
-        "title": "Henüz özel sayfa yok",
-        "description": "Özel düşüncelerinizi burada saklayın. Paylaşmaya hazır olduğunuzda, ekip bir tık uzağınızda.",
-        "primary_button": {
-          "text": "İlk sayfanızı oluşturun"
-        }
-      },
-      "public": {
-        "title": "Henüz genel sayfa yok",
-        "description": "Projenizdeki herkesle paylaşılan sayfaları burada görün.",
-        "primary_button": {
-          "text": "İlk sayfanızı oluşturun"
-        }
-      },
-      "archived": {
-        "title": "Henüz arşivlenmiş sayfa yok",
-        "description": "Radarınızda olmayan sayfaları arşivleyin. İhtiyaç duyduğunuzda buradan erişin."
-      }
-    }
-  },
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -316,13 +272,6 @@
       "module": {
         "title": "Modüller bu proje için etkin değil.",
         "description": "Modüller projenizin yapı taşlarıdır. Kullanmaya başlamak için proje ayarlarından modülleri etkinleştirin.",
-        "primary_button": {
-          "text": "Özellikleri yönet"
-        }
-      },
-      "page": {
-        "title": "Sayfalar bu proje için etkin değil.",
-        "description": "Sayfalar projenizin yapı taşlarıdır. Kullanmaya başlamak için proje ayarlarından sayfaları etkinleştirin.",
         "primary_button": {
           "text": "Özellikleri yönet"
         }

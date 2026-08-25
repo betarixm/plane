@@ -235,39 +235,6 @@
       }
     }
   },
-  "workspace_pages": {
-    "empty_state": {
-      "general": {
-        "title": "Napíšte poznámku, dokument alebo úplnú znalostnej bázu. Nechajte Galilea, Plenovho AI asistenta, aby vám pomohol začať",
-        "description": "Stránky sú priestor pre myšlienky v Plene. Zapíšte si poznámky zo stretnutí, jednoducho ich formátujte, vložte pracovné položky, rozložte ich pomocou knižnice komponentov a uchovajte ich všetky v kontexte vášho projektu. Aby ste skrátili prácu na akomkoľvek dokumente, vyvolajte Galilea, AI Plena, pomocou skratky alebo kliknutia na tlačidlo.",
-        "primary_button": {
-          "text": "Vytvorte svoju prvú stránku"
-        }
-      },
-      "private": {
-        "title": "Zatiaľ žiadne súkromné stránky",
-        "description": "Uchovajte si tu svoje súkromné myšlienky. Keď budete pripravení zdieľať, tím je len na kliknutie.",
-        "primary_button": {
-          "text": "Vytvorte svoju prvú stránku"
-        }
-      },
-      "public": {
-        "title": "Zatiaľ žiadne stránky pracovného priestoru",
-        "description": "Pozrite si stránky zdieľané so všetkými vo vašom pracovnom priestore práve tu.",
-        "primary_button": {
-          "text": "Vytvorte svoju prvú stránku"
-        }
-      },
-      "archived": {
-        "title": "Zatiaľ žiadne archivované stránky",
-        "description": "Archivujte stránky, ktoré nie sú vo vašom radare. Keď ich budete potrebovať, pristupujte k nim tu."
-      },
-      "shared": {
-        "title": "Zatiaľ žiadne zdieľané stránky",
-        "description": "Stránky, ktoré s vami zdieľali iní, sa zobrazia tu."
-      }
-    }
-  },
   "workspace_cycles": {
     "empty_state": {
       "active": {

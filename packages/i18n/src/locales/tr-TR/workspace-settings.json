@@ -3,7 +3,7 @@
     "label": "Çalışma Alanı Ayarları",
     "page_label": "{workspace} - Genel ayarlar",
     "key_created": "Anahtar oluşturuldu",
-    "copy_key": "Bu gizli anahtarı Plane Pages'e kopyalayıp kaydedin. Kapat düğmesine bastıktan sonra bu anahtarı göremezsiniz. Anahtar içeren bir CSV dosyası indirildi.",
+    "copy_key": "Bu gizli anahtarı kopyalayıp güvenli bir yerde saklayın. Kapat'a bastıktan sonra anahtarı tekrar göremezsiniz. Anahtarı içeren bir CSV dosyası indirildi.",
     "token_copied": "Token panoya kopyalandı.",
     "settings": {
       "general": {
@@ -340,7 +340,7 @@
         },
         "app_available_description": "Kullanmaya başlamak için bir Pleyn workspeysi bağlayın",
         "client_id_and_secret": "Klayınt ID ve Sikrıt",
-        "client_id_and_secret_description": "Bu sikrıt anahtarı Peycislere kopyalayıp kaydedin. Kapat'a bastıktan sonra bu anahtarı tekrar göremezsiniz.",
+        "client_id_and_secret_description": "Bu gizli anahtarı kopyalayıp güvenli bir yerde saklayın.",
         "client_id_and_secret_download": "Anahtarı buradan CSV olarak indirebilirsiniz.",
         "application_id": "Aplikasyon ID",
         "client_id": "Klayınt ID",
@@ -450,7 +450,6 @@
         "write": "Yazma",
         "scope_description": {
           "projects": "Projelere ve projeyle ilgili tüm varlıklara erişim",
-          "wiki": "Wiki'ye ve wiki ile ilgili tüm varlıklara erişim",
           "workspaces": "Çalışma alanlarına ve ilgili tüm varlıklara erişim",
           "stickies": "Yapışkanlara ve ilgili tüm varlıklara erişim",
           "profile": "Kullanıcı profil bilgilerine erişim",
