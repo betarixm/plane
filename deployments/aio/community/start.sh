@@ -183,7 +183,6 @@ update_env_file(){
     fi
     update_env_value "SECRET_KEY" "$SECRET_KEY"
     update_env_value "FILE_SIZE_LIMIT" "${FILE_SIZE_LIMIT:-5242880}"
-    update_env_value "API_KEY_RATE_LIMIT" "${API_KEY_RATE_LIMIT:-60/minute}"
 
     echo "✅ Environment file updated"
     echo ""

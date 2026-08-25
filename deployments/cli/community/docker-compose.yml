@@ -54,7 +54,6 @@ x-app-env: &app-env
   DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
   SECRET_KEY: ${SECRET_KEY}
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
-  API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
   IDENTITY_PROVIDER: ${IDENTITY_PROVIDER:-slack}
   SLACK_CLIENT_ID: ${SLACK_CLIENT_ID}
   SLACK_CLIENT_SECRET: ${SLACK_CLIENT_SECRET}

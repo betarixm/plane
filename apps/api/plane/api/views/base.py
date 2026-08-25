@@ -23,7 +23,6 @@ from rest_framework.generics import GenericAPIView
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
-from plane.api.rate_limit import ApiKeyRateThrottle
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
@@ -57,9 +56,6 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
         for backend in list(self.filter_backends):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return queryset
-
-    def get_throttles(self):
-        return [ApiKeyRateThrottle()]
 
     def handle_exception(self, exc):
         """

@@ -114,10 +114,6 @@ docker run --name myaio --rm -it \
 
 - `FILE_SIZE_LIMIT`: Maximum file upload size in bytes (default: `5242880` = 5MB)
 
-#### API Configuration
-
-- `API_KEY_RATE_LIMIT`: API key rate limit (default: `60/minute`)
-
 ## Port Mapping
 
 The following ports are exposed:

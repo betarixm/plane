@@ -21,7 +21,6 @@ from plane.app.permissions import ROLE, allow_permission
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import FileAsset, Project, ProjectMember, User, Workspace
 from plane.settings.storage import S3Storage
-from plane.throttles.asset import AssetRateThrottle
 from plane.utils.cache import invalidate_cache_directly
 from plane.utils.path_validator import sanitize_filename
 from plane.utils.external_assets import (
@@ -812,8 +811,6 @@ class AssetCheckEndpoint(BaseAPIView):
 
 
 class DuplicateAssetEndpoint(BaseAPIView):
-    throttle_classes = [AssetRateThrottle]
-
     def get_entity_id_field(self, entity_type, entity_id):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
