@@ -4,5 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export * from "./view.service";
 export * from "./sites-publish.service";
