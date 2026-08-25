@@ -204,3 +204,64 @@ class TestS3StorageSignedURLExpiration:
         mock_s3_client.generate_presigned_url.assert_called_once()
         call_kwargs = mock_s3_client.generate_presigned_url.call_args[1]
         assert call_kwargs["ExpiresIn"] == 120
+
+
+@pytest.mark.unit
+class TestS3StorageMinioEndpoint:
+    @patch.dict(
+        os.environ,
+        {
+            "USE_MINIO": "1",
+            "AWS_S3_ENDPOINT_URL": "http://plane-minio:9000",
+            "MINIO_ENDPOINT_SSL": "0",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.settings.DEBUG", True)
+    @patch("plane.settings.storage.boto3")
+    def test_debug_request_uses_public_host_with_minio_port(self, mock_boto3):
+        request = Mock(scheme="http")
+        request.get_host.return_value = "dev.example.com:8000"
+
+        S3Storage(request=request)
+
+        assert mock_boto3.client.call_args.kwargs["endpoint_url"] == "http://dev.example.com:9000"
+
+    @patch.dict(
+        os.environ,
+        {
+            "USE_MINIO": "1",
+            "AWS_S3_ENDPOINT_URL": "http://plane-minio:9000",
+            "AWS_S3_PUBLIC_ENDPOINT_URL": "https://assets.example.com",
+            "MINIO_ENDPOINT_SSL": "0",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.settings.DEBUG", True)
+    @patch("plane.settings.storage.boto3")
+    def test_explicit_public_endpoint_takes_precedence(self, mock_boto3):
+        request = Mock(scheme="http")
+        request.get_host.return_value = "dev.example.com:8000"
+
+        S3Storage(request=request)
+
+        assert mock_boto3.client.call_args.kwargs["endpoint_url"] == "https://assets.example.com"
+
+    @patch.dict(
+        os.environ,
+        {
+            "USE_MINIO": "1",
+            "AWS_S3_ENDPOINT_URL": "http://plane-minio:9000",
+            "MINIO_ENDPOINT_SSL": "0",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.settings.DEBUG", False)
+    @patch("plane.settings.storage.boto3")
+    def test_production_request_keeps_proxy_host(self, mock_boto3):
+        request = Mock(scheme="https")
+        request.get_host.return_value = "plane.example.com"
+
+        S3Storage(request=request)
+
+        assert mock_boto3.client.call_args.kwargs["endpoint_url"] == "https://plane.example.com"

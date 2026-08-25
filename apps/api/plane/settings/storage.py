@@ -5,11 +5,14 @@
 # Python imports
 import os
 import uuid
+from urllib.parse import quote, urlsplit, urlunsplit
 
 # Third party imports
 import boto3
 from botocore.exceptions import ClientError
-from urllib.parse import quote
+
+# Django imports
+from django.conf import settings
 
 # Module imports
 from plane.utils.exception_logger import log_exception
@@ -21,6 +24,30 @@ class S3Storage(S3Boto3Storage):
         return name
 
     """S3 storage class to generate presigned URLs for S3 objects"""
+
+    def _get_minio_endpoint_url(self, request):
+        public_endpoint_url = os.environ.get("AWS_S3_PUBLIC_ENDPOINT_URL")
+        if public_endpoint_url:
+            return public_endpoint_url
+
+        if request is None:
+            return self.aws_s3_endpoint_url
+
+        endpoint_protocol = "https" if os.environ.get("MINIO_ENDPOINT_SSL") == "1" else request.scheme
+        request_endpoint = urlsplit(f"{endpoint_protocol}://{request.get_host()}")
+
+        # The production proxy exposes MinIO on the same host as the API. Local
+        # development exposes it directly on the port from AWS_S3_ENDPOINT_URL.
+        # Keep the browser-visible request host, but use that MinIO port in DEBUG.
+        if settings.DEBUG and self.aws_s3_endpoint_url:
+            minio_endpoint = urlsplit(self.aws_s3_endpoint_url)
+            if minio_endpoint.port and request_endpoint.port != minio_endpoint.port:
+                hostname = request_endpoint.hostname or "localhost"
+                if ":" in hostname:
+                    hostname = f"[{hostname}]"
+                request_endpoint = request_endpoint._replace(netloc=f"{hostname}:{minio_endpoint.port}")
+
+        return urlunsplit(request_endpoint)
 
     def __init__(self, request=None):
         # Get the AWS credentials and bucket name from the environment
@@ -37,18 +64,13 @@ class S3Storage(S3Boto3Storage):
         self.signed_url_expiration = int(os.environ.get("SIGNED_URL_EXPIRATION", "3600"))
 
         if os.environ.get("USE_MINIO") == "1":
-            # Determine protocol based on environment variable
-            if os.environ.get("MINIO_ENDPOINT_SSL") == "1":
-                endpoint_protocol = "https"
-            else:
-                endpoint_protocol = request.scheme if request else "http"
             # Create an S3 client for MinIO
             self.s3_client = boto3.client(
                 "s3",
                 aws_access_key_id=self.aws_access_key_id,
                 aws_secret_access_key=self.aws_secret_access_key,
                 region_name=self.aws_region,
-                endpoint_url=(f"{endpoint_protocol}://{request.get_host()}" if request else self.aws_s3_endpoint_url),
+                endpoint_url=self._get_minio_endpoint_url(request),
                 config=boto3.session.Config(signature_version="s3v4"),
             )
         else:
