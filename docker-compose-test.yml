@@ -116,9 +116,6 @@ services:
       REDIS_URL: redis://test-redis:6379/
       RABBITMQ_HOST: test-mq
       AWS_S3_ENDPOINT_URL: http://test-minio:9000
-      # Magic-link tests mock the celery delay but the view first checks that
-      # EMAIL_HOST is configured. Set a placeholder so the check passes.
-      EMAIL_HOST: test-smtp.invalid
     volumes:
       - ./apps/api:/code
     working_dir: /code

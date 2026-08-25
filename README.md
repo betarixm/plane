@@ -44,7 +44,9 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 | Kubernetes           | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://developers.plane.so/self-hosting/methods/kubernetes) |
 | Managed hosting      | [<img alt="Deploy with Zenith" src="https://cdn.zenith.hosting/buttons/deploy-with-zenith.svg" height="40">](https://zenith.hosting/host/plane)                                         |
 
-Workspace administrators can configure both workspace and instance settings from Administration.
+This deployment runs one Plane workspace per instance and uses Slack as the
+source of truth for sign-in, profiles, and membership. Deployment credentials
+are configured through server environment variables.
 
 ## 🌟 Features
 

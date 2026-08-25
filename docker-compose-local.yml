@@ -77,6 +77,8 @@ services:
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      IDENTITY_PROVIDER: ${IDENTITY_PROVIDER:-slack}
     depends_on:
       - plane-db
       - plane-redis
@@ -98,6 +100,8 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      IDENTITY_PROVIDER: ${IDENTITY_PROVIDER:-slack}
     depends_on:
       - api
       - plane-db
@@ -117,6 +121,8 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      IDENTITY_PROVIDER: ${IDENTITY_PROVIDER:-slack}
     depends_on:
       - api
       - plane-db
@@ -136,6 +142,8 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
+    environment:
+      IDENTITY_PROVIDER: ${IDENTITY_PROVIDER:-slack}
     depends_on:
       - plane-db
       - plane-redis

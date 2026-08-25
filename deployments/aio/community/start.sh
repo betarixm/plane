@@ -10,21 +10,34 @@ print_header(){
     echo "    DOMAIN_NAME, DATABASE_URL, REDIS_URL, AMQP_URL"
     echo "    AWS_REGION, AWS_ACCESS_KEY_ID"
     echo "    AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME"
+    echo "    Slack provider: SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, SLACK_SIGNING_SECRET"
     echo ""
     echo "Other optional environment variables: "
     echo "    SITE_ADDRESS (default: ':80')"
     echo "    FILE_SIZE_LIMIT (default: 5242880)"
     echo "    APP_PROTOCOL (http or https)"
+    echo "    IDENTITY_PROVIDER (default: 'slack'; only Slack is implemented today)"
     echo "    SECRET_KEY (auto-generated on first boot if not set)"
-    echo "    LIVE_SERVER_SECRET_KEY (auto-generated on first boot if not set)"
     echo ""
     echo ""
 }
 
 check_required_env(){
     echo "Checking required environment variables..."
-    local keys=("DOMAIN_NAME" "DATABASE_URL" "REDIS_URL" "AMQP_URL" 
+    local keys=("DOMAIN_NAME" "DATABASE_URL" "REDIS_URL" "AMQP_URL"
                 "AWS_REGION" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY" "AWS_S3_BUCKET_NAME")
+
+    IDENTITY_PROVIDER="${IDENTITY_PROVIDER:-slack}"
+    case "$IDENTITY_PROVIDER" in
+        slack)
+            keys+=("SLACK_CLIENT_ID" "SLACK_CLIENT_SECRET" "SLACK_SIGNING_SECRET")
+            ;;
+        *)
+            echo "  ❌  Unsupported IDENTITY_PROVIDER '$IDENTITY_PROVIDER'. Supported providers: slack"
+            echo ""
+            exit 1
+            ;;
+    esac
     
     local missing_keys=()
     # Check if the environment variable is set and not empty
@@ -130,6 +143,15 @@ update_env_file(){
     update_env_value "WEB_URL" "$app_protocol://$DOMAIN_NAME"
     update_env_value "CORS_ALLOWED_ORIGINS" "http://$DOMAIN_NAME,https://$DOMAIN_NAME"
 
+    update_env_value "IDENTITY_PROVIDER" "$IDENTITY_PROVIDER"
+    case "$IDENTITY_PROVIDER" in
+        slack)
+            update_env_value "SLACK_CLIENT_ID" "$SLACK_CLIENT_ID"
+            update_env_value "SLACK_CLIENT_SECRET" "$SLACK_CLIENT_SECRET"
+            update_env_value "SLACK_SIGNING_SECRET" "$SLACK_SIGNING_SECRET"
+            ;;
+    esac
+
     # update database url
     update_env_value "DATABASE_URL" "$DATABASE_URL"
     update_env_value "REDIS_URL" "$REDIS_URL"
@@ -161,20 +183,6 @@ update_env_file(){
     fi
     update_env_value "SECRET_KEY" "$SECRET_KEY"
     update_env_value "FILE_SIZE_LIMIT" "${FILE_SIZE_LIMIT:-5242880}"
-    # LIVE_SERVER_SECRET_KEY: same first-boot generation strategy.
-    local _insecure_lssk="htbqvBJAgpm9bzvf3r4urJer0ENReatceh"
-    local _placeholder_lssk="change-this-key-on-deployment"
-    if [ -z "$LIVE_SERVER_SECRET_KEY" ] || [ "$LIVE_SERVER_SECRET_KEY" = "$_insecure_lssk" ] || [ "$LIVE_SERVER_SECRET_KEY" = "$_placeholder_lssk" ]; then
-        local _stored_lssk
-        _stored_lssk=$(grep "^LIVE_SERVER_SECRET_KEY=" plane.env 2>/dev/null | cut -d'=' -f2-)
-        if [ -n "$_stored_lssk" ] && [ "$_stored_lssk" != "$_insecure_lssk" ] && [ "$_stored_lssk" != "$_placeholder_lssk" ]; then
-            LIVE_SERVER_SECRET_KEY="$_stored_lssk"
-        else
-            LIVE_SERVER_SECRET_KEY=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c50)
-        fi
-    fi
-    update_env_value "LIVE_SERVER_SECRET_KEY" "$LIVE_SERVER_SECRET_KEY"
-
     update_env_value "API_KEY_RATE_LIMIT" "${API_KEY_RATE_LIMIT:-60/minute}"
 
     echo "✅ Environment file updated"

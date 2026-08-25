@@ -18,11 +18,6 @@
         reverse_proxy localhost:3004
     }
 
-	handle_path /god-mode* {
-        root * /app/admin
-        try_files {path} {path}/ /index.html
-        file_server
-    }
     handle_path /* {
         root * /app/web
         try_files {path} {path}/ /index.html

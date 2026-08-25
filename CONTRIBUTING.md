@@ -64,20 +64,22 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-3. Start the containers
+3. Set `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, and `SLACK_SIGNING_SECRET` in `apps/api/.env`.
+
+4. Start the containers
 
 ```bash
 docker compose -f docker-compose-local.yml up
 ```
 
-4. Start web apps:
+5. Start web apps:
 
 ```bash
 pnpm dev
 ```
 
-5. Open your browser to http://localhost:3001/god-mode/ and initialize the instance and its workspace administrator
-6. Open up your browser to http://localhost:3000 then log in using the same credentials from the previous step
+6. Open http://localhost:3000 and connect the Slack workspace that will own Plane identities and membership
+7. Continue with an active account from that Slack workspace
 
 That’s it! You’re all set to begin coding. Remember to refresh your browser if changes don’t auto-reload. Happy contributing! 🎉
 

@@ -63,7 +63,7 @@ mkdir plane-selfhost
 cd plane-selfhost
 ```
 
-#### For *Docker Compose* based setup
+#### For _Docker Compose_ based setup
 
 ```
 curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/download/setup.sh
@@ -71,7 +71,7 @@ curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/downlo
 chmod +x setup.sh
 ```
 
-#### For *Docker Swarm* based setup
+#### For _Docker Swarm_ based setup
 
 ```
 curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/download/swarm.sh
@@ -89,7 +89,8 @@ Lets get started by running the `./setup.sh` command.
 
 This will prompt you with the below options.
 
-#### Docker Compose 
+#### Docker Compose
+
 ```bash
 Select an Action you want to perform:
    1) Install (x86_64)
@@ -150,7 +151,12 @@ Below are the most import keys you must refer to. _<span style="color: #fcba03">
 
 > `CORS_ALLOWED_ORIGINS` - This is default set to `http://localhost`. Change this to the FQDN you plan to use along with LISTEN_HTTP_PORT (eg. `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
 
-There are many other settings you can play with, but we suggest you configure `EMAIL SETTINGS` as it will enable you to invite your teammates onto the platform.
+> `IDENTITY_PROVIDER` - Selects the external identity source. `slack` is the only implemented value today.
+
+> `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET`, `SLACK_SIGNING_SECRET` - Required Slack app credentials. Configure the app's OAuth, OpenID Connect, and Events API URLs as described in [`docs/slack-identity.md`](../../../docs/slack-identity.md).
+
+Plane creates its single workspace from Slack and continuously mirrors Slack
+profiles and membership; local email invitations are not used.
 
 ---
 
@@ -189,7 +195,7 @@ You have successfully self hosted `Plane` instance. Access the application by go
 
 In case you want to make changes to `plane.env` variables, we suggest you to stop the services before doing that.
 
-#### Docker Compose 
+#### Docker Compose
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `3` to stop the services
 
@@ -239,6 +245,7 @@ In case you want to make changes to `plane.env` variables, without stopping the 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `4` to restart the services
 
 #### Docker Compose
+
 ```bash
 Select a Action you want to perform:
    1) Install (x86_64)
@@ -275,7 +282,7 @@ If all goes well, you will see the confirmation from docker cli
 
 ---
 
-### Upgrading Plane Version 
+### Upgrading Plane Version
 
 It is always advised to keep Plane up to date with the latest release.
 
@@ -337,9 +344,9 @@ Once done with making changes in `plane.env` file, jump on to `Redeploy Stack`
 
 ### View Logs
 
-There would a time when you might want to check what is happening inside the API, Worker or any other container.  
+There would a time when you might want to check what is happening inside the API, Worker or any other container.
 
-Lets again run the `./setup.sh` command. You will again be prompted with the below options. 
+Lets again run the `./setup.sh` command. You will again be prompted with the below options.
 
 This time select `6` to view logs.
 
@@ -361,7 +368,6 @@ Action [2]: 6
 
 #### Docker Swarm
 
-
 ```bash
    1) Deploy Stack
    2) Remove Stack
@@ -375,7 +381,9 @@ Action [3]: 6
 ```
 
 #### Service Menu Options for Logs
+
 This will further open sub-menu with list of services
+
 ```bash
 Select a Service you want to view the logs for:
    1) Web
@@ -395,6 +403,7 @@ Service: 3
 ```
 
 Select any of the service to view the logs e.g. `3`. Expect something similar to this
+
 ```bash
 api-1  | Waiting for database...
 api-1  | Database available!
@@ -407,22 +416,6 @@ api-1  | Waiting for database migrations to complete...
 api-1  | Waiting for database migrations to complete...
 api-1  | No migrations Pending. Starting processes ...
 api-1  | Instance registered
-api-1  | ENABLE_SIGNUP loaded with value from environment variable.
-api-1  | ENABLE_EMAIL_PASSWORD loaded with value from environment variable.
-api-1  | ENABLE_MAGIC_LINK_LOGIN loaded with value from environment variable.
-api-1  | GOOGLE_CLIENT_ID loaded with value from environment variable.
-api-1  | GITHUB_CLIENT_ID loaded with value from environment variable.
-api-1  | GITHUB_CLIENT_SECRET loaded with value from environment variable.
-api-1  | EMAIL_HOST loaded with value from environment variable.
-api-1  | EMAIL_HOST_USER loaded with value from environment variable.
-api-1  | EMAIL_HOST_PASSWORD loaded with value from environment variable.
-api-1  | EMAIL_PORT loaded with value from environment variable.
-api-1  | EMAIL_FROM loaded with value from environment variable.
-api-1  | EMAIL_USE_TLS loaded with value from environment variable.
-api-1  | EMAIL_USE_SSL loaded with value from environment variable.
-api-1  | OPENAI_API_KEY loaded with value from environment variable.
-api-1  | GPT_ENGINE loaded with value from environment variable.
-api-1  | UNSPLASH_ACCESS_KEY loaded with value from environment variable.
 api-1  | Checking bucket...
 api-1  | Bucket 'uploads' does not exist. Creating bucket...
 api-1  | Bucket 'uploads' created successfully.
@@ -439,9 +432,9 @@ api-1  | [2024-05-02 03:56:03 +0000] [25] [INFO] Application startup complete.
 
 ```
 
-To exit this, use `CTRL+C` and then you will land on to the main-menu with the list of actions. 
+To exit this, use `CTRL+C` and then you will land on to the main-menu with the list of actions.
 
-Similarly, you can view the logs of other services. 
+Similarly, you can view the logs of other services.
 
 ---
 
@@ -500,12 +493,12 @@ When you want to restore the previously backed-up data, follow the instructions 
 
    ```bash
    --------------------------------------------
-    ____  _                          ///////// 
-   |  _ \| | __ _ _ __   ___         ///////// 
-   | |_) | |/ _` | '_ \ / _ \   /////    ///// 
-   |  __/| | (_| | | | |  __/   /////    ///// 
-   |_|   |_|\__,_|_| |_|\___|        ////      
-                                    ////      
+    ____  _                          /////////
+   |  _ \| | __ _ _ __   ___         /////////
+   | |_) | |/ _` | '_ \ / _ \   /////    /////
+   |  __/| | (_| | | | |  __/   /////    /////
+   |_|   |_|\__,_|_| |_|\___|        ////
+                                    ////
    --------------------------------------------
    Project management tool from the future
    --------------------------------------------
@@ -550,81 +543,4 @@ When you want to restore the previously backed-up data on Plane Commercial Air-G
    ./restore-airgapped.sh <path to backup folder containing *.tar.gz files>
    ```
 
-1. After restoration, you are ready to start Plane Commercial (Airgapped) will all your previously saved data. 
-
----
-
-<details>
-   <summary><h2>Upgrading from v0.13.2 to v0.14.x</h2></summary>
-
-This is one time activity for users who are upgrading from v0.13.2 to v0.14.0
-
-As there has been significant changes to Self Hosting process, this step mainly covers the data migration from current (v0.13.2) docker volumes from newly created volumes
-
-> Before we begin with migration, make sure your v0.14.0 was started and then stopped. This is required to know the newly created docker volume names.
-
-Begin with downloading the migration script using below command
-
-```
-
-curl -fsSL -o migrate.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/migration-0.13-0.14.sh
-
-chmod +x migrate.sh
-
-```
-
-Now run the `./migrate.sh` command and expect the instructions as below
-
-```
-******************************************************************
-
-This script is solely for the migration purpose only.
-This is a 1 time migration of volume data from v0.13.2 => v0.14.x
-
-Assumption:
-1. Postgres data volume name ends with _pgdata
-2. Minio data volume name ends with _uploads
-3. Redis data volume name ends with _redisdata
-
-Any changes to this script can break the migration.
-
-Before you proceed, make sure you run the below command
-to know the docker volumes
-
-docker volume ls -q | grep -i "_pgdata"
-docker volume ls -q | grep -i "_uploads"
-docker volume ls -q | grep -i "_redisdata"
-
-*******************************************************
-
-Given below list of REDIS volumes, identify the prefix of source and destination volumes leaving "_redisdata"
----------------------
-plane-app_redisdata
-v0132_redisdata
-
-Provide the Source Volume Prefix :
-```
-
-**Open another terminal window**, and run the mentioned 3 command. This may be different for users who have changed the volume names in their previous setup (v0.13.2)
-
-For every command you must see 2 records something like shown in above example of `redisdata`
-
-To move forward, you would need PREFIX of old setup and new setup. As per above example, `v0132` is the prefix of v0.13.2 and `plane-app` is the prefix of v0.14.0 setup
-
-**Back to original terminal window**, _Provide the Source Volume Prefix_ and hit ENTER.
-
-Now you will be prompted to _Provide Destination Volume Prefix_. Provide the value and hit ENTER
-
-```
-Provide the Source Volume Prefix : v0132
-Provide the Destination Volume Prefix : plane-app
-```
-
-In case the suffixes are wrong or the mentioned volumes are not found, you will receive the error shown below. The image below displays an error for source volumes.
-
-![Migrate Error](images/migrate-error.png)
-
-In case of successful migration, it will be a silent exit without error.
-
-Now its time to restart v0.14.0 setup.
-</details>
+1. After restoration, you are ready to start Plane Commercial (Airgapped) with all your previously saved data.
