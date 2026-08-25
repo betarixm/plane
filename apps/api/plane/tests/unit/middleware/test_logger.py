@@ -20,7 +20,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 from django.test import RequestFactory
 
-from plane.middleware.logger import APITokenLogMiddleware
+from plane.middleware.logger import APITokenLogMiddleware, RequestLoggerMiddleware
 
 
 @pytest.fixture
@@ -77,3 +77,46 @@ class TestAPITokenLogMiddleware:
         with patch("plane.middleware.logger.process_logs") as process_logs:
             middleware.process_request(request, HttpResponse(b"{}"), request_body=b"")
             assert not process_logs.delay.called
+
+    def test_slack_callback_query_is_not_persisted(self, middleware, request_factory):
+        request = request_factory.get(
+            "/auth/slack/callback/",
+            {"code": "single-use-code", "state": "secret-state"},
+            HTTP_X_API_KEY=self.API_KEY,
+        )
+        request.user = AnonymousUser()
+
+        with patch("plane.middleware.logger.process_logs") as process_logs:
+            middleware.process_request(request, HttpResponse(b"{}"), request_body=b"")
+            log_data = process_logs.delay.call_args.kwargs["log_data"]
+
+        assert log_data["query_params"] == ""
+
+
+@pytest.mark.unit
+class TestRequestLoggerMiddleware:
+    @pytest.mark.parametrize(
+        "path",
+        [
+            "/auth/slack/install/callback/",
+            "/auth/slack/callback/",
+        ],
+    )
+    def test_slack_callback_credentials_are_removed_from_request_target(self, request_factory, path):
+        middleware = RequestLoggerMiddleware(Mock(return_value=HttpResponse()))
+        request = request_factory.get(
+            path,
+            {"code": "single-use-code", "state": "secret-state"},
+        )
+
+        target = middleware._request_target(request)
+
+        assert target == path
+        assert "single-use-code" not in target
+        assert "secret-state" not in target
+
+    def test_non_sensitive_query_string_is_preserved(self, request_factory):
+        middleware = RequestLoggerMiddleware(Mock(return_value=HttpResponse()))
+        request = request_factory.get("/api/issues/", {"cursor": "next-page"})
+
+        assert middleware._request_target(request) == "/api/issues/?cursor=next-page"

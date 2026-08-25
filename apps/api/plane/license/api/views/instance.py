@@ -2,172 +2,87 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Python imports
 import os
 
-# Django imports
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
-
-# Third party imports
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-# Module imports
 from plane.app.views import BaseAPIView
-from plane.license.api.permissions import WorkspaceAdminPermission
-from plane.license.api.serializers import InstanceSerializer
+from plane.db.models import IdentitySource
+from plane.integrations.identity import (
+    configured_identity_provider,
+    identity_provider_adapter,
+)
 from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
-from plane.utils.cache import cache_response, invalidate_cache
+from plane.utils.identity_access import is_workspace_admin
 
 
 class InstanceEndpoint(BaseAPIView):
-    def get_permissions(self):
-        if self.request.method == "PATCH":
-            return [WorkspaceAdminPermission()]
-        return [AllowAny()]
+    permission_classes = [AllowAny]
 
-    @cache_response(60 * 60 * 2, user=False)
     @method_decorator(cache_control(private=True, max_age=12))
     def get(self, request):
         instance = Instance.objects.first()
-
-        # get the instance
-        if instance is None:
-            return Response(
-                {"is_activated": False, "is_setup_done": False},
-                status=status.HTTP_200_OK,
-            )
-        # Return instance
-        serializer = InstanceSerializer(instance)
-        data = serializer.data
-        data["is_activated"] = True
-        # Get all the configuration
+        instance_data = {"is_setup_done": bool(instance and instance.is_setup_done)}
         (
-            ENABLE_SIGNUP,
-            IS_GOOGLE_ENABLED,
-            IS_GITHUB_ENABLED,
-            GITHUB_APP_NAME,
-            IS_GITLAB_ENABLED,
-            IS_GITEA_ENABLED,
-            EMAIL_HOST,
-            ENABLE_MAGIC_LINK_LOGIN,
-            ENABLE_EMAIL_PASSWORD,
-            SLACK_CLIENT_ID,
-            POSTHOG_API_KEY,
-            POSTHOG_HOST,
-            UNSPLASH_ACCESS_KEY,
-            LLM_API_KEY,
+            github_app_name,
+            unsplash_access_key,
+            llm_api_key,
         ) = get_configuration_value(
             [
-                {
-                    "key": "ENABLE_SIGNUP",
-                    "default": os.environ.get("ENABLE_SIGNUP", "0"),
-                },
-                {
-                    "key": "IS_GOOGLE_ENABLED",
-                    "default": os.environ.get("IS_GOOGLE_ENABLED", "0"),
-                },
-                {
-                    "key": "IS_GITHUB_ENABLED",
-                    "default": os.environ.get("IS_GITHUB_ENABLED", "0"),
-                },
-                {
-                    "key": "GITHUB_APP_NAME",
-                    "default": os.environ.get("GITHUB_APP_NAME", ""),
-                },
-                {
-                    "key": "IS_GITLAB_ENABLED",
-                    "default": os.environ.get("IS_GITLAB_ENABLED", "0"),
-                },
-                {
-                    "key": "IS_GITEA_ENABLED",
-                    "default": os.environ.get("IS_GITEA_ENABLED", "0"),
-                },
-                {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST", "")},
-                {
-                    "key": "ENABLE_MAGIC_LINK_LOGIN",
-                    "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
-                },
-                {
-                    "key": "ENABLE_EMAIL_PASSWORD",
-                    "default": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
-                },
-                {
-                    "key": "SLACK_CLIENT_ID",
-                    "default": os.environ.get("SLACK_CLIENT_ID", None),
-                },
-                {
-                    "key": "POSTHOG_API_KEY",
-                    "default": os.environ.get("POSTHOG_API_KEY", None),
-                },
-                {
-                    "key": "POSTHOG_HOST",
-                    "default": os.environ.get("POSTHOG_HOST", None),
-                },
-                {
-                    "key": "UNSPLASH_ACCESS_KEY",
-                    "default": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
-                },
-                {
-                    "key": "LLM_API_KEY",
-                    "default": os.environ.get("LLM_API_KEY", ""),
-                },
+                {"key": "GITHUB_APP_NAME", "default": os.environ.get("GITHUB_APP_NAME", "")},
+                {"key": "UNSPLASH_ACCESS_KEY", "default": os.environ.get("UNSPLASH_ACCESS_KEY", "")},
+                {"key": "LLM_API_KEY", "default": os.environ.get("LLM_API_KEY", "")},
             ]
         )
 
-        data = {}
-        # Authentication
-        data["enable_signup"] = ENABLE_SIGNUP == "1"
-        data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
-        data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
-        data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
-        data["is_gitea_enabled"] = IS_GITEA_ENABLED == "1"
-        data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
-        data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
-
-        # Github app name
-        data["github_app_name"] = str(GITHUB_APP_NAME)
-
-        # Slack client
-        data["slack_client_id"] = SLACK_CLIENT_ID
-
-        # Posthog
-        data["posthog_api_key"] = POSTHOG_API_KEY
-        data["posthog_host"] = POSTHOG_HOST
-
-        # Unsplash
-        data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
-
-        # Open AI settings
-        data["has_llm_configured"] = bool(LLM_API_KEY)
-
-        # File size settings
-        data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
-
-        # is smtp configured
-        data["is_smtp_configured"] = bool(EMAIL_HOST)
-
-        # Base URL
-        data["admin_base_url"] = settings.ADMIN_BASE_URL
-        data["space_base_url"] = settings.SPACE_BASE_URL
-        data["app_base_url"] = settings.APP_BASE_URL
-
-        data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
-        data["is_self_managed"] = settings.IS_SELF_MANAGED
-
-        response_data = {"config": data, "instance": serializer.data}
-        return Response(response_data, status=status.HTTP_200_OK)
-
-    @invalidate_cache(path="/api/instances/", user=False)
-    def patch(self, request):
-        # Get the instance
-        instance = Instance.objects.first()
-        serializer = InstanceSerializer(instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        configured_provider = configured_identity_provider()
+        provider = configured_provider
+        source = IdentitySource.objects.filter(provider=provider).first()
+        provider_adapter = identity_provider_adapter(provider)
+        identity_source = {
+            "provider": provider,
+            "configured": bool(
+                provider == configured_provider
+                and provider_adapter is not None
+                and provider_adapter.credentials_configured()
+            ),
+            "connected": bool(
+                source is not None
+                and source.status == IdentitySource.Status.ACTIVE
+            ),
+            "organization": (
+                {
+                    "name": source.external_organization_name,
+                    "domain": source.external_organization_domain,
+                    "icon_url": source.external_organization_icon_url,
+                }
+                if source is not None
+                else None
+            ),
+            "last_synced_at": source.last_synced_at if source is not None else None,
+            "auth_url": provider_adapter.auth_url if provider_adapter is not None else "",
+            "install_url": provider_adapter.install_url if provider_adapter is not None else "",
+        }
+        if source is not None and is_workspace_admin(request.user):
+            identity_source["sync_error"] = source.sync_error
+        config = {
+            # Provider credentials, organization IDs, and tokens remain private.
+            "identity_source": identity_source,
+            # GitHub project integration is independent from human authentication.
+            "github_app_name": github_app_name,
+            "has_unsplash_configured": bool(unsplash_access_key),
+            "has_llm_configured": bool(llm_api_key),
+            "file_size_limit": float(os.environ.get("FILE_SIZE_LIMIT", 5242880)),
+            "instance_changelog_url": settings.INSTANCE_CHANGELOG_URL,
+            "is_self_managed": settings.IS_SELF_MANAGED,
+        }
+        return Response(
+            {"config": config, "instance": instance_data},
+            status=status.HTTP_200_OK,
+        )

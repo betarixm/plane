@@ -8,11 +8,18 @@ from uuid import uuid4
 import pytest
 from rest_framework import status
 
-from plane.db.models import Project, ProjectMember, State, User, WorkspaceMember
+from plane.db.models import (
+    Project,
+    ProjectMember,
+    ExternalIdentity,
+    State,
+    User,
+    WorkspaceMember,
+)
 
 
 @pytest.fixture
-def other_workspace_member(db, workspace):
+def other_workspace_member(db, workspace, external_identity_source):
     """Create another user that is a member of the workspace, distinct from the creator."""
     unique_id = uuid4().hex[:8]
     other = User.objects.create(
@@ -21,9 +28,13 @@ def other_workspace_member(db, workspace):
         first_name="Other",
         last_name="User",
     )
-    other.set_password("test-password")
-    other.save()
     WorkspaceMember.objects.create(workspace=workspace, member=other, role=20)
+    ExternalIdentity.objects.create(
+        user=other,
+        source=external_identity_source.source,
+        external_user_id=f"U{other.id.hex[:20].upper()}",
+        source_generation=external_identity_source.source.generation,
+    )
     return other
 
 
@@ -37,8 +48,6 @@ def outsider_user(db):
         first_name="Out",
         last_name="Sider",
     )
-    outsider.set_password("test-password")
-    outsider.save()
     return outsider
 
 
@@ -208,7 +217,7 @@ class TestProjectListCreateAPIEndpoint:
     def test_list_relational_order_by_injection_does_not_500(self, api_key_client, workspace, create_user):
         """Regression for GHSA-p885-6jpg-cr2p (relational-traversal leak half).
 
-        Ordering by a related-table column (``created_by__password``) used to
+        Ordering by a related-table column (``created_by__email``) used to
         reach ``.order_by()`` raw, forming a blind ordering oracle. After the
         fix the value is not in ``PROJECT_ORDER_BY_ALLOWLIST`` and is replaced
         with the safe default, so it can no longer influence SQL ordering.
@@ -224,7 +233,7 @@ class TestProjectListCreateAPIEndpoint:
         ProjectMember.objects.create(project=project, member=create_user, role=20)
 
         url = self.get_url(workspace.slug)
-        response = api_key_client.get(url, {"order_by": "created_by__password"})
+        response = api_key_client.get(url, {"order_by": "created_by__email"})
 
         assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
 
@@ -259,3 +268,56 @@ class TestProjectListCreateAPIEndpoint:
         # The dispatch was attempted but its failure was swallowed by
         # transaction.on_commit(robust=True).
         mocked_activity.delay.assert_called_once()
+
+
+@pytest.mark.contract
+class TestProjectArchiveUnarchiveAPIEndpoint:
+    def get_url(self, workspace_slug, project_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/archive/"
+
+    @pytest.mark.django_db
+    def test_workspace_member_cannot_archive_project_without_membership(
+        self,
+        api_key_client,
+        workspace,
+        create_user,
+        other_workspace_member,
+    ):
+        WorkspaceMember.objects.filter(workspace=workspace, member=create_user).update(role=15)
+        project = Project.objects.create(
+            name="Secret Project",
+            identifier="SECRET",
+            workspace=workspace,
+            created_by=other_workspace_member,
+            network=0,
+        )
+        ProjectMember.objects.create(project=project, member=other_workspace_member, role=20)
+
+        response = api_key_client.post(self.get_url(workspace.slug, project.id), {}, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        project.refresh_from_db()
+        assert project.archived_at is None
+
+    @pytest.mark.django_db
+    def test_active_project_member_can_archive_project(
+        self,
+        api_key_client,
+        workspace,
+        create_user,
+    ):
+        WorkspaceMember.objects.filter(workspace=workspace, member=create_user).update(role=15)
+        project = Project.objects.create(
+            name="Member Project",
+            identifier="MEMBER",
+            workspace=workspace,
+            created_by=create_user,
+            network=0,
+        )
+        ProjectMember.objects.create(project=project, member=create_user, role=15)
+
+        response = api_key_client.post(self.get_url(workspace.slug, project.id), {}, format="json")
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        project.refresh_from_db()
+        assert project.archived_at is not None

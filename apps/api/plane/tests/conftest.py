@@ -6,7 +6,13 @@ import pytest
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 
-from plane.db.models import User, Workspace, WorkspaceMember
+from plane.db.models import (
+    ExternalIdentity,
+    IdentitySource,
+    User,
+    Workspace,
+    WorkspaceMember,
+)
 from plane.db.models.api import APIToken
 
 
@@ -23,26 +29,14 @@ def api_client():
 
 
 @pytest.fixture
-def user_data():
-    """Return standard user data for tests"""
-    return {
-        "email": "test@plane.so",
-        "password": "test-password",
-        "first_name": "Test",
-        "last_name": "User",
-    }
-
-
-@pytest.fixture
-def create_user(db, user_data):
+def create_user(db):
     """Create and return a user instance"""
     user = User.objects.create(
-        email=user_data["email"],
-        first_name=user_data["first_name"],
-        last_name=user_data["last_name"],
+        email="test@plane.so",
+        username="test-user",
+        first_name="Test",
+        last_name="User",
     )
-    user.set_password(user_data["password"])
-    user.save()
     return user
 
 
@@ -58,35 +52,17 @@ def api_token(db, create_user):
 
 
 @pytest.fixture
-def api_key_client(api_client, api_token):
+def api_key_client(api_client, api_token, external_identity_source):
     """Return an API key authenticated client for external API testing"""
     api_client.credentials(HTTP_X_API_KEY=api_token.token)
     return api_client
 
 
 @pytest.fixture
-def session_client(api_client, create_user):
+def session_client(api_client, create_user, external_identity_source):
     """Return a session authenticated API client for app API testing, which is what plane.app uses"""
     api_client.force_authenticate(user=create_user)
     return api_client
-
-
-@pytest.fixture
-def create_bot_user(db):
-    """Create and return a bot user instance"""
-    from uuid import uuid4
-
-    unique_id = uuid4().hex[:8]
-    user = User.objects.create(
-        email=f"bot-{unique_id}@plane.so",
-        username=f"bot_user_{unique_id}",
-        first_name="Bot",
-        last_name="User",
-        is_bot=True,
-    )
-    user.set_password("bot@123")
-    user.save()
-    return user
 
 
 @pytest.fixture
@@ -109,7 +85,6 @@ def create_api_token_for_user(db, create_user):
         label="Test Token",
         description="Test token description",
         user=create_user,
-        user_type=0,
     )
 
 
@@ -131,10 +106,45 @@ def workspace(create_user):
     # Create the workspace using the model
     created_workspace = Workspace.objects.create(
         name="Test Workspace",
-        owner=create_user,
         slug="test-workspace",
     )
 
     WorkspaceMember.objects.create(workspace=created_workspace, member=create_user, role=20)
 
     return created_workspace
+
+
+@pytest.fixture
+def external_identity_source(workspace, create_user):
+    """Create the active Slack projection required by human authentication."""
+
+    installation = IdentitySource.objects.create(
+        workspace=workspace,
+        provider=IdentitySource.Provider.SLACK,
+        external_organization_id="TTEST",
+        external_organization_name="Test Slack",
+    )
+    identity = ExternalIdentity.objects.create(
+        user=create_user,
+        source=installation,
+        external_user_id="UTEST",
+        source_generation=installation.generation,
+    )
+    return identity
+
+
+@pytest.fixture
+def bind_external_identity(external_identity_source):
+    """Bind an additional test user to the singleton Slack generation."""
+
+    def bind(user, *, external_user_id=None):
+        from uuid import uuid4
+
+        return ExternalIdentity.objects.create(
+            user=user,
+            source=external_identity_source.source,
+            external_user_id=external_user_id or f"U{uuid4().hex[:12].upper()}",
+            source_generation=external_identity_source.source.generation,
+        )
+
+    return bind

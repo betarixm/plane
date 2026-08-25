@@ -43,6 +43,13 @@ from plane.utils.exception_logger import log_exception
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.identity_access import (
+    active_project_members,
+    active_workspace_members,
+    enqueue_task_after_commit,
+    lock_active_identity_source,
+    lock_active_workspace_member,
+)
 from plane.api.serializers import (
     ProjectSerializer,
     ProjectLiteSerializer,
@@ -105,9 +112,8 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 )
             )
             .annotate(
-                total_members=ProjectMember.objects.filter(
-                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
-                )
+                total_members=active_project_members()
+                .filter(project_id=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -182,9 +188,9 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",
-                    queryset=ProjectMember.objects.filter(workspace__slug=slug, is_active=True).select_related(
-                        "member"
-                    ),
+                    queryset=active_project_members()
+                    .filter(workspace__slug=slug)
+                    .select_related("member"),
                 )
             )
             .order_by(
@@ -221,6 +227,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             409: PROJECT_NAME_TAKEN_RESPONSE,
         },
     )
+    @transaction.atomic
     def post(self, request, slug):
         """Create project
 
@@ -228,7 +235,17 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         Automatically adds the creator as admin and sets up default workflow states.
         """
         try:
-            workspace = Workspace.objects.get(slug=slug)
+            workspace = Workspace.objects.using("default").get(slug=slug)
+            lock_active_identity_source(workspace_id=workspace.id)
+            if not active_workspace_members().select_for_update().filter(
+                workspace=workspace,
+                member=request.user,
+                role__in=[15, 20],
+            ).exists():
+                return Response(
+                    {"error": "You don't have the required permissions."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
             serializer = ProjectCreateSerializer(data={**request.data}, context={"workspace_id": workspace.id})
 
@@ -447,7 +464,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                 )
                 | Q(network=2)
             )
-            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
+            .select_related("workspace", "default_assignee", "project_lead")
             .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
@@ -459,9 +476,8 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                 )
             )
             .annotate(
-                total_members=ProjectMember.objects.filter(
-                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
-                )
+                total_members=active_project_members()
+                .filter(project_id=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -543,6 +559,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
             409: PROJECT_NAME_TAKEN_RESPONSE,
         },
     )
+    @transaction.atomic
     def patch(self, request, slug, pk):
         """Update project
 
@@ -550,8 +567,39 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         Tracks changes in model activity logs for audit purposes.
         """
         try:
-            workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=pk)
+            workspace = Workspace.objects.using("default").get(slug=slug)
+            lock_active_identity_source(workspace_id=workspace.id)
+            requester_workspace_member = lock_active_workspace_member(
+                workspace_id=workspace.id,
+                user_id=request.user.id,
+            )
+            if requester_workspace_member is None:
+                return Response(
+                    {"error": "An active external workspace membership is required."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            project = Project.objects.using("default").select_for_update().get(
+                pk=pk,
+                workspace=workspace,
+            )
+            requesting_project_member = (
+                ProjectMember.objects.using("default")
+                .select_for_update()
+                .filter(
+                    project=project,
+                    member=request.user,
+                    is_active=True,
+                )
+                .first()
+            )
+            is_workspace_admin = requester_workspace_member.role == 20
+            if requesting_project_member is None or (
+                requesting_project_member.role != 20 and not is_workspace_admin
+            ):
+                return Response(
+                    {"error": "You don't have the required permissions."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
             current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
 
             intake_view = request.data.get("intake_view", project.intake_view)
@@ -582,7 +630,8 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
 
                 project = self.get_queryset().filter(pk=serializer.instance.id).first()
 
-                model_activity.delay(
+                enqueue_task_after_commit(
+                    model_activity,
                     model_name="project",
                     model_id=str(project.id),
                     requested_data=request.data,
@@ -620,17 +669,45 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
             204: DELETED_RESPONSE,
         },
     )
+    @transaction.atomic
     def delete(self, request, slug, pk):
         """Delete project
 
         Permanently remove a project and all its associated data from the workspace.
         Only admins can delete projects and the action cannot be undone.
         """
-        project = Project.objects.get(pk=pk, workspace__slug=slug)
+        workspace = Workspace.objects.using("default").get(slug=slug)
+        lock_active_identity_source(workspace_id=workspace.id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=workspace.id,
+            user_id=request.user.id,
+        )
+        if requester_workspace_member is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project = Project.objects.using("default").select_for_update().get(
+            pk=pk,
+            workspace=workspace,
+        )
+        requesting_project_member = ProjectMember.objects.using("default").select_for_update().filter(
+            project=project,
+            member=request.user,
+            is_active=True,
+        ).first()
+        if requesting_project_member is None or (
+            requesting_project_member.role != 20 and requester_workspace_member.role != 20
+        ):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # Delete the user favorite cycle
         UserFavorite.objects.filter(entity_type="project", entity_identifier=pk, project_id=pk).delete()
         project.delete()
-        webhook_activity.delay(
+        enqueue_task_after_commit(
+            webhook_activity,
             event="project",
             verb="deleted",
             field=None,
@@ -663,15 +740,41 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
             204: ARCHIVED_RESPONSE,
         },
     )
+    @transaction.atomic
     def post(self, request, slug, project_id):
         """Archive project
 
         Move a project to archived status, hiding it from active project lists.
         Archived projects remain accessible but are excluded from regular workflows.
         """
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        workspace = Workspace.objects.using("default").get(slug=slug)
+        lock_active_identity_source(workspace_id=workspace.id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=workspace.id,
+            user_id=request.user.id,
+        )
+        if requester_workspace_member is None:
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project = Project.objects.using("default").select_for_update().get(
+            pk=project_id,
+            workspace=workspace,
+        )
+        requesting_project_member = ProjectMember.objects.using("default").select_for_update().filter(
+            project=project,
+            member=request.user,
+            role__in=[20, 15],
+            is_active=True,
+        ).exists()
+        if requester_workspace_member.role != 20 and not requesting_project_member:
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         project.archived_at = timezone.now()
-        project.save()
+        project.save(update_fields=["archived_at", "updated_at"])
         UserFavorite.objects.filter(workspace__slug=slug, project=project_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -687,15 +790,42 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
             204: UNARCHIVED_RESPONSE,
         },
     )
+    @transaction.atomic
     def delete(self, request, slug, project_id):
         """Unarchive project
 
         Restore an archived project to active status, making it available in regular workflows.
         The project will reappear in active project lists and become fully functional.
         """
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        workspace = Workspace.objects.using("default").get(slug=slug)
+        lock_active_identity_source(workspace_id=workspace.id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=workspace.id,
+            user_id=request.user.id,
+        )
+        if requester_workspace_member is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project = Project.objects.using("default").select_for_update().get(
+            pk=project_id,
+            workspace=workspace,
+        )
+        requesting_project_member = ProjectMember.objects.using("default").select_for_update().filter(
+            project=project,
+            member=request.user,
+            is_active=True,
+        ).first()
+        if requesting_project_member is None or (
+            requesting_project_member.role != 20 and requester_workspace_member.role != 20
+        ):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         project.archived_at = None
-        project.save()
+        project.save(update_fields=["archived_at", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -749,7 +879,7 @@ class ProjectSummaryAPIEndpoint(BaseAPIView):
 
         subquery_builders = {
             "members": lambda: (
-                ProjectMember.objects.filter(project_id=OuterRef("pk"), is_active=True)
+                active_project_members().filter(project_id=OuterRef("pk"))
                 .values("project_id")
                 .annotate(count=Count("*"))
                 .values("count")

@@ -56,8 +56,6 @@ def outsider_client(db, workspace, create_user):
         email=f"outsider-{unique_id}@plane.so",
         username=f"outsider_{unique_id}",
     )
-    outsider.set_password("test-password")
-    outsider.save()
     WorkspaceMember.objects.create(workspace=workspace, member=outsider, role=15)
     other_project = Project.objects.create(
         name="Outsider's Project",

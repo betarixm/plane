@@ -189,24 +189,6 @@ class ProjectBaseModel(BaseModel):
         super(ProjectBaseModel, self).save(*args, **kwargs)
 
 
-class ProjectMemberInvite(ProjectBaseModel):
-    email = models.CharField(max_length=255)
-    accepted = models.BooleanField(default=False)
-    token = models.CharField(max_length=255)
-    message = models.TextField(null=True)
-    responded_at = models.DateTimeField(null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
-
-    class Meta:
-        verbose_name = "Project Member Invite"
-        verbose_name_plural = "Project Member Invites"
-        db_table = "project_member_invites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.project.name} {self.email} {self.accepted}"
-
-
 class ProjectMember(ProjectBaseModel):
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,

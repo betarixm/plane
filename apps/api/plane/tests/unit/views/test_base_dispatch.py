@@ -23,7 +23,6 @@ from rest_framework.test import APIRequestFactory
 
 from plane.api.views.base import BaseAPIView as ApiBaseAPIView, BaseViewSet as ApiBaseViewSet
 from plane.app.views.base import BaseAPIView as AppBaseAPIView, BaseViewSet as AppBaseViewSet
-from plane.license.api.views.base import BaseAPIView as LicenseBaseAPIView
 from plane.space.views.base import BaseAPIView as SpaceBaseAPIView, BaseViewSet as SpaceBaseViewSet
 
 
@@ -33,7 +32,6 @@ VIEW_CLASSES = [
     ApiBaseViewSet,
     AppBaseAPIView,
     AppBaseViewSet,
-    LicenseBaseAPIView,
     SpaceBaseAPIView,
     SpaceBaseViewSet,
 ]

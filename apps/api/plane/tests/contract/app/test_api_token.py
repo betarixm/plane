@@ -32,26 +32,11 @@ class TestApiTokenEndpoint:
         assert "token" in response.data
         assert response.data["label"] == api_token_data["label"]
         assert response.data["description"] == api_token_data["description"]
-        assert response.data["user_type"] == 0  # Human user
 
         # Verify token was created in database
         token = APIToken.objects.get(pk=response.data["id"])
         assert token.user == create_user
         assert token.label == api_token_data["label"]
-
-    @pytest.mark.django_db
-    def test_create_api_token_for_bot_user(self, session_client, create_bot_user, api_token_data):
-        """Test API token creation for bot user"""
-        # Arrange
-        session_client.force_authenticate(user=create_bot_user)
-        url = reverse("api-tokens")
-
-        # Act
-        response = session_client.post(url, api_token_data, format="json")
-
-        # Assert
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.data["user_type"] == 1  # Bot user
 
     @pytest.mark.django_db
     def test_create_api_token_minimal_data(self, session_client, create_user):
@@ -108,10 +93,8 @@ class TestApiTokenEndpoint:
         session_client.force_authenticate(user=create_user)
 
         # Create multiple tokens
-        APIToken.objects.create(label="Token 1", user=create_user, user_type=0)
-        APIToken.objects.create(label="Token 2", user=create_user, user_type=0)
-        # Create a service token (should be excluded)
-        APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
+        APIToken.objects.create(label="Token 1", user=create_user)
+        APIToken.objects.create(label="Token 2", user=create_user)
         url = reverse("api-tokens")
 
         # Act
@@ -119,8 +102,7 @@ class TestApiTokenEndpoint:
 
         # Assert
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 2  # Only non-service tokens
-        assert all(token["is_service"] is False for token in response.data)
+        assert len(response.data) == 2
 
     @pytest.mark.django_db
     def test_get_empty_api_tokens_list(self, session_client, create_user):
@@ -176,7 +158,7 @@ class TestApiTokenEndpoint:
         unique_email = f"other-{unique_id}@plane.so"
         unique_username = f"other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
+        other_token = APIToken.objects.create(label="Other Token", user=other_user)
         session_client.force_authenticate(user=create_user)
         url = reverse("api-tokens-details", kwargs={"pk": other_token.pk})
 
@@ -224,7 +206,7 @@ class TestApiTokenEndpoint:
         unique_email = f"delete-other-{unique_id}@plane.so"
         unique_username = f"delete_other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
+        other_token = APIToken.objects.create(label="Other Token", user=other_user)
         session_client.force_authenticate(user=create_user)
         url = reverse("api-tokens-details", kwargs={"pk": other_token.pk})
 
@@ -235,22 +217,6 @@ class TestApiTokenEndpoint:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         # Verify token still exists
         assert APIToken.objects.filter(pk=other_token.pk).exists()
-
-    @pytest.mark.django_db
-    def test_delete_service_api_token_forbidden(self, session_client, create_user):
-        """Test deleting a service API token (should fail)"""
-        # Arrange
-        service_token = APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
-        session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens-details", kwargs={"pk": service_token.pk})
-
-        # Act
-        response = session_client.delete(url)
-
-        # Assert
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-        # Verify token still exists
-        assert APIToken.objects.filter(pk=service_token.pk).exists()
 
     # PATCH /user/api-tokens/<pk>/ tests
     @pytest.mark.django_db
@@ -318,7 +284,7 @@ class TestApiTokenEndpoint:
         unique_email = f"patch-other-{unique_id}@plane.so"
         unique_username = f"patch_other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
+        other_token = APIToken.objects.create(label="Other Token", user=other_user)
         session_client.force_authenticate(user=create_user)
         url = reverse("api-tokens-details", kwargs={"pk": other_token.pk})
         update_data = {"label": "Hacked Label"}
@@ -349,56 +315,6 @@ class TestApiTokenEndpoint:
         assert response.status_code == status.HTTP_200_OK
         create_api_token_for_user.refresh_from_db()
         assert create_api_token_for_user.token == original_token
-
-    @pytest.mark.django_db
-    def test_patch_cannot_modify_user_type(self, session_client, create_user, create_api_token_for_user):
-        """Test that user_type cannot be modified via PATCH"""
-        # Arrange
-        session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
-        update_data = {"user_type": 1}
-
-        # Act
-        response = session_client.patch(url, update_data, format="json")
-
-        # Assert
-        assert response.status_code == status.HTTP_200_OK
-        create_api_token_for_user.refresh_from_db()
-        assert create_api_token_for_user.user_type == 0
-
-    @pytest.mark.django_db
-    def test_patch_cannot_modify_allowed_rate_limit(self, session_client, create_user, create_api_token_for_user):
-        """Test that allowed_rate_limit cannot be modified via PATCH"""
-        # Arrange
-        session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens-details", kwargs={"pk": create_api_token_for_user.pk})
-        original_rate_limit = create_api_token_for_user.allowed_rate_limit
-        update_data = {"allowed_rate_limit": "100000/min"}
-
-        # Act
-        response = session_client.patch(url, update_data, format="json")
-
-        # Assert
-        assert response.status_code == status.HTTP_200_OK
-        create_api_token_for_user.refresh_from_db()
-        assert create_api_token_for_user.allowed_rate_limit == original_rate_limit
-
-    @pytest.mark.django_db
-    def test_patch_cannot_modify_service_token(self, session_client, create_user):
-        """Test that service tokens cannot be modified through user token endpoint"""
-        # Arrange
-        service_token = APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
-        session_client.force_authenticate(user=create_user)
-        url = reverse("api-tokens-details", kwargs={"pk": service_token.pk})
-        update_data = {"label": "Hacked Service Token"}
-
-        # Act
-        response = session_client.patch(url, update_data, format="json")
-
-        # Assert
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-        service_token.refresh_from_db()
-        assert service_token.label == "Service Token"
 
     # Authentication tests
     @pytest.mark.django_db

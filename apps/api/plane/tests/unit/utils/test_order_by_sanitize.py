@@ -8,8 +8,8 @@ Covers GHSA-p885-6jpg-cr2p: the external-API project list and work-item
 list endpoints passed a raw ``order_by`` query parameter to Django's
 ``.order_by()``. Because Django resolves ``__``-separated relational paths,
 an attacker could order by sensitive columns on related tables
-(``created_by__password``, ``created_by__token``, ``created_by__email``,
-``workspace__owner__password`` ...) to build a blind ordering oracle, or
+(``created_by__email``, ``created_by__api_tokens__token``,
+``workspace__logo`` ...) to build a blind ordering oracle, or
 crash the endpoint (HTTP 500) with an unknown field.
 
 The fix routes both endpoints through ``sanitize_order_by()`` with the
@@ -28,12 +28,11 @@ from plane.utils.order_queryset import (
 
 # Relational-traversal payloads from the advisory PoC plus common variants.
 INJECTION_PAYLOADS = [
-    "created_by__password",
-    "created_by__token",
     "created_by__email",
-    "-created_by__password",
-    "workspace__owner__password",
-    "updated_by__password",
+    "created_by__api_tokens__token",
+    "-created_by__email",
+    "workspace__logo",
+    "updated_by__email",
     "not_a_field",
     "id; drop table",
     "--created_at",  # malformed double-dash prefix

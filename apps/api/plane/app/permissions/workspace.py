@@ -7,7 +7,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 # Module imports
 from plane.db.models import WorkspaceMember
-from plane.utils.workspace_admin import active_human_workspace_admins
+from plane.utils.identity_access import active_workspace_admins
 
 # Permission Mappings
 Admin = 20
@@ -42,7 +42,7 @@ class WorkspaceAdminPermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
-        admins = active_human_workspace_admins().filter(member=request.user)
+        admins = active_workspace_admins().filter(member=request.user)
         if view.workspace_slug:
             admins = admins.filter(workspace__slug=view.workspace_slug)
         return admins.exists()

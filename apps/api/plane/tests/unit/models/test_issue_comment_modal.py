@@ -13,7 +13,6 @@ def workspace(create_user):
     return Workspace.objects.create(
         name="Test Workspace",
         slug="test-workspace",
-        owner=create_user,
     )
 
 

@@ -20,7 +20,7 @@ class TestWorkspaceAPI:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.django_db
-    def test_workspace_create_route_is_disabled(self, session_client):
+    def test_workspace_create_route_is_disabled(self, session_client, workspace):
         """The singleton workspace is created only during instance setup."""
         url = "/api/workspaces/"
 
@@ -31,7 +31,8 @@ class TestWorkspaceAPI:
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert Workspace.objects.count() == 0
+        assert Workspace.objects.count() == 1
+        assert Workspace.objects.get() == workspace
 
     @pytest.mark.django_db
     def test_workspace_delete_route_is_disabled(self, session_client, workspace):

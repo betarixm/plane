@@ -15,14 +15,16 @@ from plane.db.models import (
     Label,
     Module,
     Project,
-    ProjectMember,
     State,
-    WorkspaceMember,
     IssueAssignee,
     ModuleIssue,
     IssueLabel,
 )
 from typing import Optional, Dict, Tuple, Any, Union, List
+from plane.utils.identity_access import (
+    active_project_members,
+    active_workspace_members,
+)
 
 
 def issue_queryset_grouper(
@@ -163,12 +165,14 @@ def issue_group_values(
     if field == "assignees__id":
         if project_id:
             return list(
-                ProjectMember.objects.filter(workspace__slug=slug, project_id=project_id, is_active=True).values_list(
-                    "member_id", flat=True
-                )
+                active_project_members()
+                .filter(workspace__slug=slug, project_id=project_id)
+                .values_list("member_id", flat=True)
             )
         return list(
-            WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True).values_list("member_id", flat=True)
+            active_workspace_members()
+            .filter(workspace__slug=slug)
+            .values_list("member_id", flat=True)
         )
 
     if field == "issue_module__module_id":

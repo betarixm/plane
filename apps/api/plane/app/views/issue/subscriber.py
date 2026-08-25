@@ -9,8 +9,12 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueSubscriberSerializer, ProjectMemberLiteSerializer
-from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
-from plane.db.models import IssueSubscriber, ProjectMember
+from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission, ROLE
+from plane.db.models import IssueSubscriber, Project
+from plane.utils.identity_access import (
+    active_project_members,
+    identity_project_write_fence,
+)
 
 
 class IssueSubscriberViewSet(BaseViewSet):
@@ -33,6 +37,19 @@ class IssueSubscriberViewSet(BaseViewSet):
             issue_id=self.kwargs.get("issue_id"),
         )
 
+    def create(self, request, slug, project_id, issue_id):
+        project = Project.objects.only("workspace_id").get(
+            pk=project_id,
+            workspace__slug=slug,
+        )
+        with identity_project_write_fence(
+            workspace_id=project.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            return super().create(request, slug, project_id, issue_id)
+
     def get_queryset(self):
         return (
             super()
@@ -50,48 +67,81 @@ class IssueSubscriberViewSet(BaseViewSet):
         )
 
     def list(self, request, slug, project_id, issue_id):
-        members = ProjectMember.objects.filter(
-            workspace__slug=slug, project_id=project_id, is_active=True
+        members = active_project_members().filter(
+            workspace__slug=slug,
+            project_id=project_id,
         ).select_related("member")
         serializer = ProjectMemberLiteSerializer(members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, issue_id, subscriber_id):
-        issue_subscriber = IssueSubscriber.objects.get(
-            project=project_id,
-            subscriber=subscriber_id,
+        project = Project.objects.only("workspace_id").get(
+            pk=project_id,
             workspace__slug=slug,
-            issue=issue_id,
         )
-        issue_subscriber.delete()
+        with identity_project_write_fence(
+            workspace_id=project.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            issue_subscriber = IssueSubscriber.objects.get(
+                project=project_id,
+                subscriber=subscriber_id,
+                workspace__slug=slug,
+                issue=issue_id,
+            )
+            issue_subscriber.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def subscribe(self, request, slug, project_id, issue_id):
-        if IssueSubscriber.objects.filter(
-            issue_id=issue_id,
-            subscriber=request.user,
+        project = Project.objects.only("workspace_id").get(
+            pk=project_id,
             workspace__slug=slug,
-            project=project_id,
-        ).exists():
-            return Response(
-                {"message": "User already subscribed to the issue."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        subscriber = IssueSubscriber.objects.create(
-            issue_id=issue_id, subscriber_id=request.user.id, project_id=project_id
         )
+        with identity_project_write_fence(
+            workspace_id=project.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
+        ):
+            if IssueSubscriber.objects.filter(
+                issue_id=issue_id,
+                subscriber=request.user,
+                workspace__slug=slug,
+                project=project_id,
+            ).exists():
+                return Response(
+                    {"message": "User already subscribed to the issue."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            subscriber = IssueSubscriber.objects.create(
+                issue_id=issue_id,
+                subscriber_id=request.user.id,
+                project_id=project_id,
+            )
         serializer = IssueSubscriberSerializer(subscriber)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def unsubscribe(self, request, slug, project_id, issue_id):
-        issue_subscriber = IssueSubscriber.objects.get(
-            project=project_id,
-            subscriber=request.user,
+        project = Project.objects.only("workspace_id").get(
+            pk=project_id,
             workspace__slug=slug,
-            issue=issue_id,
         )
-        issue_subscriber.delete()
+        with identity_project_write_fence(
+            workspace_id=project.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
+        ):
+            issue_subscriber = IssueSubscriber.objects.get(
+                project=project_id,
+                subscriber=request.user,
+                workspace__slug=slug,
+                issue=issue_id,
+            )
+            issue_subscriber.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def subscription_status(self, request, slug, project_id, issue_id):

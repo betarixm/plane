@@ -66,6 +66,7 @@ from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
+from plane.utils.identity_access import identity_project_write_fence
 
 
 class ModuleViewSet(BaseViewSet):
@@ -296,8 +297,17 @@ class ModuleViewSet(BaseViewSet):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         serializer = ModuleWriteSerializer(data=request.data, context={"project": project})
 
-        if serializer.is_valid():
-            serializer.save()
+        with identity_project_write_fence(
+            workspace_id=project.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            serializer_is_valid = serializer.is_valid()
+            if serializer_is_valid:
+                serializer.save()
+
+        if serializer_is_valid:
 
             module = (
                 self.get_queryset()
@@ -668,8 +678,17 @@ class ModuleViewSet(BaseViewSet):
         current_instance = json.dumps(ModuleSerializer(current_module).data, cls=DjangoJSONEncoder)
         serializer = ModuleWriteSerializer(current_module, data=request.data, partial=True)
 
-        if serializer.is_valid():
-            serializer.save()
+        with identity_project_write_fence(
+            workspace_id=current_module.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            serializer_is_valid = serializer.is_valid()
+            if serializer_is_valid:
+                serializer.save()
+
+        if serializer_is_valid:
             module = module_queryset.values(
                 # Required fields
                 "id",

@@ -10,6 +10,7 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from plane.db.models import Cycle, CycleIssue, User, Project
 from plane.utils.timezone_converter import convert_to_utc
+from plane.utils.identity_access import active_project_members
 
 
 class CycleCreateSerializer(BaseSerializer):
@@ -91,8 +92,20 @@ class CycleCreateSerializer(BaseSerializer):
                 project_id=project_id,
             )
 
-        if not data.get("owned_by"):
-            data["owned_by"] = self.context["request"].user
+        owned_by_was_provided = "owned_by" in data
+        if self.instance is not None and not owned_by_was_provided:
+            owned_by = self.instance.owned_by
+        else:
+            owned_by = data.get("owned_by") or self.context["request"].user
+        if not active_project_members().filter(
+            project_id=project_id,
+            member=owned_by,
+        ).exists():
+            raise serializers.ValidationError(
+                {"owned_by": "Owner must be an active current external project member."}
+            )
+        if self.instance is None or owned_by_was_provided:
+            data["owned_by"] = owned_by
 
         return data
 

@@ -65,10 +65,8 @@ from .intake import (
     IntakeIssueDetailAPIEndpoint,
 )
 
-from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
+from .asset import GenericAssetEndpoint
 
 from .user import UserEndpoint
-
-from .invite import WorkspaceInvitationsViewset
 
 from .sticky import StickyViewSet

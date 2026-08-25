@@ -50,13 +50,13 @@ class TestPaginateGroupByValidation:
     """
 
     def test_invalid_group_by_raises_parse_error(self):
-        request = _make_request(group_by="created_by__password")
+        request = _make_request(group_by="created_by__email")
         with pytest.raises(ParseError):
             BasePaginator().paginate(
                 request=request,
                 queryset=None,
                 paginator_cls=_StubGroupedPaginator,
-                group_by_field_name="created_by__password",
+                group_by_field_name="created_by__email",
                 group_by_fields=[],
                 count_filter=None,
             )
@@ -64,7 +64,7 @@ class TestPaginateGroupByValidation:
     def test_invalid_sub_group_by_raises_parse_error(self):
         # A valid group_by paired with an invalid sub_group_by must still be
         # rejected — the PoC in the advisory used exactly this combination
-        # (group_by=state_id&sub_group_by=created_by__password).
+        # (group_by=state_id&sub_group_by=created_by__email).
         request = _make_request(group_by="priority", sub_group_by="workspace__secret_key")
         with pytest.raises(ParseError):
             BasePaginator().paginate(

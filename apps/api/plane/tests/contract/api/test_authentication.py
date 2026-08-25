@@ -6,7 +6,7 @@
 Contract tests for external API key authentication.
 
 End-to-end proof that an API key cannot be used to access the API once the
-owning user account has been deactivated.
+owning user projection has been deactivated.
 """
 
 import pytest
@@ -29,13 +29,13 @@ class TestAPIKeyAuthenticationContract:
     def test_deactivated_user_cannot_access_with_api_key(
         self, api_key_client, create_user
     ):
-        # The account is disabled after the API key was generated.
+        # The external identity projection is disabled after key generation.
         create_user.is_active = False
         create_user.save()
 
         response = api_key_client.get(self.USERS_ME_URL)
 
-        # Access is denied once the account is deactivated. APIKeyAuthentication
+        # Access is denied once the projection is deactivated. APIKeyAuthentication
         # does not set a WWW-Authenticate header, so DRF surfaces the
         # AuthenticationFailed as 403 Forbidden rather than 401.
         assert response.status_code in (

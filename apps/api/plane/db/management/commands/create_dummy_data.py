@@ -8,7 +8,8 @@ from typing import Any
 from django.core.management.base import BaseCommand, CommandError
 
 # Module imports
-from plane.db.models import User, Workspace, WorkspaceMember
+from plane.db.models import User, Workspace
+from plane.utils.identity_access import active_workspace_members
 
 
 class Command(BaseCommand):
@@ -27,21 +28,26 @@ class Command(BaseCommand):
                 raise CommandError("User email is required and should have signed in plane")
 
             user = User.objects.get(email=creator)
-            if not WorkspaceMember.objects.filter(
+            if not active_workspace_members().filter(
                 workspace=workspace,
                 member=user,
-                is_active=True,
             ).exists():
-                raise CommandError("The creator must be an active workspace member")
+                raise CommandError("The creator must be an active external workspace member")
 
             members = input("Enter Member emails (comma separated): ")
-            members = members.split(",") if members != "" else []
-            user_ids = User.objects.filter(email__in=members)
-
-            _ = WorkspaceMember.objects.bulk_create(
-                [WorkspaceMember(workspace=workspace, member=user_id, role=15) for user_id in user_ids],
-                ignore_conflicts=True,
+            members = [email.strip().lower() for email in members.split(",") if email.strip()]
+            active_member_emails = set(
+                active_workspace_members().filter(
+                    workspace=workspace,
+                    member__email__in=members,
+                ).values_list("member__email", flat=True)
             )
+            missing_members = sorted(set(members) - active_member_emails)
+            if missing_members:
+                raise CommandError(
+                    "Every dummy-data member must already be an active external workspace member: "
+                    + ", ".join(missing_members)
+                )
 
             project_count = int(input("Number of projects to be created: "))
 

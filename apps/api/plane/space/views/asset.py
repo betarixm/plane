@@ -19,6 +19,11 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import DeployBoard, FileAsset
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
+from plane.utils.external_assets import (
+    EXTERNALLY_MANAGED_ASSET_ENTITY_TYPES,
+    EXTERNALLY_MANAGED_ASSET_ERROR,
+    is_externally_managed_asset_entity_type,
+)
 
 # Module imports
 from .base import BaseAPIView
@@ -107,6 +112,11 @@ class EntityAssetEndpoint(BaseAPIView):
                 {"error": "Invalid entity type.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if is_externally_managed_asset_entity_type(entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Check if the file type is allowed
         allowed_types = [
@@ -163,6 +173,11 @@ class EntityAssetEndpoint(BaseAPIView):
 
         # get the asset id — scope to project to prevent cross-project IDOR
         asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        if is_externally_managed_asset_entity_type(asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -183,6 +198,11 @@ class EntityAssetEndpoint(BaseAPIView):
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
         # Get the asset
         asset = FileAsset.objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        if is_externally_managed_asset_entity_type(asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -203,6 +223,11 @@ class AssetRestoreEndpoint(BaseAPIView):
 
         # Get the asset — scope to project to prevent cross-project IDOR
         asset = FileAsset.all_objects.get(id=pk, workspace=deploy_board.workspace, project_id=deploy_board.project_id)
+        if is_externally_managed_asset_entity_type(asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])
@@ -231,6 +256,14 @@ class EntityBulkAssetEndpoint(BaseAPIView):
             workspace=deploy_board.workspace,
             project_id=deploy_board.project_id,
         )
+
+        if assets.filter(
+            entity_type__in=EXTERNALLY_MANAGED_ASSET_ENTITY_TYPES
+        ).exists():
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         asset = assets.first()
 

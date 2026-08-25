@@ -11,11 +11,12 @@ from rest_framework import serializers
 import re
 
 # Module imports
-from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
+from plane.db.models import Estimate, Project, ProjectIdentifier, State
 
 from plane.utils.content_validator import (
     validate_html_content,
 )
+from plane.utils.identity_access import active_workspace_members
 from .base import BaseSerializer
 
 
@@ -115,27 +116,34 @@ class ProjectCreateSerializer(BaseSerializer):
             raise serializers.ValidationError("Project identifier cannot contain special characters.")
 
         project_lead = data.get("project_lead")
-        if (
-            project_lead
-            and not WorkspaceMember.objects.filter(
-                workspace_id=self.context["workspace_id"],
-                member=project_lead,
-                is_active=True,
-            ).exists()
-        ):
-            # Field-shaped error so DRF surfaces it under the specific key
-            # rather than as non_field_errors. Also requires the membership
-            # to be active so that revoked / removed members can't slip
-            # through and trigger the FK error downstream.
-            raise serializers.ValidationError({"project_lead": "The provided user is not a member of this workspace."})
+        if project_lead:
+            lead_membership = (
+                active_workspace_members()
+                .filter(
+                    workspace_id=self.context["workspace_id"],
+                    member=project_lead,
+                )
+                .only("role")
+                .first()
+            )
+            if lead_membership is None:
+                raise serializers.ValidationError(
+                    {"project_lead": "Project lead must be an active member of the connected external workspace."}
+                )
+            if lead_membership.role == 5:
+                raise serializers.ValidationError(
+                    {"project_lead": "External workspace guests cannot be project leads."}
+                )
 
         if data.get("default_assignee", None) is not None:
             # Check if the default assignee is a member of the workspace
-            if not WorkspaceMember.objects.filter(
+            if not active_workspace_members().filter(
                 workspace_id=self.context["workspace_id"],
-                member_id=data.get("default_assignee"),
+                member=data.get("default_assignee"),
             ).exists():
-                raise serializers.ValidationError("Default assignee should be a user in the workspace")
+                raise serializers.ValidationError(
+                    {"default_assignee": "Default assignee must be an active member of the connected external workspace."}
+                )
 
         return data
 
@@ -248,25 +256,34 @@ class ProjectSerializer(BaseSerializer):
         if project_identifier is not None and re.match(Project.FORBIDDEN_IDENTIFIER_CHARS_PATTERN, project_identifier):
             raise serializers.ValidationError("Project identifier cannot contain special characters.")
 
-        # Check project lead should be a member of the workspace
-        if (
-            data.get("project_lead", None) is not None
-            and not WorkspaceMember.objects.filter(
-                workspace_id=self.context["workspace_id"],
-                member_id=data.get("project_lead"),
-            ).exists()
-        ):
-            raise serializers.ValidationError("Project lead should be a user in the workspace")
+        project_lead = data.get("project_lead")
+        if project_lead is not None:
+            lead_membership = (
+                active_workspace_members()
+                .filter(
+                    workspace_id=self.context["workspace_id"],
+                    member=project_lead,
+                )
+                .only("role")
+                .first()
+            )
+            if lead_membership is None:
+                raise serializers.ValidationError(
+                    {"project_lead": "Project lead must be an active member of the connected external workspace."}
+                )
+            if lead_membership.role == 5:
+                raise serializers.ValidationError(
+                    {"project_lead": "External workspace guests cannot be project leads."}
+                )
 
-        # Check default assignee should be a member of the workspace
-        if (
-            data.get("default_assignee", None) is not None
-            and not WorkspaceMember.objects.filter(
-                workspace_id=self.context["workspace_id"],
-                member_id=data.get("default_assignee"),
-            ).exists()
-        ):
-            raise serializers.ValidationError("Default assignee should be a user in the workspace")
+        default_assignee = data.get("default_assignee")
+        if default_assignee is not None and not active_workspace_members().filter(
+            workspace_id=self.context["workspace_id"],
+            member=default_assignee,
+        ).exists():
+            raise serializers.ValidationError(
+                {"default_assignee": "Default assignee must be an active member of the connected external workspace."}
+            )
 
         # Validate description content for security
         if "description_html" in data and data["description_html"]:

@@ -119,7 +119,7 @@ SPECTACULAR_SETTINGS = {
                 "Manage team members, roles, and permissions within projects and workspaces. "
                 "Control access levels and track member participation.\n\n"
                 "*Key Features:*\n"
-                "- Invite and manage team members\n"
+                "- Add existing workspace members to projects\n"
                 "- Assign roles and permissions\n"
                 "- Control project and workspace access\n"
                 "- Track member activity and participation\n\n"

@@ -74,12 +74,12 @@ class TestIssueListOrderByInjection:
 
     @pytest.mark.django_db
     def test_relational_order_by_injection_does_not_500(self, api_key_client, workspace, project, issue):
-        """Ordering by a related-table column (``created_by__password``) used to
+        """Ordering by a related-table column (``created_by__email``) used to
         reach ``.order_by()`` raw, forming a blind ordering oracle. It is now
         neutralized to the safe default. (Deterministic neutralization is
         asserted in tests/unit/utils/test_order_by_sanitize.py.)"""
         url = self.get_url(workspace.slug, project.id)
-        response = api_key_client.get(url, {"order_by": "created_by__password"})
+        response = api_key_client.get(url, {"order_by": "created_by__email"})
 
         assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
 

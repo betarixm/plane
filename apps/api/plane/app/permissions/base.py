@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.db.models import ProjectMember, WorkspaceMember
-from plane.utils.workspace_admin import WORKSPACE_ADMIN_ROLE, active_human_workspace_admins
+from plane.utils.identity_access import WORKSPACE_ADMIN_ROLE, active_workspace_admins
 
 
 class ROLE(Enum):
@@ -56,7 +56,7 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
                 )
                 role_is_allowed = workspace_role is not None and (
                     workspace_role != WORKSPACE_ADMIN_ROLE
-                    or active_human_workspace_admins()
+                    or active_workspace_admins()
                     .filter(member=request.user, workspace__slug=kwargs["slug"])
                     .exists()
                 )
@@ -81,7 +81,7 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
                         project_id=kwargs["project_id"],
                         is_active=True,
                     ).exists()
-                    and active_human_workspace_admins()
+                    and active_workspace_admins()
                     .filter(member=request.user, workspace__slug=kwargs["slug"])
                     .exists()
                 ):

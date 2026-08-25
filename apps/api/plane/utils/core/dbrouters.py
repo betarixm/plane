@@ -17,6 +17,23 @@ from .request_scope import should_use_read_replica
 
 logger = logging.getLogger("plane.db")
 
+# Authentication and authorization revocations must be visible immediately.
+# Serving these models from a lagging replica can briefly resurrect a deleted
+# session or a source-deactivated user's old workspace/project permissions.
+PRIMARY_ONLY_MODEL_LABELS = frozenset(
+    {
+        "db.apitoken",
+        "db.externalidentity",
+        "db.identitysource",
+        "db.projectmember",
+        "db.session",
+        "db.slackeventreceipt",
+        "db.slackusertombstone",
+        "db.user",
+        "db.workspacemember",
+    }
+)
+
 
 class ReadReplicaRouter:
     """
@@ -36,6 +53,9 @@ class ReadReplicaRouter:
         Returns:
             str: Database alias ('replica' or 'default')
         """
+        if model._meta.label_lower in PRIMARY_ONLY_MODEL_LABELS:
+            logger.debug(f"Routing security-sensitive read for {model._meta.label} to primary database")
+            return "default"
         if should_use_read_replica():
             logger.debug(f"Routing read for {model._meta.label} to replica database")
             return "replica"

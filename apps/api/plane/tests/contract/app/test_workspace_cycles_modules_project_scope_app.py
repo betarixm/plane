@@ -77,8 +77,6 @@ def outsider_client(db, workspace):
         first_name="Outsider",
         last_name="User",
     )
-    outsider.set_password("test-password")
-    outsider.save()
     WorkspaceMember.objects.create(workspace=workspace, member=outsider, role=15)
     client = APIClient()
     client.force_authenticate(user=outsider)

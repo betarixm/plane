@@ -5,17 +5,12 @@
 from django.urls import path
 
 from plane.app.views import (
-    AccountEndpoint,
     ProfileEndpoint,
-    UpdateUserOnBoardedEndpoint,
-    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
     UserActivityGraphEndpoint,
     ## User
     UserEndpoint,
     UserIssueCompletedGraphEndpoint,
-    UserSessionEndpoint,
-    UserWorkspaceAdminEndpoint,
     UserWorkspaceDashboardEndpoint,
     ## End User
     ## Workspaces
@@ -26,43 +21,17 @@ urlpatterns = [
     # User Profile
     path(
         "users/me/",
-        UserEndpoint.as_view({"get": "retrieve", "patch": "partial_update", "delete": "deactivate"}),
+        UserEndpoint.as_view({"get": "retrieve"}),
         name="users",
     ),
-    path("users/session/", UserSessionEndpoint.as_view(), name="user-session"),
     path(
         "users/me/settings/",
         UserEndpoint.as_view({"get": "retrieve_user_settings"}),
         name="users",
     ),
-    path(
-        "users/me/email/generate-code/",
-        UserEndpoint.as_view({"post": "generate_email_verification_code"}),
-        name="user-email-verify-code",
-    ),
-    path(
-        "users/me/email/",
-        UserEndpoint.as_view({"patch": "update_email"}),
-        name="user-email-update",
-    ),
     # Profile
     path("users/me/profile/", ProfileEndpoint.as_view(), name="accounts"),
     # End profile
-    # Accounts
-    path("users/me/accounts/", AccountEndpoint.as_view(), name="accounts"),
-    path("users/me/accounts/<uuid:pk>/", AccountEndpoint.as_view(), name="accounts"),
-    ## End Accounts
-    path(
-        "users/me/workspace-admin/",
-        UserWorkspaceAdminEndpoint.as_view(),
-        name="users",
-    ),
-    path("users/me/onboard/", UpdateUserOnBoardedEndpoint.as_view(), name="user-onboard"),
-    path(
-        "users/me/tour-completed/",
-        UpdateUserTourCompletedEndpoint.as_view(),
-        name="user-tour",
-    ),
     path("users/me/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # singleton workspace membership
     path("users/me/workspace/", UserWorkspaceEndpoint.as_view(), name="user-workspace"),

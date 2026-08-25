@@ -41,6 +41,10 @@ from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.host import base_host
+from plane.utils.identity_access import (
+    identity_project_write_fence,
+    identity_workspace_write_fence,
+)
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -119,8 +123,16 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 "project_id": request.data.get("project_id", None),
             },
         )
-        if serializer.is_valid():
-            serializer.save()
+        with identity_workspace_write_fence(
+            workspace_id=workspace.id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
+        ):
+            serializer_is_valid = serializer.is_valid()
+            if serializer_is_valid:
+                serializer.save()
+
+        if serializer_is_valid:
             issue = (
                 self.get_queryset()
                 .filter(pk=serializer.data.get("id"))
@@ -177,8 +189,16 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             },
         )
 
-        if serializer.is_valid():
-            serializer.save()
+        with identity_workspace_write_fence(
+            workspace_id=issue.workspace_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            serializer_is_valid = serializer.is_valid()
+            if serializer_is_valid:
+                serializer.save()
+
+        if serializer_is_valid:
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -221,8 +241,17 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             },
         )
 
-        if serializer.is_valid():
-            serializer.save()
+        with identity_project_write_fence(
+            workspace_id=draft_issue.workspace_id,
+            project_id=draft_issue.project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            serializer_is_valid = serializer.is_valid()
+            if serializer_is_valid:
+                serializer.save()
+
+        if serializer_is_valid:
 
             issue_activity.delay(
                 type="issue.activity.created",

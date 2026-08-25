@@ -13,6 +13,10 @@ from ..base import BaseAPIView, BaseViewSet
 from plane.app.permissions import WorkspaceMemberPermission
 from plane.db.models import FileAsset, Workspace
 from plane.app.serializers import FileAssetSerializer
+from plane.utils.external_assets import (
+    EXTERNALLY_MANAGED_ASSET_ERROR,
+    is_externally_managed_asset_entity_type,
+)
 
 
 class FileAssetEndpoint(BaseAPIView):
@@ -36,6 +40,11 @@ class FileAssetEndpoint(BaseAPIView):
             )
 
     def post(self, request, slug):
+        if is_externally_managed_asset_entity_type(request.data.get("entity_type")):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # WorkspaceMemberPermission already rejects unknown slugs before this runs.
         # Use .get() so any TOCTOU race still surfaces as a 404 via ObjectDoesNotExist.
         workspace = Workspace.objects.get(slug=slug)
@@ -48,6 +57,11 @@ class FileAssetEndpoint(BaseAPIView):
     def delete(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
+        if is_externally_managed_asset_entity_type(file_asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         file_asset.is_deleted = True
         file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -59,6 +73,11 @@ class FileAssetViewSet(BaseViewSet):
     def restore(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
+        if is_externally_managed_asset_entity_type(file_asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         file_asset.is_deleted = False
         file_asset.save(update_fields=["is_deleted"])
         return Response(status=status.HTTP_204_NO_CONTENT)

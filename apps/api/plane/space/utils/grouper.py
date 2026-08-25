@@ -18,9 +18,11 @@ from plane.db.models import (
     Label,
     Module,
     Project,
-    ProjectMember,
     State,
-    WorkspaceMember,
+)
+from plane.utils.identity_access import (
+    active_project_members,
+    active_workspace_members,
 )
 
 
@@ -202,12 +204,14 @@ def issue_group_values(
             return list(queryset) + ["None"]
     if field == "assignees__id":
         if project_id:
-            return ProjectMember.objects.filter(
-                workspace__slug=slug, project_id=project_id, is_active=True
+            return active_project_members().filter(
+                workspace__slug=slug, project_id=project_id
             ).values_list("member_id", flat=True)
         else:
             return list(
-                WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True).values_list("member_id", flat=True)
+                active_workspace_members()
+                .filter(workspace__slug=slug)
+                .values_list("member_id", flat=True)
             )
     if field == "issue_module__module_id":
         queryset = Module.objects.filter(workspace__slug=slug).values_list("id", flat=True)

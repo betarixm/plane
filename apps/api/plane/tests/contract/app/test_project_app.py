@@ -11,6 +11,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     ProjectUserProperty,
+    ExternalIdentity,
     State,
     WorkspaceMember,
     User,
@@ -97,13 +98,25 @@ class TestProjectAPIPost(TestProjectBase):
         assert set(state_names) == set(expected_states)
 
     @pytest.mark.django_db
-    def test_create_project_with_project_lead(self, session_client, workspace, create_user):
+    def test_create_project_with_project_lead(
+        self,
+        session_client,
+        workspace,
+        create_user,
+        external_identity_source,
+    ):
         """Test creating project with a different project lead"""
         # Create another user to be project lead
-        project_lead = User.objects.create_user(email="lead@example.com", username="projectlead")
+        project_lead = User.objects.create(email="lead@example.com", username="projectlead")
 
         # Add project lead to workspace
         WorkspaceMember.objects.create(workspace=workspace, member=project_lead, role=15)
+        ExternalIdentity.objects.create(
+            user=project_lead,
+            source=external_identity_source.source,
+            external_user_id="ULEAD",
+            source_generation=external_identity_source.source.generation,
+        )
 
         url = self.get_project_url(workspace.slug)
         project_data = {
@@ -126,7 +139,7 @@ class TestProjectAPIPost(TestProjectBase):
     @pytest.mark.django_db
     def test_create_project_guest_forbidden(self, session_client, workspace):
         """Test that guests cannot create projects"""
-        guest_user = User.objects.create_user(email="guest@example.com", username="guest")
+        guest_user = User.objects.create(email="guest@example.com", username="guest")
         WorkspaceMember.objects.create(workspace=workspace, member=guest_user, role=5)
 
         session_client.force_authenticate(user=guest_user)
@@ -255,7 +268,7 @@ class TestProjectAPIGet(TestProjectBase):
     def test_list_projects_authenticated_guest(self, session_client, workspace):
         """Test listing projects as workspace guest"""
         # Create a guest user
-        guest_user = User.objects.create_user(email="guest@example.com", username="guest")
+        guest_user = User.objects.create(email="guest@example.com", username="guest")
         WorkspaceMember.objects.create(workspace=workspace, member=guest_user, role=5, is_active=True)
 
         # Create projects
@@ -404,7 +417,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
         project = Project.objects.create(name="Protected Project", identifier="PP", workspace=workspace)
 
         # Create a member user (not admin)
-        member_user = User.objects.create_user(email="member@example.com", username="member")
+        member_user = User.objects.create(email="member@example.com", username="member")
         WorkspaceMember.objects.create(workspace=workspace, member=member_user, role=15, is_active=True)
         ProjectMember.objects.create(project=project, member=member_user, role=15, is_active=True)
 
@@ -477,11 +490,17 @@ class TestProjectAPIPatchDelete(TestProjectBase):
         assert not Project.objects.filter(id=project.id).exists()
 
     @pytest.mark.django_db
-    def test_delete_project_success_workspace_admin(self, session_client, workspace):
+    def test_delete_project_success_workspace_admin(
+        self,
+        session_client,
+        workspace,
+        bind_external_identity,
+    ):
         """Test successful project deletion by workspace admin"""
         # Create workspace admin user
-        workspace_admin = User.objects.create_user(email="admin@example.com", username="admin")
+        workspace_admin = User.objects.create(email="admin@example.com", username="admin")
         WorkspaceMember.objects.create(workspace=workspace, member=workspace_admin, role=20, is_active=True)
+        bind_external_identity(workspace_admin, external_user_id="UWORKSPACEADMIN")
 
         project = Project.objects.create(name="Delete Me", identifier="DM", workspace=workspace)
 
@@ -497,7 +516,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
     def test_delete_project_forbidden_non_admin(self, session_client, workspace):
         """Test that non-admin users cannot delete projects"""
         # Create a member user (not admin)
-        member_user = User.objects.create_user(email="member@example.com", username="member")
+        member_user = User.objects.create(email="member@example.com", username="member")
         WorkspaceMember.objects.create(workspace=workspace, member=member_user, role=15, is_active=True)
 
         project = Project.objects.create(name="Protected Project", identifier="PP", workspace=workspace)

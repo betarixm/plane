@@ -38,8 +38,8 @@ _INSECURE_SECRET_KEYS = {
 if SECRET_KEY in _INSECURE_SECRET_KEYS:
     _logger.critical(
         "SECURITY: SECRET_KEY is set to a known insecure or placeholder value. "
-        "This makes your installation vulnerable to session forgery, CSRF bypass, and "
-        "password-reset token forging. Set a unique SECRET_KEY before deploying to production. "
+        "This makes your installation vulnerable to session forgery and CSRF bypass. "
+        "Set a unique SECRET_KEY before deploying to production. "
         "Generate one with: "
         'python3 -c "from django.utils.crypto import get_random_secret_key; print(get_random_secret_key())"'
     )
@@ -129,7 +129,7 @@ MIDDLEWARE = [
 
 # Rest Framework settings
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.SessionAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("plane.authentication.session.BaseSessionAuthentication",),
     "DEFAULT_THROTTLE_CLASSES": ("rest_framework.throttling.AnonRateThrottle",),
     "DEFAULT_THROTTLE_RATES": {
         "anon": "30/minute",
@@ -138,7 +138,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    "EXCEPTION_HANDLER": "plane.authentication.adapter.exception.auth_exception_handler",
+    "EXCEPTION_HANDLER": "plane.authentication.exception_handler.identity_exception_handler",
     # Preserve original Django URL parameter names (pk) instead of converting to 'id'
     "SCHEMA_COERCE_PATH_PK": False,
 }
@@ -146,8 +146,9 @@ REST_FRAMEWORK = {
 # API key throttle rate (DRF SimpleRateThrottle format, e.g. "60/minute")
 API_KEY_RATE_LIMIT = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
 
-# Django Auth Backend
-AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)  # default
+# Sessions restore users projected by the active external identity source. No
+# local credential backend is installed.
+AUTHENTICATION_BACKENDS = ("plane.authentication.backend.ExternalIdentitySessionBackend",)
 
 # Root Urls
 ROOT_URLCONF = "plane.urls"
@@ -162,8 +163,6 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
             ]
         },
     }
@@ -187,9 +186,6 @@ CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
 ASGI_APPLICATION = "plane.asgi.application"
-
-# Django Sites
-SITE_ID = 1
 
 # User Model
 AUTH_USER_MODEL = "db.User"
@@ -255,17 +251,6 @@ else:
         }
     }
 
-# Password validations
-AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-]
-
-# Password reset time the number of seconds the uniquely generated uid will be valid
-PASSWORD_RESET_TIMEOUT = 3600
-
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static-assets", "collected-static")
@@ -326,6 +311,10 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["application/json"]
+# Slack event ingress publishes only after its receipt is durable and disables
+# publish retries. Bound a failed broker connection so Slack can still receive
+# its acknowledgement inside the Events API deadline.
+CELERY_BROKER_CONNECTION_TIMEOUT = 1
 
 
 CELERY_IMPORTS = (
@@ -335,6 +324,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.cleanup_task",
+    "plane.bgtasks.slack_sync",
     "plane.license.bgtasks.telemetry_metrics",
     # management tasks
     "plane.bgtasks.dummy_data_task",
@@ -358,9 +348,6 @@ ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
 POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 
-# Skip environment variable configuration
-SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
-
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Cookie Settings
@@ -380,12 +367,6 @@ CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
 ######  Base URLs ######
-
-# Admin Base URL
-ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
-if ADMIN_BASE_URL and not is_valid_url(ADMIN_BASE_URL):
-    ADMIN_BASE_URL = None
-ADMIN_BASE_PATH = os.environ.get("ADMIN_BASE_PATH", "/god-mode/")
 
 # Space Base URL
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
@@ -547,9 +528,6 @@ SCRIPT_CAPABLE_MIME_TYPES: frozenset[str] = frozenset(
         "application/xml",
     ]
 )
-
-# Seed directory path
-SEED_DIR = os.path.join(BASE_DIR, "seeds")
 
 ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
 

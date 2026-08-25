@@ -73,6 +73,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.timezone_converter import user_timezone_converter
+from plane.utils.identity_access import identity_project_write_fence
 
 from .. import BaseAPIView, BaseViewSet
 
@@ -403,7 +404,7 @@ class IssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         serializer = IssueCreateSerializer(
             data=request.data,
@@ -414,8 +415,17 @@ class IssueViewSet(BaseViewSet):
             },
         )
 
-        if serializer.is_valid():
-            serializer.save()
+        with identity_project_write_fence(
+            workspace_id=project.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            serializer_is_valid = serializer.is_valid()
+            if serializer_is_valid:
+                serializer.save()
+
+        if serializer_is_valid:
 
             # Track the issue
             issue_activity.delay(
@@ -678,8 +688,17 @@ class IssueViewSet(BaseViewSet):
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
-        if serializer.is_valid():
-            serializer.save()
+        with identity_project_write_fence(
+            workspace_id=issue.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            serializer_is_valid = serializer.is_valid()
+            if serializer_is_valid:
+                serializer.save()
+
+        if serializer_is_valid:
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
             # Log all the updates

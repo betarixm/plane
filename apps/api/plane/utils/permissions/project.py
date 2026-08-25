@@ -8,7 +8,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 # Module import
 from plane.db.models import ProjectMember, WorkspaceMember
 from plane.db.models.project import ROLE
-from plane.utils.workspace_admin import active_human_workspace_admins
+from plane.utils.identity_access import active_workspace_admins
 
 
 class ProjectBasePermission(BasePermission):
@@ -45,7 +45,7 @@ class ProjectBasePermission(BasePermission):
         else:
             return (
                 project_member_qs.exists()
-                and active_human_workspace_admins()
+                and active_workspace_admins()
                 .filter(
                     member=request.user,
                     workspace__slug=view.workspace_slug,

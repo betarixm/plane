@@ -107,6 +107,7 @@ from .notification.base import (
 from .page.base import (
     PageDuplicateEndpoint,
     PageFavoriteViewSet,
+    PageLiveEditAccessEndpoint,
     PagesDescriptionViewSet,
     PageViewSet,
 )
@@ -119,11 +120,7 @@ from .project.base import (
     ProjectUserViewsEndpoint,
     ProjectViewSet,
 )
-from .project.invite import (
-    ProjectInvitationsViewset,
-    ProjectJoinEndpoint,
-    UserProjectInvitationsViewset,
-)
+from .project.join import UserProjectJoinViewSet
 from .project.member import (
     ProjectMemberPreferenceEndpoint,
     ProjectMemberUserEndpoint,
@@ -135,14 +132,9 @@ from .search.issue import IssueSearchEndpoint
 from .state.base import IntakeStateEndpoint, StateViewSet
 from .timezone.base import TimezoneEndpoint
 from .user.base import (
-    AccountEndpoint,
     ProfileEndpoint,
-    UpdateUserOnBoardedEndpoint,
-    UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
     UserEndpoint,
-    UserSessionEndpoint,
-    UserWorkspaceAdminEndpoint,
 )
 from .view.base import (
     IssueViewFavoriteViewSet,
@@ -170,11 +162,6 @@ from .workspace.favorite import (
     WorkspaceFavoriteGroupEndpoint,
 )
 from .workspace.home import WorkspaceHomePreferenceViewSet
-from .workspace.invite import (
-    UserWorkspaceInvitationEndpoint,
-    WorkspaceInvitationsViewset,
-    WorkspaceJoinEndpoint,
-)
 from .workspace.label import WorkspaceLabelsEndpoint
 from .workspace.member import (
     WorkspaceMemberUserEndpoint,

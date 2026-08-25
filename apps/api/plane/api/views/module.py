@@ -26,7 +26,7 @@ from plane.api.serializers import (
     ModuleCreateSerializer,
     ModuleUpdateSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, ROLE
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -72,6 +72,10 @@ from plane.utils.openapi import (
     REQUIRED_FIELDS_RESPONSE,
     MODULE_ISSUE_NOT_FOUND_RESPONSE,
     CANNOT_ARCHIVE_RESPONSE,
+)
+from plane.utils.identity_access import (
+    enqueue_task_after_commit,
+    identity_project_write_fenced,
 )
 
 
@@ -191,6 +195,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @identity_project_write_fenced(allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value])
     def post(self, request, slug, project_id):
         """Create module
 
@@ -228,7 +233,8 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
                 )
             serializer.save()
             # Send the model activity
-            model_activity.delay(
+            enqueue_task_after_commit(
+                model_activity,
                 model_name="module",
                 model_id=str(serializer.instance.id),
                 requested_data=request.data,
@@ -449,6 +455,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             409: OpenApiResponse(description="Module with same external ID already exists"),
         },
     )
+    @identity_project_write_fenced(allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value])
     def patch(self, request, slug, project_id, pk):
         """Update module
 
@@ -486,7 +493,8 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             serializer.save()
 
             # Send the model activity
-            model_activity.delay(
+            enqueue_task_after_commit(
+                model_activity,
                 model_name="module",
                 model_id=str(serializer.instance.id),
                 requested_data=request.data,

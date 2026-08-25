@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Third Party imports
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import (
@@ -19,8 +20,13 @@ from plane.api.serializers import (
     WorkspaceMemberLiteAPISerializer,
     ProjectMemberLiteAPISerializer,
 )
-from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
+from plane.db.models import User, Workspace, Project, ProjectMember
 from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
+from plane.utils.identity_access import (
+    active_workspace_members,
+    lock_active_identity_source,
+    lock_active_workspace_member,
+)
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -87,7 +93,9 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace_members = WorkspaceMember.objects.filter(workspace__slug=slug).select_related("member")
+        workspace_members = active_workspace_members().filter(
+            workspace__slug=slug,
+        ).select_related("member")
 
         # Get all the users with their roles
         users_with_roles = []
@@ -140,9 +148,16 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
             )
 
         # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug).values_list(
-            "member_id", flat=True
-        )
+        active_member_ids = active_workspace_members().filter(
+            workspace__slug=slug,
+        ).values("member_id")
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            is_active=True,
+            member__is_active=True,
+            member_id__in=active_member_ids,
+        ).values_list("member_id", flat=True)
 
         # Get all the users that are present inside the workspace
         users = UserLiteSerializer(User.objects.filter(id__in=project_members), many=True).data
@@ -157,10 +172,34 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
         responses={201: OpenApiResponse(description="Project member created", response=ProjectMemberSerializer)},
         request=OpenApiRequest(request=ProjectMemberSerializer),
     )
+    @transaction.atomic
     def post(self, request, slug, project_id):
+        project = Project.objects.using("default").only("workspace_id").get(
+            pk=project_id,
+            workspace__slug=slug,
+        )
+        lock_active_identity_source(workspace_id=project.workspace_id)
+        if lock_active_workspace_member(
+            workspace_id=project.workspace_id,
+            user_id=request.user.id,
+        ) is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if not ProjectMember.objects.using("default").select_for_update().filter(
+            project=project,
+            member=request.user,
+            role=20,
+            is_active=True,
+        ).exists():
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = ProjectMemberSerializer(data=request.data, context={"slug": slug})
         serializer.is_valid(raise_exception=True)
-        serializer.save(project_id=project_id)
+        serializer.save(project=project)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -194,7 +233,17 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
             )
 
         # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        active_member_ids = active_workspace_members().filter(
+            workspace__slug=slug,
+        ).values("member_id")
+        project_members = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            pk=pk,
+            is_active=True,
+            member__is_active=True,
+            member_id__in=active_member_ids,
+        )
         user = User.objects.get(id=project_members.member_id)
         user = UserLiteSerializer(user).data
         return Response(user, status=status.HTTP_200_OK)
@@ -208,10 +257,56 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         responses={200: OpenApiResponse(description="Project member updated", response=ProjectMemberSerializer)},
         request=OpenApiRequest(request=ProjectMemberSerializer),
     )
+    @transaction.atomic
     def patch(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        project = Project.objects.using("default").only("workspace_id").get(
+            pk=project_id,
+            workspace__slug=slug,
+        )
+        lock_active_identity_source(workspace_id=project.workspace_id)
+        if lock_active_workspace_member(
+            workspace_id=project.workspace_id,
+            user_id=request.user.id,
+        ) is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if not ProjectMember.objects.using("default").select_for_update().filter(
+            project=project,
+            member=request.user,
+            role=20,
+            is_active=True,
+        ).exists():
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project_member = ProjectMember.objects.using("default").select_for_update().get(
+            project=project,
+            pk=pk,
+            member__is_active=True,
+            member_id__in=active_workspace_members()
+            .filter(workspace_id=project.workspace_id)
+            .values("member_id"),
+        )
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True, context={"slug": slug})
         serializer.is_valid(raise_exception=True)
+        next_role = serializer.validated_data.get("role", project_member.role)
+        next_is_active = serializer.validated_data.get("is_active", project_member.is_active)
+        if project_member.role == 20 and (next_role != 20 or not next_is_active):
+            active_admins = list(
+                ProjectMember.objects.using("default").select_for_update().filter(
+                    project=project,
+                    role=20,
+                    is_active=True,
+                )
+            )
+            if len(active_admins) <= 1:
+                return Response(
+                    {"error": "The project must retain at least one active administrator"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -223,10 +318,59 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         responses={204: OpenApiResponse(description="Project member deleted")},
     )
+    @transaction.atomic
     def delete(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        project = Project.objects.using("default").only("workspace_id").get(
+            pk=project_id,
+            workspace__slug=slug,
+        )
+        lock_active_identity_source(workspace_id=project.workspace_id)
+        if lock_active_workspace_member(
+            workspace_id=project.workspace_id,
+            user_id=request.user.id,
+        ) is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if not ProjectMember.objects.using("default").select_for_update().filter(
+            project=project,
+            member=request.user,
+            role=20,
+            is_active=True,
+        ).exists():
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project_member = ProjectMember.objects.using("default").select_for_update().get(
+            project=project,
+            pk=pk,
+            member__is_active=True,
+            member_id__in=active_workspace_members()
+            .filter(workspace_id=project.workspace_id)
+            .values("member_id"),
+        )
+        if project_member.member_id == request.user.id:
+            return Response(
+                {"error": "Use the project leave endpoint to remove yourself"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if project_member.role == 20:
+            active_admins = list(
+                ProjectMember.objects.using("default").select_for_update().filter(
+                    project=project,
+                    role=20,
+                    is_active=True,
+                )
+            )
+            if len(active_admins) <= 1:
+                return Response(
+                    {"error": "The project must retain at least one active administrator"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         project_member.is_active = False
-        project_member.save()
+        project_member.save(update_fields=["is_active", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -268,7 +412,10 @@ class WorkspaceMemberLiteAPIEndpoint(BaseAPIView):
             )
 
         workspace_members = (
-            WorkspaceMember.objects.filter(workspace__slug=slug).select_related("member").order_by("-created_at")
+            active_workspace_members()
+            .filter(workspace__slug=slug)
+            .select_related("member")
+            .order_by("-created_at")
         )
         return self.paginate(
             request=request,
@@ -320,8 +467,17 @@ class ProjectMemberLiteAPIEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        active_member_ids = active_workspace_members().filter(
+            workspace__slug=slug,
+        ).values("member_id")
         project_members = (
-            ProjectMember.objects.filter(project_id=project_id, workspace__slug=slug)
+            ProjectMember.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                is_active=True,
+                member__is_active=True,
+                member_id__in=active_member_ids,
+            )
             .select_related("member")
             .order_by("-created_at")
         )

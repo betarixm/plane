@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 
 # Django imports
 from django.db.models import Max
+from django.db import transaction
 
 # Third party imports
 from celery import shared_task
@@ -39,6 +40,10 @@ from plane.db.models import (
     IntakeIssue,
 )
 from plane.db.models.intake import SourceType
+from plane.utils.identity_access import (
+    active_workspace_members,
+    lock_active_identity_source,
+)
 
 
 def create_project(workspace, user_id):
@@ -496,15 +501,33 @@ def create_dummy_data(
     intake_issue_count,
 ):
     workspace = Workspace.objects.get(slug=slug)
+    with transaction.atomic():
+        lock_active_identity_source(workspace_id=workspace.id)
+        user = (
+            active_workspace_members()
+            .filter(workspace=workspace, member__email=email)
+            .select_related("member")
+            .first()
+        )
+        if user is None:
+            raise ValueError("Dummy-data creator must be in the current external roster")
+        user = user.member
+        user_id = user.id
 
-    user = User.objects.get(email=email)
-    user_id = user.id
+        active_member_emails = set(
+            active_workspace_members()
+            .filter(workspace=workspace, member__email__in=members)
+            .values_list("member__email", flat=True)
+        )
+        if set(members) != active_member_emails:
+            raise ValueError("Every dummy-data member must be in the current external roster")
 
-    # Create a project
-    project = create_project(workspace=workspace, user_id=user_id)
-
-    # create project members
-    create_project_members(workspace=workspace, project=project, members=members)
+        project = create_project(workspace=workspace, user_id=user_id)
+        create_project_members(
+            workspace=workspace,
+            project=project,
+            members=members,
+        )
 
     # Create states
     create_states(workspace=workspace, project=project, user_id=user_id)

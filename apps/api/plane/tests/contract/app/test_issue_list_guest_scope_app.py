@@ -34,7 +34,7 @@ LIST_URL = "/api/workspaces/{slug}/projects/{project_id}/issues/list/"
 
 @pytest.fixture
 def project(db, workspace, create_user):
-    """A project (guest_view_all_features defaults to False); owner is a member."""
+    """A project (guest_view_all_features defaults to False); admin is a member."""
     project = Project.objects.create(
         name="Scoped Project",
         identifier="SP",
@@ -57,8 +57,6 @@ def guest(db, workspace, project):
         first_name="Guest",
         last_name="User",
     )
-    user.set_password("test-password")
-    user.save()
     WorkspaceMember.objects.create(workspace=workspace, member=user, role=5)
     ProjectMember.objects.create(
         project=project, member=user, workspace=workspace, role=5
@@ -121,7 +119,7 @@ class TestIssueListGuestScope:
     def test_project_member_reads_all_requested_issues(
         self, session_client, workspace, project, own_issue, foreign_issue
     ):
-        """Positive control: a full member (owner) still gets every requested issue."""
+        """Positive control: a full member still gets every requested issue."""
         url = LIST_URL.format(slug=workspace.slug, project_id=project.id)
         response = session_client.get(url, {"issues": f"{own_issue.id},{foreign_issue.id}"})
 

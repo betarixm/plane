@@ -16,7 +16,6 @@ from plane.app.serializers.user import UserLiteSerializer, UserAdminLiteSerializ
 from plane.db.models import (
     Project,
     ProjectMember,
-    ProjectMemberInvite,
     ProjectIdentifier,
     DeployBoard,
     ProjectPublicMember,
@@ -25,6 +24,7 @@ from plane.db.models import (
 from plane.utils.content_validator import (
     validate_html_content,
 )
+from plane.utils.identity_access import active_workspace_members
 
 
 class ProjectSerializer(BaseSerializer):
@@ -85,6 +85,35 @@ class ProjectSerializer(BaseSerializer):
             if not is_valid:
                 raise serializers.ValidationError({"error": "html content is not valid"})
 
+        project_lead = data.get("project_lead")
+        if project_lead is not None:
+            lead_membership = (
+                active_workspace_members()
+                .filter(
+                    workspace_id=self.context["workspace_id"],
+                    member=project_lead,
+                )
+                .only("role")
+                .first()
+            )
+            if lead_membership is None:
+                raise serializers.ValidationError(
+                    {"project_lead": "Project lead must be an active member of the connected external workspace."}
+                )
+            if lead_membership.role == 5:
+                raise serializers.ValidationError(
+                    {"project_lead": "External workspace guests cannot be project leads."}
+                )
+
+        default_assignee = data.get("default_assignee")
+        if default_assignee is not None and not active_workspace_members().filter(
+            workspace_id=self.context["workspace_id"],
+            member=default_assignee,
+        ).exists():
+            raise serializers.ValidationError(
+                {"default_assignee": "Default assignee must be an active member of the connected external workspace."}
+            )
+
         return data
 
     def create(self, validated_data):
@@ -126,7 +155,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
         project_members = getattr(obj, "members_list", None)
         if project_members is not None:
             # Filter members by the project ID
-            return [member.member_id for member in project_members if member.is_active and not member.member.is_bot]
+            return [member.member_id for member in project_members if member.is_active]
         return []
 
     def get_next_work_item_sequence(self, obj):
@@ -160,7 +189,32 @@ class ProjectMemberSerializer(BaseSerializer):
 
     class Meta:
         model = ProjectMember
-        fields = "__all__"
+        fields = [
+            "id",
+            "workspace",
+            "project",
+            "member",
+            "role",
+            "view_props",
+            "default_props",
+            "preferences",
+            "sort_order",
+            "is_active",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "member",
+            "view_props",
+            "default_props",
+            "preferences",
+            "sort_order",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class ProjectMemberPreferenceSerializer(BaseSerializer):
@@ -182,7 +236,8 @@ class ProjectMemberAdminSerializer(BaseSerializer):
 
     class Meta:
         model = ProjectMember
-        fields = "__all__"
+        fields = ProjectMemberSerializer.Meta.fields
+        read_only_fields = ProjectMemberSerializer.Meta.fields
 
 
 class ProjectMemberRoleSerializer(DynamicBaseSerializer):
@@ -192,40 +247,6 @@ class ProjectMemberRoleSerializer(DynamicBaseSerializer):
         model = ProjectMember
         fields = ("id", "role", "member", "project", "original_role", "created_at")
         read_only_fields = ["original_role", "created_at"]
-
-
-class ProjectMemberInviteSerializer(BaseSerializer):
-    project = ProjectLiteSerializer(read_only=True)
-    workspace = WorkspaceLiteSerializer(read_only=True)
-
-    class Meta:
-        model = ProjectMemberInvite
-        fields = "__all__"
-
-
-class ProjectMemberInvitePublicSerializer(BaseSerializer):
-    """Safe read-only serializer for the public project invite GET endpoint.
-
-    Intentionally excludes ``email`` and ``token`` so that an unauthenticated
-    caller cannot retrieve the invitee's email address or the acceptance token
-    (GHSA-2r58-hgv7-635q).
-    """
-
-    project = ProjectLiteSerializer(read_only=True)
-    workspace = WorkspaceLiteSerializer(read_only=True)
-
-    class Meta:
-        model = ProjectMemberInvite
-        fields = [
-            "id",
-            "project",
-            "workspace",
-            "role",
-            "message",
-            "accepted",
-            "responded_at",
-        ]
-        read_only_fields = fields
 
 
 class ProjectIdentifierSerializer(BaseSerializer):

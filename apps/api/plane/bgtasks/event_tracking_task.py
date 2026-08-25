@@ -11,11 +11,8 @@ from typing import Any, Dict
 from celery import shared_task
 from posthog import Posthog
 
-from plane.db.models import Workspace
-
 # module imports
 from plane.license.utils.instance_value import get_configuration_value
-from plane.utils.analytics_events import USER_INVITED_TO_WORKSPACE
 from plane.utils.exception_logger import log_exception
 
 logger = logging.getLogger("plane.worker")
@@ -40,24 +37,6 @@ def posthogConfiguration():
         return None, None
 
 
-def preprocess_data_properties(
-    user_id: uuid.UUID, event_name: str, slug: str, data_properties: Dict[str, Any]
-) -> Dict[str, Any]:
-    if event_name == USER_INVITED_TO_WORKSPACE:
-        try:
-            # Check if the current user is the workspace owner
-            workspace = Workspace.objects.get(slug=slug)
-            if str(workspace.owner_id) == str(user_id):
-                data_properties["role"] = "owner"
-            else:
-                data_properties["role"] = "admin"
-        except Workspace.DoesNotExist:
-            logger.warning(f"Workspace {slug} does not exist while sending event {event_name} for user {user_id}")
-            data_properties["role"] = "unknown"
-
-    return data_properties
-
-
 @shared_task
 def track_event(user_id: uuid.UUID, event_name: str, slug: str, event_properties: Dict[str, Any]):
     POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()
@@ -67,9 +46,7 @@ def track_event(user_id: uuid.UUID, event_name: str, slug: str, event_properties
         return
 
     try:
-        # preprocess the data properties for massaging the payload
-        # in the correct format for posthog
-        data_properties = preprocess_data_properties(user_id, event_name, slug, event_properties)
+        data_properties = event_properties
         groups = {
             "workspace": slug,
         }

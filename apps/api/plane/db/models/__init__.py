@@ -54,22 +54,21 @@ from .project import (
     ProjectBaseModel,
     ProjectIdentifier,
     ProjectMember,
-    ProjectMemberInvite,
     ProjectNetwork,
     ProjectPublicMember,
     ProjectUserProperty,
 )
 from .session import Session
-from .social_connection import SocialLoginConnection
+from .identity import ExternalIdentity, IdentitySource
+from .slack import SlackEventReceipt, SlackUserTombstone
 from .state import State, StateGroup, DEFAULT_STATES
-from .user import Account, Profile, User, BotTypeEnum
+from .user import Profile, User
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
     Workspace,
     WorkspaceBaseModel,
     WorkspaceMember,
-    WorkspaceMemberInvite,
     WorkspaceTheme,
     WorkspaceUserProperties,
     WorkspaceUserLink,
@@ -84,8 +83,6 @@ from .issue_type import IssueType
 from .recent_visit import UserRecentVisit
 
 from .label import Label
-
-from .device import Device, DeviceSession
 
 from .sticky import Sticky
 

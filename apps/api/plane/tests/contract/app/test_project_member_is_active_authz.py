@@ -22,6 +22,8 @@ from rest_framework.test import APIClient
 from plane.db.models import (
     Project,
     ProjectMember,
+    ExternalIdentity,
+    IdentitySource,
     User,
     WorkspaceMember,
 )
@@ -33,14 +35,18 @@ def _member_detail_url(slug: str, project_id: uuid.UUID, pk: uuid.UUID) -> str:
 
 def _make_user(email: str) -> User:
     local_part = email.split("@")[0]
-    user = User.objects.create(email=email, username=local_part, first_name=local_part)
-    user.set_password("test-password")
-    user.save()
-    return user
+    return User.objects.create(email=email, username=local_part, first_name=local_part)
 
 
 def _add_member(workspace, project, user, *, ws_role: int, project_role: int) -> ProjectMember:
     WorkspaceMember.objects.create(workspace=workspace, member=user, role=ws_role, is_active=True)
+    installation = IdentitySource.objects.get(workspace=workspace)
+    ExternalIdentity.objects.create(
+        user=user,
+        source=installation,
+        external_user_id=f"U{user.id.hex[:20].upper()}",
+        source_generation=installation.generation,
+    )
     return ProjectMember.objects.create(
         workspace=workspace, project=project, member=user, role=project_role, is_active=True
     )
@@ -48,14 +54,26 @@ def _add_member(workspace, project, user, *, ws_role: int, project_role: int) ->
 
 @pytest.fixture
 def project(db, workspace, create_user):
-    """A project owned by ``create_user`` (workspace owner / admin)."""
+    """A project administered by ``create_user``."""
+    installation = IdentitySource.objects.create(
+        workspace=workspace,
+        provider=IdentitySource.Provider.SLACK,
+        external_organization_id="TSECURITY",
+        external_organization_name="Security Slack",
+    )
+    ExternalIdentity.objects.create(
+        user=create_user,
+        source=installation,
+        external_user_id="UOWNER",
+        source_generation=installation.generation,
+    )
     project = Project.objects.create(
         name="Secure Project",
         identifier="SEC",
         workspace=workspace,
         created_by=create_user,
     )
-    # create_user is the workspace owner (role=20 via the workspace fixture);
+    # create_user is a workspace admin (role=20 via the workspace fixture);
     # make them a project ADMIN too — this is the takeover victim.
     ProjectMember.objects.create(
         workspace=workspace, project=project, member=create_user, role=20, is_active=True
@@ -66,6 +84,135 @@ def project(db, workspace, create_user):
 @pytest.mark.contract
 @pytest.mark.django_db
 class TestProjectMemberIsActiveAuthz:
+    def test_bulk_member_update_cannot_demote_the_last_project_admin(
+        self,
+        workspace,
+        project,
+        create_user,
+    ):
+        ProjectMember.objects.filter(project=project, member=create_user).update(
+            is_active=False,
+        )
+        sole_admin = _make_user("sole-project-admin@plane.so")
+        sole_admin_membership = _add_member(
+            workspace,
+            project,
+            sole_admin,
+            ws_role=15,
+            project_role=20,
+        )
+        client = APIClient()
+        client.force_authenticate(user=sole_admin)
+
+        response = client.post(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/members/",
+            {"members": [{"member_id": str(sole_admin.id), "role": 15}]},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        sole_admin_membership.refresh_from_db()
+        assert sole_admin_membership.role == 20
+        assert sole_admin_membership.is_active is True
+
+    def test_last_project_admin_cannot_leave(
+        self,
+        workspace,
+        project,
+        create_user,
+    ):
+        client = APIClient()
+        client.force_authenticate(user=create_user)
+
+        response = client.post(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/members/leave/"
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert ProjectMember.objects.get(project=project, member=create_user).is_active is True
+
+    def test_inherited_put_project_update_route_is_removed(
+        self,
+        workspace,
+        project,
+    ):
+        outsider = _make_user("put-outsider@plane.so")
+        WorkspaceMember.objects.create(
+            workspace=workspace,
+            member=outsider,
+            role=5,
+            is_active=True,
+        )
+        installation = IdentitySource.objects.get(workspace=workspace)
+        ExternalIdentity.objects.create(
+            user=outsider,
+            source=installation,
+            external_user_id="UPUTOUTSIDER",
+            source_generation=installation.generation,
+        )
+        client = APIClient()
+        client.force_authenticate(user=outsider)
+
+        response = client.put(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/",
+            {"name": "Unauthorized replacement"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+        project.refresh_from_db()
+        assert project.name == "Secure Project"
+
+    def test_bulk_create_cannot_promote_a_slack_guest_with_a_string_role(
+        self,
+        workspace,
+        project,
+        create_user,
+    ):
+        guest = _make_user("string-role-guest@plane.so")
+        guest_membership = _add_member(
+            workspace,
+            project,
+            guest,
+            ws_role=5,
+            project_role=5,
+        )
+        client = APIClient()
+        client.force_authenticate(user=create_user)
+
+        response = client.post(
+            f"/api/workspaces/{workspace.slug}/projects/{project.id}/members/",
+            {"members": [{"member_id": str(guest.id), "role": "20"}]},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        guest_membership.refresh_from_db()
+        assert guest_membership.role == 5
+
+    def test_guest_cannot_soft_delete_admin_through_hidden_model_fields(
+        self,
+        workspace,
+        project,
+        create_user,
+    ):
+        attacker = _make_user("soft-delete-attacker@plane.so")
+        _add_member(workspace, project, attacker, ws_role=15, project_role=5)
+        victim = ProjectMember.objects.get(project=project, member=create_user)
+        client = APIClient()
+        client.force_authenticate(user=attacker)
+
+        response = client.patch(
+            _member_detail_url(workspace.slug, project.id, victim.id),
+            {"deleted_at": "2026-08-24T00:00:00Z"},
+            format="json",
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        victim.refresh_from_db()
+        assert victim.deleted_at is None
+        assert victim.is_active is True
+
     def test_guest_cannot_deactivate_admin(self, workspace, project, create_user):
         """A project GUEST must not deactivate a project ADMIN via is_active."""
         attacker = _make_user("guest-attacker@plane.so")
@@ -154,8 +301,10 @@ class TestProjectMemberIsActiveAuthz:
         bypass so future changes don't silently remove it.
         """
         ws_admin = _make_user("ws-admin@plane.so")
+        backup_admin = _make_user("backup-project-admin@plane.so")
         # workspace ADMIN (20) but only a project GUEST (5)
         _add_member(workspace, project, ws_admin, ws_role=20, project_role=5)
+        _add_member(workspace, project, backup_admin, ws_role=15, project_role=20)
         # victim is the project ADMIN (create_user) set up by the `project` fixture
         victim = ProjectMember.objects.get(project=project, member=create_user)
 

@@ -9,7 +9,7 @@ from rest_framework import serializers
 
 from plane.api.serializers import WorkspaceLiteSerializer
 from plane.app.serializers import WorkSpaceSerializer
-from plane.db.models import User, Workspace
+from plane.db.models import Workspace
 
 # Names with no letter or digit — must be rejected (issue #9255)
 SYMBOL_ONLY_NAMES = ["-_________-", "---", "___", "- - -", "   ", "  -_ "]
@@ -39,12 +39,13 @@ class TestWorkspaceLiteSerializer:
 
     def test_workspace_lite_serializer_fields(self, db):
         """Test that the serializer includes the correct fields"""
-        # Create a user to be the owner
-        owner = User.objects.create(email="test@example.com", first_name="Test", last_name="User")
-
         # Create a workspace with explicit ID to test serialization
         workspace_id = uuid4()
-        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", id=workspace_id, owner=owner)
+        workspace = Workspace.objects.create(
+            name="Test Workspace",
+            slug="test-workspace",
+            id=workspace_id,
+        )
 
         # Serialize the workspace
         serialized_data = WorkspaceLiteSerializer(workspace).data
@@ -60,11 +61,12 @@ class TestWorkspaceLiteSerializer:
 
     def test_workspace_lite_serializer_read_only(self, db):
         """Test that the serializer fields are read-only"""
-        # Create a user to be the owner
-        owner = User.objects.create(email="test2@example.com", first_name="Test", last_name="User")
-
         # Create a workspace
-        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", id=uuid4(), owner=owner)
+        workspace = Workspace.objects.create(
+            name="Test Workspace",
+            slug="test-workspace",
+            id=uuid4(),
+        )
 
         # Try to update via serializer
         serializer = WorkspaceLiteSerializer(workspace, data={"name": "Updated Name", "slug": "updated-slug"})

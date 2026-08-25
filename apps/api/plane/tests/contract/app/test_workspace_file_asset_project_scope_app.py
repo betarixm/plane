@@ -59,8 +59,6 @@ def outsider_user(db):
         first_name="Outsider",
         last_name="User",
     )
-    user.set_password("test-password")
-    user.save()
     return user
 
 

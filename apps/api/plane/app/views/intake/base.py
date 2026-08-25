@@ -49,7 +49,10 @@ from plane.utils.host import base_host
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import INTAKE_ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.timezone_converter import user_timezone_converter
-from plane.utils.workspace_admin import active_human_workspace_admins
+from plane.utils.identity_access import (
+    active_workspace_admins,
+    identity_project_write_fenced,
+)
 
 # Module imports
 from ..base import BaseViewSet
@@ -227,6 +230,9 @@ class IntakeIssueViewSet(BaseViewSet):
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @identity_project_write_fenced(
+        allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value]
+    )
     def create(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -333,6 +339,9 @@ class IntakeIssueViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Issue)
+    @identity_project_write_fenced(
+        allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value]
+    )
     def partial_update(self, request, slug, project_id, pk):
         skip_activity = request.data.pop("skip_activity", False)
         is_description_update = request.data.get("description_html") is not None
@@ -353,7 +362,7 @@ class IntakeIssueViewSet(BaseViewSet):
         ).first()
 
         is_workspace_admin = (
-            active_human_workspace_admins()
+            active_workspace_admins()
             .filter(
                 workspace__slug=slug,
                 member=request.user,

@@ -23,7 +23,6 @@ _LITE_MEMBER_FIELDS = (
     "display_name",
     "role",
     "is_active",
-    "is_bot",
 )
 
 
@@ -70,7 +69,7 @@ class TestWorkspaceMembersLite:
         item = response.data["results"][0]
         for key in _LITE_MEMBER_FIELDS:
             assert key in item
-        # The requesting user is the workspace owner (admin role = 20).
+        # The requesting user is a workspace admin (role = 20).
         assert item["role"] == 20
 
     @pytest.mark.django_db

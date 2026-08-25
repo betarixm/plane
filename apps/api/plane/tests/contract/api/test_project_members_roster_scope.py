@@ -54,8 +54,6 @@ def foreign_project(db, workspace):
         email=f"owner-{unique_id}@plane.so",
         username=f"owner_{unique_id}",
     )
-    owner.set_password("test-password")
-    owner.save()
     project = Project.objects.create(
         name="Foreign Project",
         identifier="FOR",

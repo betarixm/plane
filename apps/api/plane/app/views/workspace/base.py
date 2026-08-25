@@ -39,6 +39,7 @@ from plane.db.models import (
     WorkspaceTheme,
 )
 from plane.utils.csv_utils import sanitize_csv_row
+from plane.utils.identity_access import active_workspace_members
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -47,13 +48,12 @@ class WorkSpaceViewSet(BaseViewSet):
     permission_classes = [WorkSpaceBasePermission]
 
     search_fields = ["name"]
-    filterset_fields = ["owner"]
-
     lookup_field = "slug"
 
     def get_queryset(self):
         member_count = (
-            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
+            active_workspace_members()
+            .filter(workspace=OuterRef("id"))
             .order_by()
             .values("workspace_id")
             .annotate(count=Count("id"))
@@ -61,7 +61,7 @@ class WorkSpaceViewSet(BaseViewSet):
         )
 
         return (
-            self.filter_queryset(super().get_queryset().select_related("owner"))
+            self.filter_queryset(super().get_queryset())
             .order_by("name")
             .filter(
                 workspace_member__member=self.request.user,
@@ -76,13 +76,13 @@ class WorkSpaceViewSet(BaseViewSet):
 
 
 class UserWorkspaceEndpoint(BaseAPIView):
-    # Membership identity must be read-your-writes after setup, invite
-    # acceptance, and leave operations.
+    # Membership identity must be read-your-writes after source synchronization.
     use_read_replica = False
 
     def get(self, request):
         member_count = (
-            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member__is_bot=False, is_active=True)
+            active_workspace_members()
+            .filter(workspace=OuterRef("id"))
             .order_by()
             .values("workspace_id")
             .annotate(count=Count("id"))

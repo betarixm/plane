@@ -10,7 +10,6 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from plane.utils.color import get_random_color
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 
 # Module imports
@@ -107,10 +106,6 @@ def get_default_display_properties():
     }
 
 
-def get_issue_props():
-    return {"subscribed": True, "assigned": True, "created": True, "all_issues": True}
-
-
 def slug_validator(value):
     if value in RESTRICTED_WORKSPACE_SLUGS:
         raise ValidationError("Slug is not valid")
@@ -148,15 +143,8 @@ class Workspace(BaseModel):
         blank=True,
         null=True,
     )
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
-        related_name="owner_workspace",
-    )
     slug = models.SlugField(max_length=48, db_index=True, unique=True, validators=[slug_validator])
-    organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
-    background_color = models.CharField(max_length=255, default=get_random_color)
 
     def __str__(self):
         """Return name of the Workspace"""
@@ -218,14 +206,8 @@ class WorkspaceMember(BaseModel):
         related_name="member_workspace",
     )
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
-    company_role = models.TextField(null=True, blank=True)
     view_props = models.JSONField(default=get_default_props)
-    default_props = models.JSONField(default=get_default_props)
-    issue_props = models.JSONField(default=get_issue_props)
     is_active = models.BooleanField(default=True)
-    getting_started_checklist = models.JSONField(default=dict)
-    tips = models.JSONField(default=dict)
-    explored_features = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["workspace", "member", "deleted_at"]
@@ -243,34 +225,7 @@ class WorkspaceMember(BaseModel):
 
     def __str__(self):
         """Return members of the workspace"""
-        return f"{self.member.email} <{self.workspace.name}>"
-
-
-class WorkspaceMemberInvite(BaseModel):
-    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_member_invite")
-    email = models.CharField(max_length=255)
-    accepted = models.BooleanField(default=False)
-    token = models.CharField(max_length=255)
-    message = models.TextField(null=True)
-    responded_at = models.DateTimeField(null=True)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
-
-    class Meta:
-        unique_together = ["email", "workspace", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["email", "workspace"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="workspace_member_invite_unique_email_workspace_when_deleted_at_null",
-            )
-        ]
-        verbose_name = "Workspace Member Invite"
-        verbose_name_plural = "Workspace Member Invites"
-        db_table = "workspace_member_invites"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"{self.workspace.name} {self.email} {self.accepted}"
+        return f"{self.member.display_name} <{self.workspace.name}>"
 
 
 class Team(BaseModel):
@@ -305,7 +260,7 @@ class WorkspaceTheme(BaseModel):
     colors = models.JSONField(default=dict)
 
     def __str__(self):
-        return str(self.name) + str(self.actor.email)
+        return f"{self.name} {self.actor.display_name}"
 
     class Meta:
         unique_together = ["workspace", "name", "deleted_at"]

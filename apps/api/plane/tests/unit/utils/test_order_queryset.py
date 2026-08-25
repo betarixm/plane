@@ -39,9 +39,9 @@ class TestIssueGroupByAllowlist:
         # to trigger a 500 / force a blind relational-traversal oracle.
         dangerous_values = [
             "not_a_field",
-            "created_by__password",
+            "created_by__email",
             "workspace__secret_key",
-            "assignees__password",
+            "assignees__email",
             "id",
             "",
             None,

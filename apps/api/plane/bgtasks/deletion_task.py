@@ -181,7 +181,7 @@ def hard_delete():
 
     # Iterate through all models
     for model in all_models:
-        if model._meta.label_lower == "db.workspace":
+        if model._meta.label_lower in {"db.workspace", "license.instance"}:
             continue
         # Check if the model has a 'deleted_at' field
         if hasattr(model, "deleted_at"):

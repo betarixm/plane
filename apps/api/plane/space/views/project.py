@@ -13,7 +13,8 @@ from rest_framework.permissions import AllowAny
 # Module imports
 from .base import BaseAPIView
 from plane.app.serializers import DeployBoardSerializer
-from plane.db.models import Project, DeployBoard, ProjectMember
+from plane.db.models import Project, DeployBoard
+from plane.utils.identity_access import active_project_members
 
 
 class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
@@ -73,10 +74,14 @@ class ProjectMembersEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        members = ProjectMember.objects.filter(
+        # A deploy board is public, but its member directory must still be a
+        # projection of the current external roster. Project memberships are
+        # deliberately retained across a source reconnect, so filtering only
+        # on ProjectMember.is_active can otherwise expose a user from an old
+        # installation generation until reconciliation catches up.
+        members = active_project_members().filter(
             project=deploy_board.project,
             workspace=deploy_board.workspace,
-            is_active=True,
         ).values(
             "id",
             "member",

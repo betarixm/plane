@@ -46,7 +46,7 @@ from plane.db.models import (
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import VIEW_ORDER_BY_ALLOWLIST, order_issue_queryset, sanitize_order_by
-from plane.utils.workspace_admin import active_human_workspace_admins
+from plane.utils.identity_access import active_workspace_admins
 
 from .. import BaseViewSet
 
@@ -123,7 +123,7 @@ class WorkspaceViewViewSet(BaseViewSet):
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)
 
-        workspace_member = active_human_workspace_admins().filter(workspace__slug=slug, member=request.user)
+        workspace_member = active_workspace_admins().filter(workspace__slug=slug, member=request.user)
         if workspace_member.exists() or workspace_view.owned_by == request.user:
             workspace_view.delete()
             # Delete the user favorite view

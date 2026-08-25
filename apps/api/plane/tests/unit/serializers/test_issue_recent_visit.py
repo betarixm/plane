@@ -24,7 +24,12 @@ class TestIssueRecentVisitSerializer:
     def test_issue_recent_visit_serializer_fields(self, db):
         """Test that the serializer includes the correct fields"""
 
-        test_user_1 = User.objects.create(email="test_user_1@example.com", first_name="Test", last_name="User")
+        test_user_1 = User.objects.create(
+            email="test_user_1@example.com",
+            username="test-user-1",
+            first_name="Test",
+            last_name="User",
+        )
 
         # To test for deleted issue assignee
         test_user_2 = User.objects.create(
@@ -34,7 +39,7 @@ class TestIssueRecentVisitSerializer:
             username="some user name",
         )
 
-        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace", owner=test_user_1)
+        workspace = Workspace.objects.create(name="Test Workspace", slug="test-workspace")
 
         WorkspaceMember.objects.create(member=test_user_2, role=15, workspace=workspace)
 

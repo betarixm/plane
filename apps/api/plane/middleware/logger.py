@@ -24,6 +24,13 @@ api_logger = logging.getLogger("plane.api.request")
 
 
 class RequestLoggerMiddleware:
+    SENSITIVE_QUERY_PATHS = frozenset(
+        {
+            "/auth/slack/install/callback/",
+            "/auth/slack/callback/",
+        }
+    )
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -35,6 +42,11 @@ class RequestLoggerMiddleware:
         if request.path == "/" and request.method == "GET":
             return False
         return True
+
+    def _request_target(self, request: Request | HttpRequest) -> str:
+        if request.path in self.SENSITIVE_QUERY_PATHS:
+            return request.path
+        return request.get_full_path()
 
     def __call__(self, request):
         # get the start time
@@ -61,7 +73,7 @@ class RequestLoggerMiddleware:
 
         # Log the request information
         api_logger.info(
-            f"{request.method} {request.get_full_path()} {response.status_code}",
+            f"{request.method} {self._request_target(request)} {response.status_code}",
             extra={
                 "path": request.path,
                 "method": request.method,
@@ -146,7 +158,11 @@ class APITokenLogMiddleware:
                 ).hexdigest(),
                 "path": request.path,
                 "method": request.method,
-                "query_params": request.META.get("QUERY_STRING", ""),
+                "query_params": (
+                    ""
+                    if request.path in RequestLoggerMiddleware.SENSITIVE_QUERY_PATHS
+                    else request.META.get("QUERY_STRING", "")
+                ),
                 "headers": self._redacted_headers(request),
                 "body": self._safe_decode_body(request_body) if request_body else None,
                 "response_body": self._safe_decode_body(response.content) if response.content else None,

@@ -24,7 +24,6 @@ from plane.db.models import (
     Issue,
     Workspace,
     Project,
-    ProjectMember,
     Cycle,
     Module,
 )
@@ -32,6 +31,7 @@ from plane.db.models import (
 from plane.utils.analytics_plot import build_graph_plot, VALID_ANALYTICS_FIELDS, VALID_YAXIS
 from plane.utils.issue_filters import issue_filters
 from plane.app.permissions import allow_permission, ROLE
+from plane.utils.identity_access import active_project_members
 
 
 class AnalyticsEndpoint(BaseAPIView):
@@ -445,7 +445,8 @@ class ProjectStatsEndpoint(BaseAPIView):
 
         if "total_members" in requested_fields:
             annotations["total_members"] = (
-                ProjectMember.objects.filter(project_id=OuterRef("id"), member__is_bot=False, is_active=True)
+                active_project_members()
+                .filter(project_id=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

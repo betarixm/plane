@@ -34,7 +34,7 @@ from plane.api.serializers import (
     CycleUpdateSerializer,
     IssueSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission, ROLE
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
@@ -76,6 +76,10 @@ from plane.utils.openapi import (
     CYCLE_CANNOT_ARCHIVE_RESPONSE,
     UNARCHIVED_RESPONSE,
     REQUIRED_FIELDS_RESPONSE,
+)
+from plane.utils.identity_access import (
+    enqueue_task_after_commit,
+    identity_project_write_fenced,
 )
 
 
@@ -298,6 +302,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @identity_project_write_fenced(allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value])
     def post(self, request, slug, project_id):
         """Create cycle
 
@@ -336,7 +341,8 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                     )
                 serializer.save(project_id=project_id)
                 # Send the model activity
-                model_activity.delay(
+                enqueue_task_after_commit(
+                    model_activity,
                     model_name="cycle",
                     model_id=str(serializer.instance.id),
                     requested_data=request.data,
@@ -540,6 +546,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @identity_project_write_fenced(allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value])
     def patch(self, request, slug, project_id, pk):
         """Update cycle
 
@@ -592,7 +599,8 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             serializer.save()
 
             # Send the model activity
-            model_activity.delay(
+            enqueue_task_after_commit(
+                model_activity,
                 model_name="cycle",
                 model_id=str(serializer.instance.id),
                 requested_data=request.data,

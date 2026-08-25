@@ -22,9 +22,6 @@ export MACHINE_SIGNATURE=$SIGNATURE
 
 # Register instance
 python manage.py register_instance "$MACHINE_SIGNATURE"
-# Load the configuration variable
-python manage.py configure_instance
-
 # Create the default bucket
 python manage.py create_bucket
 

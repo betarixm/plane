@@ -28,9 +28,6 @@ Work-item link unfurling / favicon
   * GHSA-9fr2-pprw-pp9j / CVE-2026-39843  favicon redirect SSRF        -> TestFaviconRedirect
   * GHSA-3856-6mgg-rx84  favicon DNS-rebinding                         -> TestFaviconRebinding
 
-OAuth avatar (the still-unresolved family this change adds)
-  * GHSA-cv9p-325g-wmv5  OAuth avatar redirect SSRF -> static-asset exfil
-  * GHSA-hx79-5pj5-qh42  Gitea OAuth SSRF (avatar hop)                 -> TestOAuthAvatarSSRF
 """
 
 import pytest
@@ -41,7 +38,6 @@ from bs4 import BeautifulSoup
 
 from plane.utils.ip_address import validate_url
 from plane.bgtasks.work_item_link_task import fetch_and_encode_favicon, DEFAULT_FAVICON
-from plane.authentication.adapter.base import Adapter
 
 
 def _addr(ip):
@@ -241,49 +237,3 @@ class TestFaviconRebinding:
         )
         result = fetch_and_encode_favicon({}, soup, "https://attacker.example.com")
         assert result["favicon_base64"] == f"data:image/svg+xml;base64,{DEFAULT_FAVICON}"
-
-
-# ---------------------------------------------------------------------------
-# OAuth avatar SSRF — GHSA-cv9p-325g-wmv5 / GHSA-hx79-5pj5-qh42 (avatar hop)
-# download_and_upload_avatar must reject avatar URLs that point at, or redirect
-# to, internal addresses, returning None (no fetch stored as an asset).
-# ---------------------------------------------------------------------------
-@pytest.mark.unit
-class TestOAuthAvatarSSRF:
-    def _adapter(self):
-        return Adapter(request=MagicMock(), provider="gitea")
-
-    @patch("plane.utils.url_security.resolve_and_validate")
-    def test_avatar_to_internal_ip_is_blocked(self, mock_resolve):
-        mock_resolve.side_effect = ValueError(_BLOCKED)
-        result = self._adapter().download_and_upload_avatar(
-            "http://169.254.169.254/latest/meta-data/", user=MagicMock()
-        )
-        assert result is None
-        mock_resolve.assert_called()  # SSRF validation was actually attempted
-
-    @patch("plane.utils.url_security.requests.Session")
-    @patch("plane.utils.url_security.resolve_and_validate")
-    def test_avatar_redirect_to_internal_is_blocked(self, mock_resolve, mock_session_cls):
-        # Public avatar URL that 302-redirects to the metadata service.
-        mock_resolve.side_effect = [["93.184.216.34"], ValueError(_BLOCKED)]
-        session = mock_session_cls.return_value
-        session.request.return_value = _resp(
-            302, headers={"Location": "http://169.254.169.254/imds"}
-        )
-        result = self._adapter().download_and_upload_avatar(
-            "https://evil.example.com/avatar", user=MagicMock()
-        )
-        assert result is None
-
-    @patch("plane.authentication.adapter.base.pinned_fetch_following_redirects")
-    def test_avatar_uses_ssrf_safe_client(self, mock_fetch):
-        # Wiring guard: the avatar path must go through the pinned client, never
-        # a raw requests.get (which would re-resolve + follow redirects freely).
-        mock_fetch.side_effect = ValueError(_BLOCKED)
-        result = self._adapter().download_and_upload_avatar(
-            "https://cdn.example.com/a.png", user=MagicMock()
-        )
-        assert result is None
-        assert mock_fetch.call_args.args[0] == "GET"
-        assert mock_fetch.call_args.args[1] == "https://cdn.example.com/a.png"

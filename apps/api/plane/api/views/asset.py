@@ -18,6 +18,10 @@ from drf_spectacular.utils import OpenApiExample, OpenApiRequest
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
+from plane.utils.external_assets import (
+    EXTERNALLY_MANAGED_ASSET_ERROR,
+    is_externally_managed_asset_entity_type,
+)
 from plane.db.models import FileAsset, User, Workspace
 from plane.app.permissions import WorkspaceUserPermission
 from plane.api.views.base import BaseAPIView
@@ -619,6 +623,12 @@ class GenericAssetEndpoint(BaseAPIView):
         """
         try:
             asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug, is_deleted=False)
+
+            if is_externally_managed_asset_entity_type(asset.entity_type):
+                return Response(
+                    {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
             # Update is_uploaded status
             asset.is_uploaded = request.data.get("is_uploaded", asset.is_uploaded)

@@ -29,13 +29,13 @@ class TestMySerializer:
     def test_serializer_valid_data(self):
         # Create input data
         data = {"field1": "value1", "field2": 42}
-        
+
         # Initialize the serializer
         serializer = MySerializer(data=data)
-        
+
         # Validate
         assert serializer.is_valid()
-        
+
         # Check validated data
         assert serializer.validated_data["field1"] == "value1"
         assert serializer.validated_data["field2"] == 42
@@ -58,10 +58,10 @@ class TestMyEndpoint:
     def test_my_endpoint_get(self, auth_client):
         # Get the URL
         url = reverse("my-endpoint")
-        
+
         # Make request
         response = auth_client.get(url)
-        
+
         # Check response
         assert response.status_code == status.HTTP_200_OK
         assert "data" in response.data
@@ -80,23 +80,13 @@ import requests
 @pytest.mark.smoke
 class TestCriticalFlow:
     @pytest.mark.django_db
-    def test_login_flow(self, plane_server, create_user, user_data):
-        # Get login URL
-        url = f"{plane_server.url}/api/auth/signin/"
-        
-        # Test login
-        response = requests.post(
-            url, 
-            json={
-                "email": user_data["email"],
-                "password": user_data["password"]
-            }
+    def test_identity_provider_login_redirect(self, plane_server):
+        response = requests.get(
+            f"{plane_server.url}/auth/slack/",
+            allow_redirects=False,
         )
-        
-        # Verify
-        assert response.status_code == 200
-        data = response.json()
-        assert "access_token" in data
+
+        assert response.status_code in (302, 303)
 ```
 
 ## Useful Fixtures
@@ -116,13 +106,14 @@ Our test setup provides several useful fixtures:
 For more complex test data setup, use the provided factories:
 
 ```python
-from plane.tests.factories import UserFactory, WorkspaceFactory
+from plane.tests.factories import UserFactory, WorkspaceFactory, WorkspaceMemberFactory
 
 # Create a user
 user = UserFactory()
 
-# Create a workspace with a specific owner
-workspace = WorkspaceFactory(owner=user)
+# Create a workspace and grant the user its administrator role
+workspace = WorkspaceFactory()
+WorkspaceMemberFactory(workspace=workspace, member=user, role=20)
 
 # Create multiple objects
 users = UserFactory.create_batch(5)

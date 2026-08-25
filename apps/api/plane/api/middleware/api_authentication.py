@@ -12,6 +12,7 @@ from rest_framework.exceptions import AuthenticationFailed
 
 # Module imports
 from plane.db.models import APIToken
+from plane.utils.identity_access import has_active_external_identity
 
 
 class APIKeyAuthentication(authentication.BaseAuthentication):
@@ -28,7 +29,7 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
 
     def validate_api_token(self, token):
         try:
-            api_token = APIToken.objects.get(
+            api_token = APIToken.objects.using("default").get(
                 Q(Q(expired_at__gt=timezone.now()) | Q(expired_at__isnull=True)),
                 token=token,
                 is_active=True,
@@ -36,6 +37,9 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
             )
         except APIToken.DoesNotExist:
             raise AuthenticationFailed("Given API token is not valid")
+
+        if not has_active_external_identity(api_token.user):
+            raise AuthenticationFailed("An active external identity is required")
 
         # save api token last used
         api_token.last_used = timezone.now()

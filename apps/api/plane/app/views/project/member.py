@@ -3,7 +3,11 @@
 # See the LICENSE file for details.
 
 # Third Party imports
+from uuid import UUID
+
+from django.db import transaction
 from django.db.models import Min
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -15,10 +19,15 @@ from plane.app.serializers import (
     ProjectMemberRoleSerializer,
     ProjectMemberSerializer,
 )
-from plane.bgtasks.project_add_user_email_task import project_add_user_email
-from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
+from plane.bgtasks.project_member_added_email_task import project_member_added_email
+from plane.db.models import Project, ProjectMember, ProjectUserProperty
 from plane.utils.host import base_host
-from plane.utils.workspace_admin import active_human_workspace_admins
+from plane.utils.identity_access import (
+    active_workspace_members,
+    lock_active_identity_source,
+    lock_active_workspace_member,
+    project_role_for_workspace_role,
+)
 
 # Module imports
 from .base import BaseAPIView, BaseViewSet
@@ -31,117 +40,191 @@ class ProjectMemberViewSet(BaseViewSet):
     search_fields = ["member__display_name", "member__first_name"]
 
     def get_queryset(self):
+        active_member_ids = active_workspace_members().filter(
+            workspace__slug=self.kwargs.get("slug"),
+        ).values("member_id")
         return self.filter_queryset(
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(member__is_bot=False)
-            .filter()
+            .filter(member_id__in=active_member_ids)
             .select_related("project")
             .select_related("member")
-            .select_related("workspace", "workspace__owner")
+            .select_related("workspace")
         )
 
+    @transaction.atomic
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
-        # Get the list of members to be added to the project and their roles i.e. the user_id and the role
         members = request.data.get("members", [])
-
-        # get the project
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
-
-        # Check if the members array is empty
-        if not len(members):
+        project = Project.objects.using("default").get(pk=project_id, workspace__slug=slug)
+        lock_active_identity_source(workspace_id=project.workspace_id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=project.workspace_id,
+            user_id=request.user.id,
+        )
+        if requester_workspace_member is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        requester_is_admin = ProjectMember.objects.select_for_update().filter(
+            project=project,
+            member=request.user,
+            is_active=True,
+        ).filter(
+            role=ROLE.ADMIN.value,
+        ).exists() or requester_workspace_member.role == ROLE.ADMIN.value
+        if not requester_is_admin:
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if not isinstance(members, list) or not members:
             return Response(
                 {"error": "At least one member is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Initialize the bulk arrays
-        bulk_project_members = []
-        bulk_issue_props = []
-
-        # Create a dictionary of the member_id and their roles
-        member_roles = {member.get("member_id"): member.get("role") for member in members}
-
-        # check the workspace role of the new user
-        for member in member_roles:
-            workspace_member_role = WorkspaceMember.objects.get(
-                workspace__slug=slug, member=member, is_active=True
-            ).role
-            if workspace_member_role in [20] and member_roles.get(member) in [5, 15]:
+        member_roles: dict[str, int] = {}
+        for member_payload in members:
+            try:
+                member_id = str(UUID(str(member_payload["member_id"])))
+                requested_role = int(member_payload.get("role", ROLE.GUEST.value))
+            except (KeyError, TypeError, ValueError):
                 return Response(
-                    {"error": "You cannot add a user with role lower than the workspace role"},
+                    {"error": "Each member must have a valid member_id and role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            if workspace_member_role in [5] and member_roles.get(member) in [15, 20]:
+            workspace_member = (
+                active_workspace_members()
+                .select_for_update()
+                .filter(
+                    workspace=project.workspace,
+                    member_id=member_id,
+                )
+                .only("role")
+                .first()
+            )
+            if workspace_member is None:
                 return Response(
-                    {"error": "You cannot add a user with role higher than the workspace role"},
+                    {"error": "Every project member must be an active member of the connected external workspace"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            try:
+                effective_role = project_role_for_workspace_role(
+                    workspace_role=workspace_member.role,
+                    requested_role=requested_role,
+                )
+            except ValueError:
+                return Response(
+                    {"error": "Invalid project role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if effective_role != requested_role:
+                return Response(
+                    {"error": "The project role must respect the member's external workspace role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            member_roles[member_id] = effective_role
 
-        # Update roles in the members array based on the member_roles dictionary and set is_active to True
-        for project_member in ProjectMember.objects.filter(
-            project_id=project_id,
-            member_id__in=[member.get("member_id") for member in members],
-        ):
+        existing_project_members = list(
+            ProjectMember.objects.select_for_update().filter(
+                project=project,
+                member_id__in=member_roles,
+            )
+        )
+        active_admin_member_ids = {
+            str(member_id)
+            for member_id in ProjectMember.objects.select_for_update()
+            .filter(
+                project=project,
+                role=ROLE.ADMIN.value,
+                is_active=True,
+            )
+            .values_list("member_id", flat=True)
+        }
+        resulting_admin_member_ids = {
+            member_id
+            for member_id in active_admin_member_ids
+            if member_id not in member_roles
+            or member_roles[member_id] == ROLE.ADMIN.value
+        }
+        resulting_admin_member_ids.update(
+            member_id
+            for member_id, role in member_roles.items()
+            if role == ROLE.ADMIN.value
+        )
+        if not resulting_admin_member_ids:
+            return Response(
+                {"error": "The project must retain at least one active administrator"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        existing_member_ids = {
+            str(project_member.member_id)
+            for project_member in existing_project_members
+        }
+        for project_member in existing_project_members:
             project_member.role = member_roles[str(project_member.member_id)]
             project_member.is_active = True
-            bulk_project_members.append(project_member)
+        ProjectMember.objects.bulk_update(
+            existing_project_members,
+            ["is_active", "role"],
+            batch_size=100,
+        )
 
-        # Update the roles of the existing members
-        ProjectMember.objects.bulk_update(bulk_project_members, ["is_active", "role"], batch_size=100)
-
-        # Get the minimum sort_order for each member in the workspace
         member_sort_orders = (
             ProjectUserProperty.objects.filter(
-                workspace__slug=slug,
-                user_id__in=[member.get("member_id") for member in members],
+                workspace=project.workspace,
+                user_id__in=member_roles,
             )
             .values("user_id")
             .annotate(min_sort_order=Min("sort_order"))
         )
-        # Convert to dictionary for easy lookup: {user_id: min_sort_order}
-        sort_order_map = {str(item["user_id"]): item["min_sort_order"] for item in member_sort_orders}
-
-        # Loop through requested members
-        for member in members:
-            member_id = str(member.get("member_id"))
-            # Get the minimum sort_order for this member, or use default
-            min_sort_order = sort_order_map.get(member_id)
-            # Create a new project member
-            bulk_project_members.append(
+        sort_order_map = {
+            str(item["user_id"]): item["min_sort_order"]
+            for item in member_sort_orders
+        }
+        ProjectMember.objects.bulk_create(
+            [
                 ProjectMember(
-                    member_id=member.get("member_id"),
-                    role=member.get("role", 5),
-                    project_id=project_id,
-                    workspace_id=project.workspace_id,
+                    member_id=member_id,
+                    role=role,
+                    project=project,
+                    workspace=project.workspace,
                 )
-            )
-            # Create a new issue property
-            bulk_issue_props.append(
+                for member_id, role in member_roles.items()
+                if member_id not in existing_member_ids
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
+        ProjectUserProperty.objects.bulk_create(
+            [
                 ProjectUserProperty(
-                    user_id=member.get("member_id"),
-                    project_id=project_id,
-                    workspace_id=project.workspace_id,
-                    sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
+                    user_id=member_id,
+                    project=project,
+                    workspace=project.workspace,
+                    sort_order=(
+                        sort_order_map[member_id] - 10000
+                        if sort_order_map.get(member_id) is not None
+                        else 65535
+                    ),
                 )
-            )
-
-        # Bulk create the project members and issue properties
-        project_members = ProjectMember.objects.bulk_create(bulk_project_members, batch_size=10, ignore_conflicts=True)
-
-        _ = ProjectUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
+                for member_id in member_roles
+            ],
+            batch_size=10,
+            ignore_conflicts=True,
+        )
 
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
-            member_id__in=[member.get("member_id") for member in members],
+            member_id__in=member_roles,
         )
-        # Send emails to notify the users
+        # Notify members whose external profile exposes an email address.
         [
-            project_add_user_email.delay(
+            project_member_added_email.delay(
                 base_host(request=request, is_app=True),
                 project_member.id,
                 request.user.id,
@@ -156,13 +239,14 @@ class ProjectMemberViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         # Get the list of project members for the project
+        active_member_ids = active_workspace_members().filter(
+            workspace__slug=slug,
+        ).values("member_id")
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
-            member__is_bot=False,
             is_active=True,
-            member__member_workspace__workspace__slug=slug,
-            member__member_workspace__is_active=True,
+            member_id__in=active_member_ids,
         ).select_related("project", "member", "workspace")
 
         serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role"), many=True)
@@ -170,11 +254,15 @@ class ProjectMemberViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk):
+        active_member_ids = active_workspace_members().filter(
+            workspace__slug=slug,
+        ).values("member_id")
         requesting_project_member = ProjectMember.objects.get(
             project_id=project_id,
             workspace__slug=slug,
             member=request.user,
             is_active=True,
+            member_id__in=active_member_ids,
         )
 
         project_member = (
@@ -182,8 +270,8 @@ class ProjectMemberViewSet(BaseViewSet):
                 pk=pk,
                 project_id=project_id,
                 workspace__slug=slug,
-                member__is_bot=False,
                 is_active=True,
+                member_id__in=active_member_ids,
             )
             .select_related("project", "member", "workspace")
             .first()
@@ -202,16 +290,42 @@ class ProjectMemberViewSet(BaseViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @transaction.atomic
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
+        unsupported_fields = set(request.data) - {"role", "is_active"}
+        if unsupported_fields:
+            return Response(
+                {"error": "Only role and is_active can be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        project = Project.objects.using("default").only("workspace_id").get(
+            pk=project_id,
+            workspace__slug=slug,
+        )
+        lock_active_identity_source(workspace_id=project.workspace_id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=project.workspace_id,
+            user_id=request.user.id,
+        )
+        if requester_workspace_member is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project_member = ProjectMember.objects.select_for_update().get(
+            pk=pk,
+            project=project,
+            is_active=True,
+        )
 
         # Fetch the target's workspace role (used to cap the new project role)
-        target_workspace_role = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=project_member.member, is_active=True
+        target_workspace_role = active_workspace_members().select_for_update().get(
+            workspace_id=project_member.workspace_id,
+            member=project_member.member,
         ).role
         # Fetch the requester's workspace role to decide if they may bypass project-role checks
-        is_workspace_admin = active_human_workspace_admins().filter(workspace__slug=slug, member=request.user).exists()
+        is_workspace_admin = requester_workspace_member.role == ROLE.ADMIN.value
 
         # Check if the user is not editing their own role if they are not an admin
         if request.user.id == project_member.member_id and not is_workspace_admin:
@@ -220,7 +334,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # Check while updating user roles
-        requested_project_member = ProjectMember.objects.get(
+        requested_project_member = ProjectMember.objects.select_for_update().get(
             project_id=project_id,
             workspace__slug=slug,
             member=request.user,
@@ -242,7 +356,13 @@ class ProjectMemberViewSet(BaseViewSet):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-            new_role = int(request.data.get("role"))
+            try:
+                new_role = int(request.data.get("role"))
+            except (TypeError, ValueError):
+                return Response(
+                    {"error": "Invalid project role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             # Cannot assign a role equal to or higher than your own
             if new_role >= requested_project_member.role and not is_workspace_admin:
@@ -251,10 +371,19 @@ class ProjectMemberViewSet(BaseViewSet):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-            # Cannot assign a role higher than the target's workspace role
-            if target_workspace_role in [5] and new_role in [15, 20]:
+            try:
+                effective_role = project_role_for_workspace_role(
+                    workspace_role=target_workspace_role,
+                    requested_role=new_role,
+                )
+            except ValueError:
                 return Response(
-                    {"error": "You cannot add a user with role higher than the workspace role"},
+                    {"error": "Invalid project role"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if effective_role != new_role:
+                return Response(
+                    {"error": "The project role must respect the member's external workspace role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -280,26 +409,62 @@ class ProjectMemberViewSet(BaseViewSet):
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
         if serializer.is_valid():
+            next_role = serializer.validated_data.get("role", project_member.role)
+            next_is_active = serializer.validated_data.get("is_active", project_member.is_active)
+            if project_member.role == ROLE.ADMIN.value and (
+                next_role != ROLE.ADMIN.value or not next_is_active
+            ):
+                active_admins = list(
+                    ProjectMember.objects.select_for_update().filter(
+                        project=project,
+                        role=ROLE.ADMIN.value,
+                        is_active=True,
+                    )
+                )
+                if len(active_admins) <= 1:
+                    return Response(
+                        {"error": "The project must retain at least one active administrator"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @transaction.atomic
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(
+        project = Project.objects.using("default").only("workspace_id").get(
+            pk=project_id,
             workspace__slug=slug,
-            project_id=project_id,
+        )
+        lock_active_identity_source(workspace_id=project.workspace_id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=project.workspace_id,
+            user_id=request.user.id,
+        )
+        if requester_workspace_member is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project_member = ProjectMember.objects.select_for_update().get(
+            project=project,
             pk=pk,
-            member__is_bot=False,
             is_active=True,
         )
         # check requesting user role
-        requesting_project_member = ProjectMember.objects.get(
+        requesting_project_member = ProjectMember.objects.select_for_update().get(
             workspace__slug=slug,
             member=request.user,
             project_id=project_id,
             is_active=True,
         )
+        is_workspace_admin = requester_workspace_member.role == ROLE.ADMIN.value
+        if requesting_project_member.role < ROLE.ADMIN.value and not is_workspace_admin:
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # User cannot remove himself
         if str(project_member.id) == str(requesting_project_member.id):
             return Response(
@@ -312,37 +477,61 @@ class ProjectMemberViewSet(BaseViewSet):
                 {"error": "You cannot remove a user having role higher than you"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if project_member.role == ROLE.ADMIN.value:
+            active_admins = list(
+                ProjectMember.objects.select_for_update().filter(
+                    project=project,
+                    role=ROLE.ADMIN.value,
+                    is_active=True,
+                )
+            )
+            if len(active_admins) <= 1:
+                return Response(
+                    {"error": "The project must retain at least one active administrator"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         project_member.is_active = False
-        project_member.save()
+        project_member.save(update_fields=["is_active", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @transaction.atomic
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def leave(self, request, slug, project_id):
-        project_member = ProjectMember.objects.get(
+        project = Project.objects.using("default").only("workspace_id").get(
+            pk=project_id,
             workspace__slug=slug,
-            project_id=project_id,
+        )
+        lock_active_identity_source(workspace_id=project.workspace_id)
+        if lock_active_workspace_member(
+            workspace_id=project.workspace_id,
+            user_id=request.user.id,
+        ) is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project_member = ProjectMember.objects.select_for_update().get(
+            project=project,
             member=request.user,
             is_active=True,
         )
 
-        # Check if the leaving user is the only admin of the project
-        if (
-            project_member.role == 20
-            and not ProjectMember.objects.filter(
-                workspace__slug=slug, project_id=project_id, role=20, is_active=True
-            ).count()
-            > 1
-        ):
-            return Response(
-                {
-                    "error": "You cannot leave the project as your the only admin of the project you will have to either delete the project or create an another admin"  # noqa: E501
-                },
-                status=status.HTTP_400_BAD_REQUEST,
+        if project_member.role == ROLE.ADMIN.value:
+            active_admins = list(
+                ProjectMember.objects.select_for_update().filter(
+                    project=project,
+                    role=ROLE.ADMIN.value,
+                    is_active=True,
+                )
             )
-        # Deactivate the user
+            if len(active_admins) <= 1:
+                return Response(
+                    {"error": "The project must retain at least one active administrator"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         project_member.is_active = False
-        project_member.save()
+        project_member.save(update_fields=["is_active", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -352,6 +541,9 @@ class ProjectMemberUserEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
             member=request.user,
+            member_id__in=active_workspace_members()
+            .filter(workspace__slug=slug)
+            .values("member_id"),
             is_active=True,
         )
         serializer = ProjectMemberSerializer(project_member)
@@ -368,8 +560,9 @@ class UserProjectRolesEndpoint(BaseAPIView):
             workspace__slug=slug,
             member_id=request.user.id,
             is_active=True,
-            member__member_workspace__workspace__slug=slug,
-            member__member_workspace__is_active=True,
+            member_id__in=active_workspace_members()
+            .filter(workspace__slug=slug)
+            .values("member_id"),
         ).values("project_id", "role")
 
         project_members = {str(member["project_id"]): member["role"] for member in project_members}
@@ -382,6 +575,10 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
             project_id=project_id,
             member_id=member_id,
             workspace__slug=slug,
+            is_active=True,
+            member_id__in=active_workspace_members()
+            .filter(workspace__slug=slug)
+            .values("member_id"),
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -391,9 +588,12 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
         serializer = ProjectMemberPreferenceSerializer(project_member, {"preferences": request.data}, partial=True)
 
         if serializer.is_valid():
-            serializer.save()
-
-            return Response({"preferences": serializer.data["preferences"]}, status=status.HTTP_200_OK)
+            preferences = serializer.validated_data["preferences"]
+            ProjectMember.objects.filter(pk=project_member.pk).update(
+                preferences=preferences,
+                updated_at=timezone.now(),
+            )
+            return Response({"preferences": preferences}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])

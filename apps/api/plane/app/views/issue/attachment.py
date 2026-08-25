@@ -62,7 +62,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_attachment = FileAsset.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         ).first()
         if not issue_attachment:
             return Response(
@@ -149,7 +153,11 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_attachment = FileAsset.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         )
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
@@ -205,7 +213,11 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, issue_id, pk):
         issue_attachment = FileAsset.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, issue_id=issue_id
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         )
         serializer = IssueAttachmentSerializer(issue_attachment)
 

@@ -112,7 +112,7 @@ def _collect_and_push_metrics() -> None:
         meter = provider.get_meter(__name__)
 
         # Collect instance-level counts
-        user_count = User.objects.filter(is_bot=False).count()
+        user_count = User.objects.count()
         workspace_count = Workspace.objects.count()
         project_count = Project.objects.count()
         issue_count = Issue.objects.count()
@@ -120,7 +120,7 @@ def _collect_and_push_metrics() -> None:
         cycle_count = Cycle.objects.count()
         cycle_issue_count = CycleIssue.objects.count()
         module_issue_count = ModuleIssue.objects.count()
-        page_count = Page.objects.exclude(owned_by__is_bot=True, access=1).count()
+        page_count = Page.objects.count()
 
         # Derive domain from WEB_URL env var (e.g. https://plane.acmecorp.com -> plane.acmecorp.com).
         # Prepend "//" for scheme-less values (e.g. "plane.acmecorp.com") so urlparse
@@ -138,7 +138,6 @@ def _collect_and_push_metrics() -> None:
             "latest_version": str(instance.latest_version or ""),
             "edition": str(instance.edition or ""),
             "domain": domain,
-            "is_verified": str(instance.is_verified).lower(),
             "is_setup_done": str(instance.is_setup_done).lower(),
         }
 
@@ -257,7 +256,6 @@ def _collect_and_push_metrics() -> None:
         )
         page_counts = dict(
             Page.objects.filter(workspace_id__in=workspace_ids)
-            .exclude(owned_by__is_bot=True, access=1)
             .values("workspace_id")
             .annotate(count=Count("id"))
             .values_list("workspace_id", "count")

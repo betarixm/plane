@@ -51,6 +51,18 @@ app.conf.beat_schedule = {
         "task": "plane.license.bgtasks.telemetry_metrics.push_instance_metrics",
         "schedule": schedule(run_every=timedelta(minutes=METRICS_PUSH_INTERVAL_MINUTES)),
     },
+    "reconcile-slack-identity-source": {
+        "task": "plane.bgtasks.slack_sync.reconcile_all_slack_installations",
+        "schedule": crontab(minute="*/15"),
+    },
+    "delete-old-slack-event-receipts": {
+        "task": "plane.bgtasks.slack_sync.delete_old_slack_event_receipts",
+        "schedule": crontab(hour=4, minute=0),
+    },
+    "requeue-stale-slack-event-receipts": {
+        "task": "plane.bgtasks.slack_sync.requeue_stale_slack_event_receipts",
+        "schedule": crontab(minute="*"),
+    },
     # Occurs once every day
     "check-every-day-to-delete-hard-delete": {
         "task": "plane.bgtasks.deletion_task.hard_delete",

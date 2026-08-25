@@ -8,15 +8,12 @@ from plane.app.views import (
     ExportWorkspaceUserActivityEndpoint,
     QuickLinkViewSet,
     UserRecentVisitViewSet,
-    UserWorkspaceInvitationEndpoint,
     WorkspaceCyclesEndpoint,
     WorkspaceDraftIssueViewSet,
     WorkspaceEstimatesEndpoint,
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
     WorkspaceHomePreferenceViewSet,
-    WorkspaceInvitationsViewset,
-    WorkspaceJoinEndpoint,
     WorkspaceLabelsEndpoint,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
@@ -46,28 +43,7 @@ urlpatterns = [
         ),
         name="workspace",
     ),
-    path(
-        "workspaces/<str:slug>/invitations/",
-        WorkspaceInvitationsViewset.as_view({"get": "list", "post": "create"}),
-        name="workspace-invitations",
-    ),
-    path(
-        "workspaces/<str:slug>/invitations/<uuid:pk>/",
-        WorkspaceInvitationsViewset.as_view({"delete": "destroy", "get": "retrieve", "patch": "partial_update"}),
-        name="workspace-invitations",
-    ),
-    # current user's invitation to the singleton workspace
-    path(
-        "users/me/workspace/invitation/",
-        UserWorkspaceInvitationEndpoint.as_view(),
-        name="user-workspace-invitation",
-    ),
-    path(
-        "workspaces/<str:slug>/invitations/<uuid:pk>/join/",
-        WorkspaceJoinEndpoint.as_view(),
-        name="workspace-join",
-    ),
-    # user join workspace
+    # The configured external provider is the source of truth for the roster.
     path(
         "workspaces/<str:slug>/members/",
         WorkSpaceMemberViewSet.as_view({"get": "list"}),
@@ -80,13 +56,8 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/members/<uuid:pk>/",
-        WorkSpaceMemberViewSet.as_view({"patch": "partial_update", "delete": "destroy", "get": "retrieve"}),
+        WorkSpaceMemberViewSet.as_view({"get": "retrieve"}),
         name="workspace-member",
-    ),
-    path(
-        "workspaces/<str:slug>/members/leave/",
-        WorkSpaceMemberViewSet.as_view({"post": "leave"}),
-        name="leave-workspace-members",
     ),
     path(
         "workspaces/<str:slug>/workspace-members/me/",

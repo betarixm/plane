@@ -17,12 +17,9 @@ class APITokenSerializer(BaseSerializer):
             "expired_at",
             "created_at",
             "updated_at",
-            "workspace",
             "user",
             "is_active",
             "last_used",
-            "user_type",
-            "allowed_rate_limit",
         ]
 
 

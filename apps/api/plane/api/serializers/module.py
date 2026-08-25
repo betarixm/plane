@@ -13,9 +13,9 @@ from plane.db.models import (
     ModuleLink,
     ModuleMember,
     ModuleIssue,
-    ProjectMember,
     Project,
 )
+from plane.utils.identity_access import active_project_members
 
 
 class ModuleCreateSerializer(BaseSerializer):
@@ -73,8 +73,17 @@ class ModuleCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
+        lead = data.get("lead")
+        if lead is not None and not active_project_members().filter(
+            project_id=project_id,
+            member=lead,
+        ).exists():
+            raise serializers.ValidationError(
+                {"lead": "Lead must be an active current external project member."}
+            )
+
         if data.get("members", []):
-            data["members"] = ProjectMember.objects.filter(
+            data["members"] = active_project_members().filter(
                 project_id=self.context.get("project_id"), member_id__in=data["members"]
             ).values_list("member_id", flat=True)
 

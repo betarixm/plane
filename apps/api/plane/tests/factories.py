@@ -18,12 +18,10 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     id = factory.LazyFunction(uuid4)
     email = factory.Sequence(lambda n: f"user{n}@plane.so")
-    password = factory.PostGenerationMethodCall("set_password", "password")
+    username = factory.Sequence(lambda n: f"user{n}")
     first_name = factory.Sequence(lambda n: f"First{n}")
     last_name = factory.Sequence(lambda n: f"Last{n}")
     is_active = True
-    is_superuser = False
-    is_staff = False
 
 
 class WorkspaceFactory(factory.django.DjangoModelFactory):
@@ -36,7 +34,6 @@ class WorkspaceFactory(factory.django.DjangoModelFactory):
     id = factory.LazyFunction(uuid4)
     name = factory.Sequence(lambda n: f"Workspace {n}")
     slug = factory.Sequence(lambda n: f"workspace-{n}")
-    owner = factory.SubFactory(UserFactory)
     created_at = factory.LazyFunction(timezone.now)
     updated_at = factory.LazyFunction(timezone.now)
 
@@ -65,8 +62,8 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     id = factory.LazyFunction(uuid4)
     name = factory.Sequence(lambda n: f"Project {n}")
     workspace = factory.SubFactory(WorkspaceFactory)
-    created_by = factory.SelfAttribute("workspace.owner")
-    updated_by = factory.SelfAttribute("workspace.owner")
+    created_by = factory.SubFactory(UserFactory)
+    updated_by = factory.SelfAttribute("created_by")
     created_at = factory.LazyFunction(timezone.now)
     updated_at = factory.LazyFunction(timezone.now)
 

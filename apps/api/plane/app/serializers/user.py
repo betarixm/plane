@@ -6,58 +6,9 @@
 from rest_framework import serializers
 
 # Module import
-from plane.db.models import Account, Profile, User, Workspace, WorkspaceMemberInvite
-from plane.utils.url import contains_url
+from plane.db.models import Profile, User, Workspace
 
 from .base import BaseSerializer
-
-
-class UserSerializer(BaseSerializer):
-    def validate_first_name(self, value):
-        if contains_url(value):
-            raise serializers.ValidationError("First name cannot contain a URL.")
-        return value
-
-    def validate_last_name(self, value):
-        if contains_url(value):
-            raise serializers.ValidationError("Last name cannot contain a URL.")
-        return value
-
-    class Meta:
-        model = User
-        # Exclude password field from the serializer
-        fields = [field.name for field in User._meta.fields if field.name != "password"]
-        # Make all system fields and email read only
-        read_only_fields = [
-            "id",
-            "username",
-            "mobile_number",
-            "email",
-            "token",
-            "created_at",
-            "updated_at",
-            "is_superuser",
-            "is_staff",
-            "is_managed",
-            "last_active",
-            "last_login_time",
-            "last_logout_time",
-            "last_login_ip",
-            "last_logout_ip",
-            "last_login_uagent",
-            "last_location",
-            "last_login_medium",
-            "created_location",
-            "is_bot",
-            "is_password_autoset",
-            "is_email_verified",
-            "is_active",
-            "token_updated_at",
-        ]
-
-        # If the user has already filled first name or last name then he is onboarded
-        def get_is_onboarded(self, obj):
-            return bool(obj.first_name) or bool(obj.last_name)
 
 
 class UserMeSerializer(BaseSerializer):
@@ -75,14 +26,8 @@ class UserMeSerializer(BaseSerializer):
             "first_name",
             "last_name",
             "is_active",
-            "is_bot",
-            "is_email_verified",
             "user_timezone",
             "username",
-            "is_password_autoset",
-            "is_email_verified",
-            "last_login_medium",
-            "last_login_time",
         ]
         read_only_fields = fields
 
@@ -96,7 +41,6 @@ class UserMeSettingsSerializer(BaseSerializer):
         read_only_fields = fields
 
     def get_workspace(self, obj):
-        workspace_invites = WorkspaceMemberInvite.objects.filter(email=obj.email).count()
         workspace = (
             Workspace.objects.filter(
                 workspace_member__member_id=obj.id,
@@ -110,7 +54,6 @@ class UserMeSettingsSerializer(BaseSerializer):
             "slug": workspace.slug if workspace is not None else None,
             "name": workspace.name if workspace is not None else None,
             "logo": workspace.logo_url if workspace is not None else None,
-            "invites": workspace_invites,
         }
 
 
@@ -123,10 +66,9 @@ class UserLiteSerializer(BaseSerializer):
             "last_name",
             "avatar",
             "avatar_url",
-            "is_bot",
             "display_name",
         ]
-        read_only_fields = ["id", "is_bot"]
+        read_only_fields = fields
 
 
 class UserAdminLiteSerializer(BaseSerializer):
@@ -138,51 +80,14 @@ class UserAdminLiteSerializer(BaseSerializer):
             "last_name",
             "avatar",
             "avatar_url",
-            "is_bot",
             "display_name",
             "email",
-            "last_login_medium",
         ]
-        read_only_fields = ["id", "is_bot"]
-
-
-class ChangePasswordSerializer(serializers.Serializer):
-    model = User
-
-    """
-    Serializer for password change endpoint.
-    """
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True, min_length=8)
-    confirm_password = serializers.CharField(required=True, min_length=8)
-
-    def validate(self, data):
-        if data.get("old_password") == data.get("new_password"):
-            raise serializers.ValidationError({"error": "New password cannot be same as old password."})
-
-        if data.get("new_password") != data.get("confirm_password"):
-            raise serializers.ValidationError({"error": "Confirm password should be same as the new password."})
-
-        return data
-
-
-class ResetPasswordSerializer(serializers.Serializer):
-    """
-    Serializer for password change endpoint.
-    """
-
-    new_password = serializers.CharField(required=True, min_length=8)
+        read_only_fields = fields
 
 
 class ProfileSerializer(BaseSerializer):
     class Meta:
         model = Profile
-        fields = "__all__"
-        read_only_fields = ["user"]
-
-
-class AccountSerializer(BaseSerializer):
-    class Meta:
-        model = Account
         fields = "__all__"
         read_only_fields = ["user"]

@@ -37,9 +37,11 @@ from plane.db.models import (
     Module,
     Page,
     IssueView,
-    ProjectMember,
     ProjectPage,
-    WorkspaceMember,
+)
+from plane.utils.identity_access import (
+    active_project_members,
+    active_workspace_members,
 )
 
 
@@ -329,11 +331,9 @@ class SearchEndpoint(BaseAPIView):
                             q |= Q(**{f"{field}__icontains": query})
 
                     users = (
-                        ProjectMember.objects.filter(
+                        active_project_members().filter(
                             q,
-                            is_active=True,
                             workspace__slug=slug,
-                            member__is_bot=False,
                             project_id=project_id,
                         )
                         .annotate(
@@ -541,11 +541,9 @@ class SearchEndpoint(BaseAPIView):
                         for field in fields:
                             q |= Q(**{f"{field}__icontains": query})
                     users = (
-                        WorkspaceMember.objects.filter(
+                        active_workspace_members().filter(
                             q,
-                            is_active=True,
                             workspace__slug=slug,
-                            member__is_bot=False,
                         )
                         .annotate(
                             member__avatar_url=Case(

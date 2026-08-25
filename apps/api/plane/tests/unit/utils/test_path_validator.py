@@ -14,11 +14,10 @@ from plane.utils.path_validator import get_safe_redirect_url
 @override_settings(
     WEB_URL="https://app.example.com",
     APP_BASE_URL="https://app.example.com",
-    ADMIN_BASE_URL="https://admin.example.com",
     SPACE_BASE_URL="https://space.example.com",
 )
 def test_safe_redirect_url_preserves_next_path_query_parameters():
-    next_path = "/workspace-invitations/?invitation_id=invite-1&slug=plane&token=secret#accept"
+    next_path = "/projects/?view=assigned&group_by=state#active"
 
     redirect_url = get_safe_redirect_url("https://app.example.com", next_path)
     query = parse_qs(urlparse(redirect_url).query)

@@ -23,9 +23,6 @@ export MACHINE_SIGNATURE=$SIGNATURE
 # Register instance
 python manage.py register_instance "$MACHINE_SIGNATURE"
 
-# Load the configuration variable
-python manage.py configure_instance
-
 # Create the default bucket
 python manage.py create_bucket
 
@@ -35,4 +32,4 @@ python manage.py clear_cache
 # Collect static files
 python manage.py collectstatic --noinput
 
-exec gunicorn -w "$GUNICORN_WORKERS" -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:"${PORT:-8000}" --max-requests 1200 --max-requests-jitter 1000 --access-logfile -
+exec gunicorn -w "$GUNICORN_WORKERS" -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:"${PORT:-8000}" --max-requests 1200 --max-requests-jitter 1000 --access-logfile - --access-logformat '%(h)s %(t)s "%(m)s %(U)s %(H)s" %(s)s %(b)s %(L)s'

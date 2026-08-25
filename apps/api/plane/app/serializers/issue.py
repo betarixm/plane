@@ -40,13 +40,13 @@ from plane.db.models import (
     State,
     IssueVersion,
     IssueDescriptionVersion,
-    ProjectMember,
     EstimatePoint,
 )
 from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.identity_access import active_project_members
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -148,10 +148,9 @@ class IssueCreateSerializer(BaseSerializer):
 
         # Validate assignees are from project
         if attrs.get("assignee_ids", []):
-            attrs["assignee_ids"] = ProjectMember.objects.filter(
+            attrs["assignee_ids"] = active_project_members().filter(
                 project_id=self.context["project_id"],
                 role__gte=15,
-                is_active=True,
                 member_id__in=attrs["assignee_ids"],
             ).values_list("member_id", flat=True)
 
@@ -233,11 +232,10 @@ class IssueCreateSerializer(BaseSerializer):
             # Then assign it to default assignee, if it is a valid assignee
             if (
                 default_assignee_id is not None
-                and ProjectMember.objects.filter(
+                and active_project_members().filter(
                     member_id=default_assignee_id,
                     project_id=project_id,
                     role__gte=15,
-                    is_active=True,
                 ).exists()
             ):
                 try:
@@ -972,6 +970,20 @@ class IssuePublicSerializer(BaseSerializer):
 
 
 class IssueSubscriberSerializer(BaseSerializer):
+    def validate_subscriber(self, value):
+        view = self.context.get("view")
+        project_id = self.context.get("project_id") or getattr(
+            view, "kwargs", {}
+        ).get("project_id")
+        if project_id is None or not active_project_members().filter(
+            project_id=project_id,
+            member=value,
+        ).exists():
+            raise serializers.ValidationError(
+                "Subscriber must be an active current external project member."
+            )
+        return value
+
     class Meta:
         model = IssueSubscriber
         fields = "__all__"

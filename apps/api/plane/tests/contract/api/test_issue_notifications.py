@@ -58,8 +58,6 @@ def assignee_user(db):
         first_name="Assignee",
         last_name="User",
     )
-    user.set_password("assignee-password")
-    user.save()
     return user
 
 

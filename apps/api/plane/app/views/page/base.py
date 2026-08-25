@@ -21,6 +21,8 @@ from django.db.models import (
     IntegerField,
 )
 from django.http import StreamingHttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce
@@ -492,6 +494,39 @@ class PageFavoriteViewSet(BaseViewSet):
             entity_type="page",
         )
         page_favorite.delete(soft=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@method_decorator(never_cache, name="dispatch")
+class PageLiveEditAccessEndpoint(BaseAPIView):
+    """Fail-closed authorization check for an active Live page editor."""
+
+    def get(self, request, slug, project_id, page_id):
+        can_edit_page = (
+            Page.objects.filter(
+                pk=page_id,
+                workspace__slug=slug,
+                archived_at__isnull=True,
+                is_locked=False,
+                project_pages__project_id=project_id,
+                project_pages__project__deleted_at__isnull=True,
+                project_pages__project__archived_at__isnull=True,
+                project_pages__project__project_projectmember__deleted_at__isnull=True,
+                project_pages__project__project_projectmember__member=request.user,
+                project_pages__project__project_projectmember__workspace__slug=slug,
+                project_pages__project__project_projectmember__is_active=True,
+                project_pages__project__project_projectmember__role__in=[
+                    ROLE.ADMIN.value,
+                    ROLE.MEMBER.value,
+                ],
+                project_pages__deleted_at__isnull=True,
+            )
+            .filter(Q(access=Page.PUBLIC_ACCESS) | Q(access=Page.PRIVATE_ACCESS, owned_by=request.user))
+            .exists()
+        )
+        if not can_edit_page:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

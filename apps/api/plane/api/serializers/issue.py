@@ -22,7 +22,6 @@ from plane.db.models import (
     IssueLink,
     IssueRelation,
     Label,
-    ProjectMember,
     State,
     User,
     EstimatePoint,
@@ -31,6 +30,7 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.identity_access import active_project_members
 
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
@@ -105,9 +105,8 @@ class IssueSerializer(BaseSerializer):
 
         # Validate assignees are from project
         if data.get("assignees", []):
-            data["assignees"] = ProjectMember.objects.filter(
+            data["assignees"] = active_project_members().filter(
                 project_id=self.context.get("project_id"),
-                is_active=True,
                 role__gte=15,
                 member_id__in=data["assignees"],
             ).values_list("member_id", flat=True)
@@ -192,11 +191,10 @@ class IssueSerializer(BaseSerializer):
                 # Then assign it to default assignee, if it is a valid assignee
                 if (
                     default_assignee_id is not None
-                    and ProjectMember.objects.filter(
+                    and active_project_members().filter(
                         member_id=default_assignee_id,
                         project_id=project_id,
                         role__gte=15,
-                        is_active=True,
                     ).exists()
                 ):
                     IssueAssignee.objects.create(

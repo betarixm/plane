@@ -59,6 +59,7 @@ from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
+from plane.utils.identity_access import identity_project_write_fence
 
 
 class CycleViewSet(BaseViewSet):
@@ -269,12 +270,22 @@ class CycleViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
         if (request.data.get("start_date", None) is None and request.data.get("end_date", None) is None) or (
             request.data.get("start_date", None) is not None and request.data.get("end_date", None) is not None
         ):
             serializer = CycleWriteSerializer(data=request.data, context={"project_id": project_id})
-            if serializer.is_valid():
-                serializer.save(project_id=project_id, owned_by=request.user)
+            with identity_project_write_fence(
+                workspace_id=project.workspace_id,
+                project_id=project_id,
+                user_id=request.user.id,
+                allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            ):
+                serializer_is_valid = serializer.is_valid()
+                if serializer_is_valid:
+                    serializer.save(project_id=project_id, owned_by=request.user)
+
+            if serializer_is_valid:
                 cycle = (
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
@@ -357,8 +368,17 @@ class CycleViewSet(BaseViewSet):
                 )
 
         serializer = CycleWriteSerializer(cycle, data=request.data, partial=True, context={"project_id": project_id})
-        if serializer.is_valid():
-            serializer.save()
+        with identity_project_write_fence(
+            workspace_id=cycle.workspace_id,
+            project_id=project_id,
+            user_id=request.user.id,
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ):
+            serializer_is_valid = serializer.is_valid()
+            if serializer_is_valid:
+                serializer.save()
+
+        if serializer_is_valid:
             cycle = queryset.values(
                 # necessary fields
                 "id",

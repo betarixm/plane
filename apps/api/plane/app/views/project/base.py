@@ -7,6 +7,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import Count, Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.utils import timezone
 
@@ -41,7 +42,13 @@ from plane.db.models import (
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
 from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
-from plane.utils.workspace_admin import active_human_workspace_admins
+from plane.utils.identity_access import (
+    active_project_members,
+    active_workspace_members,
+    enqueue_task_after_commit,
+    lock_active_identity_source,
+    lock_active_workspace_member,
+)
 
 
 class ProjectViewSet(BaseViewSet):
@@ -60,7 +67,7 @@ class ProjectViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
+            .select_related("workspace", "default_assignee", "project_lead")
             .annotate(
                 is_favorite=Exists(
                     UserFavorite.objects.filter(
@@ -89,8 +96,8 @@ class ProjectViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",
-                    queryset=ProjectMember.objects.filter(
-                        workspace__slug=self.kwargs.get("slug"), is_active=True
+                    queryset=active_project_members().filter(
+                        workspace__slug=self.kwargs.get("slug")
                     ).select_related("member"),
                     to_attr="members_list",
                 )
@@ -152,7 +159,7 @@ class ProjectViewSet(BaseViewSet):
 
         projects = (
             Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
+            .select_related("workspace", "default_assignee", "project_lead")
             .annotate(
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
@@ -254,9 +261,20 @@ class ProjectViewSet(BaseViewSet):
         serializer = ProjectListSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @transaction.atomic
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
-        workspace = Workspace.objects.get(slug=slug)
+        workspace = Workspace.objects.using("default").get(slug=slug)
+        lock_active_identity_source(workspace_id=workspace.id)
+        if not active_workspace_members().select_for_update().filter(
+            workspace=workspace,
+            member=request.user,
+            role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+        ).exists():
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = ProjectSerializer(data={**request.data}, context={"workspace_id": workspace.id})
         if serializer.is_valid():
@@ -297,7 +315,8 @@ class ProjectViewSet(BaseViewSet):
             project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
             # Create the model activity
-            model_activity.delay(
+            enqueue_task_after_commit(
+                model_activity,
                 model_name="project",
                 model_id=str(project.id),
                 requested_data=request.data,
@@ -311,21 +330,28 @@ class ProjectViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @transaction.atomic
     def partial_update(self, request, slug, pk=None):
-        # try:
-        is_workspace_admin = (
-            active_human_workspace_admins()
-            .filter(
-                member=request.user,
-                workspace__slug=slug,
-            )
-            .exists()
+        workspace = Workspace.objects.using("default").get(slug=slug)
+        lock_active_identity_source(workspace_id=workspace.id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=workspace.id,
+            user_id=request.user.id,
         )
+        if requester_workspace_member is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        project = Project.objects.using("default").select_for_update().get(
+            pk=pk,
+            workspace=workspace,
+        )
+        is_workspace_admin = requester_workspace_member.role == ROLE.ADMIN.value
 
-        is_project_admin = ProjectMember.objects.filter(
+        is_project_admin = ProjectMember.objects.using("default").select_for_update().filter(
             member=request.user,
-            workspace__slug=slug,
-            project_id=pk,
+            project=project,
             role=ROLE.ADMIN.value,
             is_active=True,
         ).exists()
@@ -337,9 +363,6 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        workspace = Workspace.objects.get(slug=slug)
-
-        project = Project.objects.get(pk=pk, workspace__slug=slug)
         intake_view = request.data.get("inbox_view", project.intake_view)
         current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
         if project.archived_at:
@@ -368,7 +391,8 @@ class ProjectViewSet(BaseViewSet):
 
             project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
-            model_activity.delay(
+            enqueue_task_after_commit(
+                model_activity,
                 model_name="project",
                 model_id=str(project.id),
                 requested_data=request.data,
@@ -381,65 +405,115 @@ class ProjectViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @transaction.atomic
     def destroy(self, request, slug, pk):
-        if (
-            active_human_workspace_admins()
-            .filter(
-                member=request.user,
-                workspace__slug=slug,
+        workspace = Workspace.objects.using("default").get(slug=slug)
+        lock_active_identity_source(workspace_id=workspace.id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=workspace.id,
+            user_id=request.user.id,
+        )
+        if requester_workspace_member is None:
+            return Response(
+                {"error": "An active external workspace membership is required."},
+                status=status.HTTP_403_FORBIDDEN,
             )
-            .exists()
-            or ProjectMember.objects.filter(
-                member=request.user,
-                workspace__slug=slug,
-                project_id=pk,
-                role=ROLE.ADMIN.value,
-                is_active=True,
-            ).exists()
-        ):
-            project = Project.objects.get(pk=pk, workspace__slug=slug)
-            project.delete()
-            webhook_activity.delay(
-                event="project",
-                verb="deleted",
-                field=None,
-                old_value=None,
-                new_value=None,
-                actor_id=request.user.id,
-                slug=slug,
-                current_site=base_host(request=request, is_app=True),
-                event_id=project.id,
-                old_identifier=None,
-                new_identifier=None,
-            )
-            # Delete the project members
-            DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()
-
-            # Delete the user favorite
-            UserFavorite.objects.filter(project_id=pk, workspace__slug=slug).delete()
-
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
+        project = Project.objects.using("default").select_for_update().get(
+            pk=pk,
+            workspace=workspace,
+        )
+        is_project_admin = ProjectMember.objects.using("default").select_for_update().filter(
+            member=request.user,
+            project=project,
+            role=ROLE.ADMIN.value,
+            is_active=True,
+        ).exists()
+        if requester_workspace_member.role != ROLE.ADMIN.value and not is_project_admin:
             return Response(
                 {"error": "You don't have the required permissions."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        project.delete()
+        enqueue_task_after_commit(
+            webhook_activity,
+            event="project",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=request.user.id,
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=project.id,
+            old_identifier=None,
+            new_identifier=None,
+        )
+        DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()
+        UserFavorite.objects.filter(project_id=pk, workspace__slug=slug).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
+    @transaction.atomic
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        workspace = Workspace.objects.using("default").get(slug=slug)
+        lock_active_identity_source(workspace_id=workspace.id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=workspace.id,
+            user_id=request.user.id,
+        )
+        project = Project.objects.using("default").select_for_update().get(
+            pk=project_id,
+            workspace=workspace,
+        )
+        requester_project_member = ProjectMember.objects.using("default").select_for_update().filter(
+            project=project,
+            member=request.user,
+            role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            is_active=True,
+        ).exists()
+        if requester_workspace_member is None or not (
+            requester_workspace_member.role == ROLE.ADMIN.value or requester_project_member
+        ):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         project.archived_at = timezone.now()
-        project.save()
+        project.save(update_fields=["archived_at", "updated_at"])
         UserFavorite.objects.filter(workspace__slug=slug, project=project_id).delete()
         return Response({"archived_at": str(project.archived_at)}, status=status.HTTP_200_OK)
 
+    @transaction.atomic
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id):
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        workspace = Workspace.objects.using("default").get(slug=slug)
+        lock_active_identity_source(workspace_id=workspace.id)
+        requester_workspace_member = lock_active_workspace_member(
+            workspace_id=workspace.id,
+            user_id=request.user.id,
+        )
+        project = Project.objects.using("default").select_for_update().get(
+            pk=project_id,
+            workspace=workspace,
+        )
+        requester_project_member = ProjectMember.objects.using("default").select_for_update().filter(
+            project=project,
+            member=request.user,
+            role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            is_active=True,
+        ).exists()
+        if requester_workspace_member is None or not (
+            requester_workspace_member.role == ROLE.ADMIN.value or requester_project_member
+        ):
+            return Response(
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         project.archived_at = None
-        project.save()
+        project.save(update_fields=["archived_at", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -492,7 +566,15 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         project_member.preferences = request.data.get("preferences", preferences)
         project_member.sort_order = request.data.get("sort_order", sort_order)
 
-        project_member.save()
+        project_member.save(
+            update_fields=[
+                "view_props",
+                "default_props",
+                "preferences",
+                "sort_order",
+                "updated_at",
+            ]
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -507,7 +589,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(user=self.request.user)
             .select_related("project", "project__project_lead", "project__default_assignee")
-            .select_related("workspace", "workspace__owner")
+            .select_related("workspace")
         )
 
     def perform_create(self, serializer):

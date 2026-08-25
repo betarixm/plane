@@ -7,8 +7,8 @@ Unit tests for APIKeyAuthentication.
 
 Covers the access-control guarantees of the external API key authentication:
 - a valid token belonging to an active user authenticates successfully
-- a valid token is rejected once the underlying user account is deactivated
-  (prevents an authentication bypass via a disabled account that still holds
+- a valid token is rejected once its projected user is deactivated
+  (prevents an authentication bypass via a disabled user that still holds
   a previously generated API key)
 """
 
@@ -22,7 +22,11 @@ from plane.db.models import APIToken
 @pytest.mark.unit
 class TestAPIKeyAuthentication:
     @pytest.mark.django_db
-    def test_validate_api_token_authenticates_active_user(self, create_user):
+    def test_validate_api_token_authenticates_active_external_user(
+        self,
+        create_user,
+        external_identity_source,
+    ):
         token = APIToken.objects.create(
             user=create_user, label="Active Token", token="active-user-token"
         )
@@ -33,12 +37,16 @@ class TestAPIKeyAuthentication:
         assert returned_token == token.token
 
     @pytest.mark.django_db
-    def test_validate_api_token_rejects_deactivated_user(self, create_user):
+    def test_validate_api_token_rejects_deactivated_user(
+        self,
+        create_user,
+        external_identity_source,
+    ):
         token = APIToken.objects.create(
             user=create_user, label="Stale Token", token="deactivated-user-token"
         )
 
-        # Account is deactivated by an administrator after the token was issued.
+        # The external identity projection is deactivated after token issuance.
         create_user.is_active = False
         create_user.save()
 

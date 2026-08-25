@@ -7,14 +7,12 @@ from django.urls import path
 from plane.app.views import (
     ProjectViewSet,
     DeployBoardViewSet,
-    ProjectInvitationsViewset,
     ProjectMemberViewSet,
     ProjectMemberUserEndpoint,
-    ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
-    UserProjectInvitationsViewset,
+    UserProjectJoinViewSet,
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
     ProjectMemberPreferenceEndpoint,
@@ -37,7 +35,6 @@ urlpatterns = [
         ProjectViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
@@ -50,29 +47,14 @@ urlpatterns = [
         name="project-identifiers",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/",
-        ProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
-        name="project-member-invite",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/<uuid:pk>/",
-        ProjectInvitationsViewset.as_view({"get": "retrieve", "delete": "destroy"}),
-        name="project-member-invite",
-    ),
-    path(
-        "users/me/workspaces/<str:slug>/projects/invitations/",
-        UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
-        name="user-project-invitations",
+        "users/me/workspaces/<str:slug>/projects/join/",
+        UserProjectJoinViewSet.as_view({"post": "create"}),
+        name="user-project-join",
     ),
     path(
         "users/me/workspaces/<str:slug>/project-roles/",
         UserProjectRolesEndpoint.as_view(),
         name="user-project-roles",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/join/<uuid:pk>/",
-        ProjectJoinEndpoint.as_view(),
-        name="project-join",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/",

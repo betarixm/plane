@@ -2,41 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Python imports
 import os
 
-# Django imports
-from django.conf import settings
 
-# Module imports
-from plane.license.models import InstanceConfiguration
-from plane.license.utils.encryption import decrypt_data
-
-
-# Helper function to return value from the passed key
 def get_configuration_value(keys):
-    environment_list = []
-    if settings.SKIP_ENV_VAR:
-        # Get the configurations
-        instance_configuration = InstanceConfiguration.objects.values("key", "value", "is_encrypted")
+    """Read deployment configuration exclusively from the process environment."""
 
-        for key in keys:
-            for item in instance_configuration:
-                if key.get("key") == item.get("key"):
-                    if item.get("is_encrypted", False):
-                        environment_list.append(decrypt_data(item.get("value")))
-                    else:
-                        environment_list.append(item.get("value"))
-
-                    break
-            else:
-                environment_list.append(key.get("default"))
-    else:
-        # Get the configuration from os
-        for key in keys:
-            environment_list.append(os.environ.get(key.get("key"), key.get("default")))
-
-    return tuple(environment_list)
+    return tuple(os.environ.get(key["key"], key.get("default")) for key in keys)
 
 
 def get_email_configuration():

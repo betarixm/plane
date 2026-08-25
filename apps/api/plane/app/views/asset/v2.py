@@ -24,7 +24,11 @@ from plane.settings.storage import S3Storage
 from plane.throttles.asset import AssetRateThrottle
 from plane.utils.cache import invalidate_cache_directly
 from plane.utils.path_validator import sanitize_filename
-from plane.utils.workspace_admin import active_human_workspace_admins
+from plane.utils.external_assets import (
+    EXTERNALLY_MANAGED_ASSET_ENTITY_TYPES,
+    EXTERNALLY_MANAGED_ASSET_ERROR,
+    is_externally_managed_asset_entity_type,
+)
 
 # Module imports
 from ..base import BaseAPIView
@@ -352,13 +356,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # WORKSPACE_LOGO may only be uploaded by workspace admins
-        if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
-            if not active_human_workspace_admins().filter(workspace__slug=slug, member=request.user).exists():
-                return Response(
-                    {"error": "Only workspace admins can upload a workspace logo."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
+        if is_externally_managed_asset_entity_type(entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Check if the file type is allowed
         allowed_types = [
@@ -415,6 +417,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     def patch(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+        if is_externally_managed_asset_entity_type(asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # enforce project-level access for project-bound assets
         if not self.has_project_asset_access(request, asset):
             return Response(
@@ -442,6 +449,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def delete(self, request, slug, asset_id):
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+        if is_externally_managed_asset_entity_type(asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # enforce project-level access for project-bound assets
         if not self.has_project_asset_access(request, asset):
             return Response(
@@ -534,6 +546,11 @@ class AssetRestoreEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
+        if is_externally_managed_asset_entity_type(asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset.is_deleted = False
         asset.deleted_at = None
         asset.save(update_fields=["is_deleted", "deleted_at"])
@@ -585,6 +602,11 @@ class ProjectAssetEndpoint(BaseAPIView):
             return Response(
                 {"error": "Invalid entity type.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        if is_externally_managed_asset_entity_type(entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         # Check if the file type is allowed
@@ -643,6 +665,11 @@ class ProjectAssetEndpoint(BaseAPIView):
     def patch(self, request, slug, project_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        if is_externally_managed_asset_entity_type(asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # get the storage metadata
         asset.is_uploaded = True
         # get the storage metadata
@@ -659,6 +686,11 @@ class ProjectAssetEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, pk):
         # Get the asset
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        if is_externally_managed_asset_entity_type(asset.entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -717,6 +749,14 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             workspace__slug=slug,
             created_by=request.user,
         ).filter(Q(project_id=project_id) | Q(project_id__isnull=True))
+
+        if assets.filter(
+            entity_type__in=EXTERNALLY_MANAGED_ASSET_ENTITY_TYPES
+        ).exists():
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Get the first asset
         asset = assets.first()
@@ -817,6 +857,11 @@ class DuplicateAssetEndpoint(BaseAPIView):
             return Response(
                 {"error": "Invalid entity type or entity id"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        if is_externally_managed_asset_entity_type(entity_type):
+            return Response(
+                {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         workspace = Workspace.objects.get(slug=slug)
