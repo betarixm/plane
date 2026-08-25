@@ -133,8 +133,7 @@ def _install_mode(
         and instance.is_setup_done
         and installation is not None
         and installation.provider == IdentitySource.Provider.SLACK
-        and installation.status
-        in {IdentitySource.Status.REVOKED, IdentitySource.Status.ERROR}
+        and installation.status in {IdentitySource.Status.REVOKED, IdentitySource.Status.ERROR}
         and IdentitySource.all_objects.count() == 1
         and Workspace.all_objects.filter(pk=installation.workspace_id).count() == 1
         and Workspace.all_objects.count() == 1
@@ -153,11 +152,7 @@ def _login_origin(value: Any) -> str:
 
 
 def _state_matches(expected: str, supplied: Any) -> bool:
-    return bool(
-        expected
-        and isinstance(supplied, str)
-        and secrets.compare_digest(expected, supplied)
-    )
+    return bool(expected and isinstance(supplied, str) and secrets.compare_digest(expected, supplied))
 
 
 def _mapping(value: Any) -> dict[str, Any] | None:
@@ -208,11 +203,7 @@ def _is_slack_admin(member: dict[str, Any]) -> bool:
     return bool(
         not member.get("is_restricted")
         and not member.get("is_ultra_restricted")
-        and (
-            member.get("is_admin")
-            or member.get("is_owner")
-            or member.get("is_primary_owner")
-        )
+        and (member.get("is_admin") or member.get("is_owner") or member.get("is_primary_owner"))
     )
 
 
@@ -292,11 +283,7 @@ def _validate_openid_id_token(id_token: str, *, client_id: str, nonce: str) -> d
         options={"require": ["aud", "exp", "iss", "nonce", "sub"]},
     )
     token_nonce = claims.get("nonce")
-    if not (
-        isinstance(token_nonce, str)
-        and nonce
-        and secrets.compare_digest(token_nonce, nonce)
-    ):
+    if not (isinstance(token_nonce, str) and nonce and secrets.compare_digest(token_nonce, nonce)):
         raise jwt.InvalidTokenError("Slack ID token nonce does not match")
     return claims
 
@@ -412,11 +399,7 @@ class SlackInstallCallbackEndpoint(View):
                 return _error_redirect(request, "IDENTITY_SOURCE_ORGANIZATION_MISMATCH")
 
             with transaction.atomic():
-                locked_installation = (
-                    IdentitySource.objects.select_for_update()
-                    .select_related("workspace")
-                    .first()
-                )
+                locked_installation = IdentitySource.objects.select_for_update().select_related("workspace").first()
                 if locked_installation is None:
                     # Bootstrap has no installation row to serialize on, so use
                     # the singleton instance and then re-check the empty slot.
@@ -426,9 +409,7 @@ class SlackInstallCallbackEndpoint(View):
                 else:
                     # Match reconcile/event lock order: installation, workspace,
                     # then instance. This avoids reconnect deadlocks.
-                    workspace = Workspace.objects.select_for_update().get(
-                        pk=locked_installation.workspace_id
-                    )
+                    workspace = Workspace.objects.select_for_update().get(pk=locked_installation.workspace_id)
                     locked_instance = Instance.objects.select_for_update().get(pk=instance.pk)
                 install_mode = _install_mode(locked_instance, locked_installation)
                 if install_mode is None:
@@ -452,23 +433,16 @@ class SlackInstallCallbackEndpoint(View):
                 if not _is_slack_admin(installer):
                     return _error_redirect(request, "IDENTITY_SOURCE_ADMIN_REQUIRED")
                 auth_response = slack_client.auth_test()
-                if (
-                    not secrets.compare_digest(
-                        str(auth_response.get("team_id") or ""),
-                        team_id,
-                    )
-                    or not secrets.compare_digest(
-                        str(auth_response.get("user_id") or ""),
-                        bot_user_id,
-                    )
+                if not secrets.compare_digest(
+                    str(auth_response.get("team_id") or ""),
+                    team_id,
+                ) or not secrets.compare_digest(
+                    str(auth_response.get("user_id") or ""),
+                    bot_user_id,
                 ):
-                    raise SlackClientError(
-                        "Slack bot token identity does not match the installation"
-                    )
+                    raise SlackClientError("Slack bot token identity does not match the installation")
 
-                raw_team_name = str(
-                    team.get("name") or oauth_team.get("name") or ""
-                ).strip()
+                raw_team_name = str(team.get("name") or oauth_team.get("name") or "").strip()
                 team_name = (raw_team_name or f"Slack {team_id}")[:80]
                 team_domain = str(team.get("domain") or "").strip()[:255]
                 team_icon_url = _team_icon_url(team)
@@ -566,7 +540,7 @@ class SlackInstallCallbackEndpoint(View):
             return HttpResponseRedirect(
                 urljoin(
                     f"{base_host(request=request, is_app=True).rstrip('/')}/",
-                    f"{workspace.slug}/",
+                    "home/",
                 )
             )
         except (IntegrityError, SlackClientError, ValueError, jwt.PyJWTError):
@@ -597,8 +571,7 @@ class SlackLoginEndpoint(View):
             )
 
         installation = IdentitySource.objects.filter(
-            provider=IdentitySource.Provider.SLACK,
-            status=IdentitySource.Status.ACTIVE
+            provider=IdentitySource.Provider.SLACK, status=IdentitySource.Status.ACTIVE
         ).first()
         if installation is None:
             return _error_redirect(
@@ -808,7 +781,7 @@ class SlackLoginCallbackEndpoint(View):
                     origin=origin,
                     next_path=next_path,
                 )
-            destination = validate_next_path(next_path) or f"/{installation.workspace.slug}/"
+            destination = validate_next_path(next_path) or "/home/"
             destination_base = base_host(
                 request=request,
                 is_app=origin == _APP_ORIGIN,

@@ -72,7 +72,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
   const handleCopyUrl = () => {
     if (!currentWorkspace) return;
 
-    void copyUrlToClipboard(`${currentWorkspace.slug}`)
+    void copyUrlToClipboard("/home")
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -118,7 +118,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             <div className="mb:-my-5 text-h5-semibold leading-6">{currentWorkspace.name}</div>
             <button type="button" onClick={handleCopyUrl} className="text-left text-body-xs-regular tracking-tight">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
-            }/${currentWorkspace.slug}`}</button>
+            }/home`}</button>
             <span className="text-caption-sm-regular text-tertiary">
               Name and logo are managed by {descriptor?.label ?? "your identity source"}
             </span>
@@ -148,7 +148,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                 type="url"
                 value={`${
                   typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
-                }/${currentWorkspace.slug}`}
+                }/home`}
                 className="w-full cursor-not-allowed rounded-md !bg-layer-1"
                 disabled
               />

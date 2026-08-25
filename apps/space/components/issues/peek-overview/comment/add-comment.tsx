@@ -15,7 +15,6 @@ import type { TIssuePublicComment } from "@plane/types";
 // editor components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
-import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useUser } from "@/hooks/store/use-user";
 // services
@@ -39,7 +38,6 @@ export const AddComment = observer(function AddComment(props: Props) {
   // store hooks
   const { peekId: issueId, addIssueComment, uploadCommentAsset } = useIssueDetails();
   const { data: currentUser } = useUser();
-  const { workspace: workspaceID } = usePublish(anchor);
   // form info
   const {
     handleSubmit,
@@ -62,6 +60,7 @@ export const AddComment = observer(function AddComment(props: Props) {
           });
           setUploadAssetIds([]);
         }
+        return undefined;
       })
       .catch(() =>
         setToast({
@@ -86,7 +85,6 @@ export const AddComment = observer(function AddComment(props: Props) {
                 if (currentUser) handleSubmit(onSubmit)(e);
               }}
               anchor={anchor}
-              workspaceId={workspaceID?.toString() ?? ""}
               ref={editorRef}
               id="peek-overview-add-comment"
               initialValue={

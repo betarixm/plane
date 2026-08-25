@@ -24,7 +24,6 @@ type RichTextEditorWrapperProps = MakeOptional<
   "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   anchor: string;
-  workspaceId: string;
 } & (
     | {
         editable: false;
@@ -43,7 +42,6 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
     anchor,
     containerClassName,
     editable,
-    workspaceId,
     disabledExtensions: additionalDisabledExtensions = [],
     ...rest
   } = props;
@@ -59,7 +57,7 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
   return (
     <RichTextEditorWithRef
       mentionHandler={{
-        renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        renderComponent: (mentionProps) => <EditorMentionsRoot {...mentionProps} />,
         getMentionedEntityDetails: (id: string) => ({
           display_name: getMemberById(id)?.member__display_name ?? "",
         }),
@@ -70,7 +68,6 @@ export const RichTextEditor = forwardRef(function RichTextEditor(
       fileHandler={getEditorFileHandlers({
         anchor,
         uploadFile: editable ? props.uploadFile : async () => "",
-        workspaceId,
       })}
       getEditorMetaData={getEditorMetaData}
       flaggedExtensions={richTextEditorExtensions.flagged}

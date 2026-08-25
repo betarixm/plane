@@ -63,8 +63,7 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   const isPinned = isWorkspaceItemPinned(item.key);
   if (!isPinned && !staticItems.includes(item.key)) return null;
 
-  const itemHref =
-    item.key === "your_work" && data?.id ? joinUrlPath(slug, item.href, data?.id) : joinUrlPath(slug, item.href);
+  const itemHref = item.key === "your_work" && data?.id ? joinUrlPath(item.href, data?.id) : joinUrlPath(item.href);
   const icon = getSidebarNavigationItemIcon(item.key);
 
   return (

@@ -376,7 +376,7 @@ describe("function-declaration", () => {
 //       \`\${process.env.VITE_API_BASE_URL}/api/users/me/\`,
 //       \`\${process.env.VITE_API_BASE_URL}/api/users/me/profile/\`,
 //       \`\${process.env.VITE_API_BASE_URL}/api/users/me/settings/\`,
-//       \`\${process.env.VITE_API_BASE_URL}/api/users/me/workspaces/?v=\${Date.now()}\`,
+//       \`\${process.env.VITE_API_BASE_URL}/api/users/me/workspace/?v=\${Date.now()}\`,
 //     ];
 //
 //     urls.forEach((url) => preloadItem(url));
@@ -406,7 +406,7 @@ export const PreloadResources = () =>
       //       \`\${process.env.VITE_API_BASE_URL}/api/users/me/\`,
       //       \`\${process.env.VITE_API_BASE_URL}/api/users/me/profile/\`,
       //       \`\${process.env.VITE_API_BASE_URL}/api/users/me/settings/\`,
-      //       \`\${process.env.VITE_API_BASE_URL}/api/users/me/workspaces/?v=\${Date.now()}\`,
+      //       \`\${process.env.VITE_API_BASE_URL}/api/users/me/workspace/?v=\${Date.now()}\`,
       //     ];
       //
       //     urls.forEach((url) => preloadItem(url));

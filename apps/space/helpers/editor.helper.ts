@@ -24,7 +24,6 @@ export const getEditorAssetSrc = (anchor: string, assetId: string): string | und
 type TArgs = {
   anchor: string;
   uploadFile: TFileHandler["upload"];
-  workspaceId: string;
 };
 
 /**
@@ -32,7 +31,7 @@ type TArgs = {
  * @param {TArgs} args
  */
 export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
-  const { anchor, uploadFile, workspaceId } = args;
+  const { anchor, uploadFile } = args;
 
   const getAssetSrc = async (path: string) => {
     if (!path) return "";
@@ -51,7 +50,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     upload: uploadFile,
     delete: async (src: string) => {
       if (src?.startsWith("http")) {
-        await sitesFileService.deleteOldEditorAsset(workspaceId, src);
+        await sitesFileService.deleteOldEditorAsset(src);
       } else {
         await sitesFileService.deleteNewAsset(getEditorAssetSrc(anchor, src) ?? "");
       }
@@ -59,7 +58,7 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
     cancel: sitesFileService.cancelUpload,
     restore: async (src: string) => {
       if (src?.startsWith("http")) {
-        await sitesFileService.restoreOldEditorAsset(workspaceId, src);
+        await sitesFileService.restoreOldEditorAsset(src);
       } else {
         await sitesFileService.restoreNewAsset(anchor, src);
       }

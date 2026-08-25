@@ -20,7 +20,6 @@ import { CommentReactions } from "@/components/issues/peek-overview/comment/comm
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
@@ -35,7 +34,6 @@ export const CommentCard = observer(function CommentCard(props: Props) {
   // store hooks
   const { peekId, deleteIssueComment, updateIssueComment, uploadCommentAsset } = useIssueDetails();
   const { data: currentUser } = useUser();
-  const { workspace: workspaceID } = usePublish(anchor);
   const isInIframe = useIsInIframe();
 
   // states
@@ -108,7 +106,6 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                   <LiteTextEditor
                     editable
                     anchor={anchor}
-                    workspaceId={workspaceID?.toString() ?? ""}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
                     ref={editorRef}
                     id={comment.id}
@@ -149,7 +146,6 @@ export const CommentCard = observer(function CommentCard(props: Props) {
             <LiteTextEditor
               editable={false}
               anchor={anchor}
-              workspaceId={workspaceID?.toString() ?? ""}
               ref={showEditorRef}
               id={comment.id}
               initialValue={comment.comment_html}

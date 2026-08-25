@@ -21,7 +21,7 @@ type Props = {
 export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetails(props: Props) {
   const { anchor, issueDetails } = props;
   // store hooks
-  const { project_details, workspace: workspaceID } = usePublish(anchor);
+  const { project_details } = usePublish(anchor);
   // derived values
   const description = issueDetails.description_html;
 
@@ -32,13 +32,7 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
       </h6>
       <h4 className="text-20 font-medium break-words">{issueDetails.name}</h4>
       {description && description !== "" && description !== "<p></p>" && (
-        <RichTextEditor
-          editable={false}
-          anchor={anchor}
-          id={issueDetails.id}
-          initialValue={description}
-          workspaceId={workspaceID?.toString() ?? ""}
-        />
+        <RichTextEditor editable={false} anchor={anchor} id={issueDetails.id} initialValue={description} />
       )}
       <IssueReactions anchor={anchor} />
     </div>

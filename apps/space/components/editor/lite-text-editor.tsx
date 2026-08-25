@@ -27,7 +27,6 @@ type LiteTextEditorWrapperProps = MakeOptional<
   anchor: string;
   isSubmitting?: boolean;
   showSubmitButton?: boolean;
-  workspaceId: string;
 } & (
     | {
         editable: false;
@@ -37,6 +36,10 @@ type LiteTextEditorWrapperProps = MakeOptional<
         uploadFile: TFileHandler["upload"];
       }
   );
+
+function isMutableRefObject<T>(candidateRef: React.ForwardedRef<T>): candidateRef is React.MutableRefObject<T | null> {
+  return !!candidateRef && typeof candidateRef === "object" && "current" in candidateRef;
+}
 
 export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   props: LiteTextEditorWrapperProps,
@@ -49,12 +52,8 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
     editable,
     isSubmitting = false,
     showSubmitButton = true,
-    workspaceId,
     ...rest
   } = props;
-  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
-    return !!ref && typeof ref === "object" && "current" in ref;
-  }
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
@@ -74,11 +73,10 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
         fileHandler={getEditorFileHandlers({
           anchor,
           uploadFile: editable ? props.uploadFile : async () => "",
-          workspaceId,
         })}
         getEditorMetaData={getEditorMetaData}
         mentionHandler={{
-          renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          renderComponent: (mentionProps) => <EditorMentionsRoot {...mentionProps} />,
         }}
         extendedEditorProps={{}}
         {...rest}

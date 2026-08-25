@@ -38,7 +38,6 @@ import {
   StartDatePropertyIcon,
   StatePropertyIcon,
 } from "@plane/propel/icons";
-import { store } from "@/lib/store-context";
 import type { TProjectActivity } from "@plane/types";
 
 type ActivityIconMap = {
@@ -81,8 +80,6 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
   const newValue = activity.new_value;
   const oldValue = activity.old_value;
   const verb = activity.verb;
-  const workspaceDetail = store.workspaceRoot.getWorkspaceById(activity.workspace);
-
   const getBooleanActionText = (value: string | undefined) => {
     if (value === "true") return "enabled";
     if (value === "false") return "disabled";
@@ -182,7 +179,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
             </span>
             {verb !== "removed" ? (
               <a
-                href={`/${workspaceDetail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+                href={`/projects/${activity.project}/cycles/${activity.new_identifier}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex font-medium text-primary"

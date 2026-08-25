@@ -35,12 +35,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
   return (
     <div className="shrink-0">
       <div className="flex items-center gap-1 py-3 pr-5 pl-4 text-body-md-medium">
-        <IconButton
-          variant="ghost"
-          size="base"
-          icon={ArrowLeft}
-          onClick={() => router.push(`/${currentWorkspace?.slug}/`)}
-        />
+        <IconButton variant="ghost" size="base" icon={ArrowLeft} onClick={() => router.push(`/home`)} />
         <p>Workspace settings</p>
       </div>
       <div className="mt-1.5 flex items-center justify-between gap-2 px-5 py-0.5">

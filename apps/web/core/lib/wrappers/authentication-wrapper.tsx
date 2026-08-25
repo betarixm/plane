@@ -46,7 +46,7 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
 
     if (!workspace) return "/";
 
-    return `/${workspace.slug}`;
+    return "/home";
   };
 
   if ((isUserSWRLoading || isUserLoading || workspaceLoader) && !currentUser?.id)

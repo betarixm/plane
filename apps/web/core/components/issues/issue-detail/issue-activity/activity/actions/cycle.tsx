@@ -35,7 +35,7 @@ export const IssueCycleActivity = observer(function IssueCycleActivity(props: TI
           <>
             <span>added this work item to the cycle </span>
             <a
-              href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              href={`/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
@@ -47,7 +47,7 @@ export const IssueCycleActivity = observer(function IssueCycleActivity(props: TI
           <>
             <span>set the cycle to </span>
             <a
-              href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              href={`/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"
@@ -59,7 +59,7 @@ export const IssueCycleActivity = observer(function IssueCycleActivity(props: TI
           <>
             <span>removed the work item from the cycle </span>
             <a
-              href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
+              href={`/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 truncate font-medium text-primary hover:underline"

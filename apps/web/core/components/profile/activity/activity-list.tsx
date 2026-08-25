@@ -143,10 +143,7 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                               <span className="text-gray font-medium">Plane</span>
                             ) : (
-                              <Link
-                                href={`/${activityItem.workspace_detail?.slug}/profile/${activityItem.actor_detail.id}`}
-                                className="inline"
-                              >
+                              <Link href={`/profile/${activityItem.actor_detail.id}`} className="inline">
                                 <span className="text-gray font-medium">
                                   {currentUser?.id === activityItem.actor_detail.id
                                     ? "You"

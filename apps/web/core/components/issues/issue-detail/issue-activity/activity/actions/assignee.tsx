@@ -33,7 +33,7 @@ export const IssueAssigneeActivity = observer(function IssueAssigneeActivity(pro
       <>
         {activity.old_value === "" ? `added a new assignee ` : `removed the assignee `}
         <a
-          href={`/${activity.workspace_detail?.slug}/profile/${activity.new_identifier ?? activity.old_identifier}`}
+          href={`/profile/${activity.new_identifier ?? activity.old_identifier}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center font-medium text-primary capitalize hover:underline"
