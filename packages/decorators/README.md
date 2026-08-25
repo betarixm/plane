@@ -6,7 +6,6 @@ A lightweight TypeScript decorator library for building Express.js controllers w
 
 - TypeScript-first design
 - Decorators for HTTP methods (GET, POST, PUT, PATCH, DELETE)
-- WebSocket support
 - Middleware support
 - No build step required - works directly with TypeScript files
 
@@ -49,29 +48,6 @@ const userController = new UserController();
 userController.registerRoutes(router);
 ```
 
-### WebSocket Controller
-
-```typescript
-import { Controller, WebSocket, BaseWebSocketController } from "@plane/decorators";
-import { Request } from "express";
-import { WebSocket as WS } from "ws";
-
-@Controller("/ws/chat")
-class ChatController extends BaseWebSocketController {
-  @WebSocket("/")
-  handleConnection(ws: WS, req: Request) {
-    ws.on("message", (message) => {
-      ws.send(`Received: ${message}`);
-    });
-  }
-}
-
-// Register WebSocket routes
-const router = require("express-ws")(app).router;
-const chatController = new ChatController();
-chatController.registerWebSocketRoutes(router);
-```
-
 ## API Reference
 
 ### Decorators
@@ -82,13 +58,11 @@ chatController.registerWebSocketRoutes(router);
 - `@Put(route: string)` - Method decorator for HTTP PUT endpoints
 - `@Patch(route: string)` - Method decorator for HTTP PATCH endpoints
 - `@Delete(route: string)` - Method decorator for HTTP DELETE endpoints
-- `@WebSocket(route: string)` - Method decorator for WebSocket endpoints
 - `@Middleware(middleware: RequestHandler)` - Method decorator for applying middleware
 
 ### Classes
 
 - `BaseController` - Base class for REST controllers
-- `BaseWebSocketController` - Base class for WebSocket controllers
 
 ## License
 

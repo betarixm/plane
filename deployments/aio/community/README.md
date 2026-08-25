@@ -9,7 +9,7 @@ The AIO image contains the following services:
 - **Web App** (Port 3001): Main Plane web interface
 - **Space** (Port 3002): Public project spaces
 - **API Server** (Port 3004): Backend API
-- **Live Server** (Port 3005): Real-time collaboration
+- **Live Server** (Port 3005): Rich-text document conversion
 - **Proxy** (Port 80, 443): Caddy reverse proxy
 - **Worker & Beat**: Background task processing
 

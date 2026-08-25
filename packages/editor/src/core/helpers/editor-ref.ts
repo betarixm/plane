@@ -4,10 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Editor } from "@tiptap/core";
 import { DOMSerializer } from "@tiptap/pm/model";
-import * as Y from "yjs";
 // plane imports
 import { convertHTMLToMarkdown } from "@plane/utils";
 // components
@@ -24,11 +22,10 @@ import { scrollSummary, scrollToNodeViaDOMCoordinates } from "./scroll-to-node";
 
 type TArgs = Pick<IEditorProps, "getEditorMetaData"> & {
   editor: Editor | null;
-  provider: HocuspocusProvider | undefined;
 };
 
 export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
-  const { editor, getEditorMetaData, provider } = args;
+  const { editor, getEditorMetaData } = args;
 
   return {
     blur: () => editor?.commands.blur(),
@@ -68,12 +65,11 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       }
     },
     getDocument: () => {
-      const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
       const documentHTML = editor?.getHTML() ?? "<p></p>";
       const documentJSON = editor?.getJSON() ?? null;
 
       return {
-        binary: documentBinary,
+        binary: null,
         html: documentHTML,
         json: documentJSON,
       };
@@ -135,7 +131,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         })
         .run();
     },
-    emitRealTimeUpdate: (message) => provider?.sendStateless(message),
     executeMenuItemCommand: (props) => {
       const { itemKey } = props;
       const editorItems = getEditorMenuItems(editor);
@@ -201,7 +196,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
 
       return item.isActive(props);
     },
-    listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     onDocumentInfoChange: (callback) => {
       const handleDocumentInfoChange = () => {
         if (!editor?.storage) return;
@@ -277,11 +271,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       } catch (error) {
         console.error("An error occurred while setting focus at position:", error);
       }
-    },
-    setProviderDocument: (value) => {
-      const document = provider?.document;
-      if (!document) return;
-      Y.applyUpdate(document, value);
     },
     undo: () => editor?.commands.undo(),
   };

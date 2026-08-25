@@ -14,27 +14,18 @@ import type { TCustomComponentsMetaData } from "@plane/utils";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // plane editor imports
-import type {
-  IEditorPropsExtended,
-  TExtendedEditorCommands,
-  ICollaborativeDocumentEditorPropsExtended,
-} from "@/plane-editor/types/editor-extended";
+import type { IEditorPropsExtended, TExtendedEditorCommands } from "@/plane-editor/types/editor-extended";
 // types
 import type {
   IMarking,
   TAIHandler,
   TDisplayConfig,
-  TDocumentEventEmitter,
-  TDocumentEventsServer,
   TEditorAsset,
   TExtensions,
   TFileHandler,
   TMentionHandler,
-  TRealtimeConfig,
-  TServerHandler,
   TUserDetails,
   TExtendedEditorRefApi,
-  EventToPayloadMap,
 } from "@/types";
 
 export type TEditorCommands =
@@ -109,7 +100,6 @@ export type CoreEditorRefApi = {
   blur: () => void;
   clearEditor: (emitUpdate?: boolean) => void;
   createSelectionAtCursorPosition: () => void;
-  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
   focus: (args: Parameters<RawCommands["focus"]>[0]) => void;
   getAttributesWithExtendedMark: (
@@ -132,7 +122,6 @@ export type CoreEditorRefApi = {
   isAnyDropbarOpen: () => boolean;
   isEditorReadyToDiscard: () => boolean;
   isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
-  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
   onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   onStateChange: (callback: () => void) => () => void;
@@ -143,7 +132,6 @@ export type CoreEditorRefApi = {
   setEditorValue: (content: string, emitUpdate?: boolean) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
-  setProviderDocument: (value: Uint8Array) => void;
   undo: () => void;
 };
 
@@ -188,26 +176,6 @@ export type ILiteTextEditorProps = IEditorProps;
 
 export type IRichTextEditorProps = IEditorProps & {
   dragDropEnabled?: boolean;
-};
-
-export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
-  aiHandler?: TAIHandler;
-  documentLoaderClassName?: string;
-  dragDropEnabled?: boolean;
-  editable: boolean;
-  realtimeConfig: TRealtimeConfig;
-  serverHandler?: TServerHandler;
-  user: TUserDetails;
-  extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
-  updatePageProperties?: <T extends keyof EventToPayloadMap>(
-    pageIds: string | string[],
-    actionType: T,
-    data: EventToPayloadMap[T],
-    performAction?: boolean
-  ) => void;
-  pageRestorationInProgress?: boolean;
-  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
-  isFetchingFallbackBinary?: boolean;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {

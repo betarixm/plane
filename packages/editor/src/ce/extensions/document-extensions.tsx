@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { AnyExtension } from "@tiptap/core";
 import { SlashCommands } from "@/extensions";
 // types
@@ -15,7 +14,6 @@ export type TDocumentEditorAdditionalExtensionsProps = Pick<
   "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "extendedEditorProps"
 > & {
   isEditable: boolean;
-  provider?: HocuspocusProvider;
   userDetails: TUserDetails;
 };
 

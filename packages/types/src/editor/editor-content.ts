@@ -24,3 +24,9 @@ export type JSONContent = {
 export type HTMLContent = string;
 
 export type Content = HTMLContent | JSONContent | JSONContent[] | null;
+
+export type TDocumentPayload = {
+  description_binary: string;
+  description_html: string;
+  description_json: object;
+};

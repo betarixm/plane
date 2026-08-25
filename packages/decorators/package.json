@@ -26,7 +26,6 @@
     "@plane/typescript-config": "workspace:*",
     "@types/express": "catalog:",
     "@types/node": "catalog:",
-    "@types/ws": "catalog:",
     "reflect-metadata": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"

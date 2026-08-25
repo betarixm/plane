@@ -46,10 +46,6 @@ export type TUserDetails = {
   cookie?: string;
 };
 
-export type TRealtimeConfig = {
-  url: string;
-};
-
 export type IMarking = {
   type: "heading";
   level: number;

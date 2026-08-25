@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Extensions } from "@tiptap/core";
 import { CharacterCount } from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
@@ -59,7 +58,6 @@ type TArguments = Pick<
 > & {
   enableHistory: boolean;
   editable: boolean;
-  provider: HocuspocusProvider | undefined;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -76,7 +74,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     tabIndex,
     editable,
     extendedEditorProps,
-    provider,
   } = args;
 
   const extensions = [
@@ -135,9 +132,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       fileHandler,
       extendedEditorProps,
     }),
-    UniqueID.configure({
-      provider,
-    }),
+    UniqueID,
   ];
 
   if (!disabledExtensions.includes("image")) {

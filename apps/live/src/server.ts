@@ -5,12 +5,10 @@
  */
 
 import type { Server as HttpServer } from "http";
-import type { Hocuspocus } from "@hocuspocus/server";
 import compression from "compression";
 import cors from "cors";
 import type { Express, Request, Response, Router } from "express";
 import express from "express";
-import expressWs from "express-ws";
 import helmet from "helmet";
 // plane imports
 import { registerController } from "@plane/decorators";
@@ -19,20 +17,14 @@ import { logger, loggerMiddleware } from "@plane/logger";
 import { CONTROLLERS } from "@/controllers";
 // env
 import { env } from "@/env";
-// hocuspocus server
-import { HocusPocusServerManager } from "@/hocuspocus";
-// redis
-import { redisManager } from "@/redis";
 
 export class Server {
   private app: Express;
   private router: Router;
-  private hocuspocusServer: Hocuspocus | undefined;
   private httpServer: HttpServer | undefined;
 
   constructor() {
     this.app = express();
-    expressWs(this.app);
     this.setupMiddleware();
     this.router = express.Router();
     this.app.set("port", env.PORT || 3000);
@@ -41,12 +33,7 @@ export class Server {
 
   public async initialize(): Promise<void> {
     try {
-      await redisManager.initialize();
-      logger.info("SERVER: Redis setup completed");
-      const manager = HocusPocusServerManager.getInstance();
-      this.hocuspocusServer = await manager.initialize();
-      logger.info("SERVER: HocusPocus setup completed");
-      this.setupRoutes(this.hocuspocusServer);
+      this.setupRoutes();
       this.setupNotFoundHandler();
     } catch (error) {
       logger.error("SERVER: Failed to initialize live server dependencies:", error);
@@ -88,8 +75,8 @@ export class Server {
     });
   }
 
-  private setupRoutes(hocuspocusServer: Hocuspocus) {
-    CONTROLLERS.forEach((controller) => registerController(this.router, controller, [hocuspocusServer]));
+  private setupRoutes() {
+    CONTROLLERS.forEach((controller) => registerController(this.router, controller, []));
   }
 
   public listen() {
@@ -104,14 +91,6 @@ export class Server {
   }
 
   public async destroy() {
-    if (this.hocuspocusServer) {
-      this.hocuspocusServer.closeConnections();
-      logger.info("SERVER: HocusPocus connections closed gracefully.");
-    }
-
-    await redisManager.disconnect();
-    logger.info("SERVER: Redis connection closed gracefully.");
-
     if (this.httpServer) {
       await new Promise<void>((resolve, reject) => {
         this.httpServer!.close((err) => {

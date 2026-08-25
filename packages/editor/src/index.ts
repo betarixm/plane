@@ -5,12 +5,7 @@
  */
 
 // editors
-export {
-  CollaborativeDocumentEditorWithRef,
-  DocumentEditorWithRef,
-  LiteTextEditorWithRef,
-  RichTextEditorWithRef,
-} from "@/components/editors";
+export { DocumentEditorWithRef, LiteTextEditorWithRef, RichTextEditorWithRef } from "@/components/editors";
 
 // constants
 export * from "@/constants/common";
