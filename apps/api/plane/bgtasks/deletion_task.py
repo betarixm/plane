@@ -126,7 +126,6 @@ def hard_delete():
         Label,
         Module,
         ModuleIssue,
-        Page,
         Project,
         State,
         UserFavorite,
@@ -144,9 +143,6 @@ def hard_delete():
 
     # check delete issue
     _ = Issue.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
-
-    # check delete page
-    _ = Page.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete view
     _ = IssueView.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()

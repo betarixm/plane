@@ -62,7 +62,7 @@ def get_default_props():
 
 
 def get_default_preferences():
-    return {"pages": {"block_display": True}, "navigation": {"default_tab": "work_items", "hide_in_more_menu": []}}
+    return {"navigation": {"default_tab": "work_items", "hide_in_more_menu": []}}
 
 
 class Project(BaseModel):
@@ -93,7 +93,6 @@ class Project(BaseModel):
     module_view = models.BooleanField(default=False)
     cycle_view = models.BooleanField(default=False)
     issue_views_view = models.BooleanField(default=False)
-    page_view = models.BooleanField(default=True)
     intake_view = models.BooleanField(default=False)
     is_time_tracking_enabled = models.BooleanField(default=False)
     is_issue_type_enabled = models.BooleanField(default=False)

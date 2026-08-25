@@ -89,14 +89,6 @@ from .api import APITokenSerializer, APITokenReadSerializer
 
 from .importer import ImporterSerializer
 
-from .page import (
-    PageSerializer,
-    PageDetailSerializer,
-    PageVersionSerializer,
-    PageBinaryUpdateSerializer,
-    PageVersionDetailSerializer,
-)
-
 from .estimate import (
     EstimateSerializer,
     EstimatePointSerializer,

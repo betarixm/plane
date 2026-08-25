@@ -56,7 +56,6 @@ class Command(BaseCommand):
                 issue_count = int(input("Number of issues to be created: "))
                 cycle_count = int(input("Number of cycles to be created: "))
                 module_count = int(input("Number of modules to be created: "))
-                pages_count = int(input("Number of pages to be created: "))
                 intake_issue_count = int(input("Number of intake issues to be created: "))
 
                 from plane.bgtasks.dummy_data_task import create_dummy_data
@@ -68,7 +67,6 @@ class Command(BaseCommand):
                     issue_count=issue_count,
                     cycle_count=cycle_count,
                     module_count=module_count,
-                    pages_count=pages_count,
                     intake_issue_count=intake_issue_count,
                 )
 

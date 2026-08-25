@@ -13,7 +13,6 @@ from rest_framework import serializers
 
 from plane.db.models import (
     Issue,
-    Page,
     Project,
     Sticky,
     UserRecentVisit,
@@ -216,34 +215,9 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
         return members
 
 
-class PageRecentVisitSerializer(serializers.ModelSerializer):
-    project_id = serializers.SerializerMethodField()
-    project_identifier = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Page
-        fields = [
-            "id",
-            "name",
-            "logo_props",
-            "project_id",
-            "owned_by",
-            "project_identifier",
-        ]
-
-    def get_project_id(self, obj):
-        return obj.project_id if hasattr(obj, "project_id") else obj.projects.values_list("id", flat=True).first()
-
-    def get_project_identifier(self, obj):
-        project = obj.projects.first()
-
-        return project.identifier if project else None
-
-
 def get_entity_model_and_serializer(entity_type):
     entity_map = {
         "issue": (Issue, IssueRecentVisitSerializer),
-        "page": (Page, PageRecentVisitSerializer),
         "project": (Project, ProjectRecentVisitSerializer),
     }
     return entity_map.get(entity_type, (None, None))

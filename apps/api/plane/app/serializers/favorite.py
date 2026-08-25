@@ -4,25 +4,13 @@
 
 from rest_framework import serializers
 
-from plane.db.models import UserFavorite, Cycle, Module, Issue, IssueView, Page, Project
+from plane.db.models import UserFavorite, Cycle, Module, Issue, IssueView, Project
 
 
 class ProjectFavoriteLiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ["id", "name", "logo_props"]
-
-
-class PageFavoriteLiteSerializer(serializers.ModelSerializer):
-    project_id = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Page
-        fields = ["id", "name", "logo_props", "project_id"]
-
-    def get_project_id(self, obj):
-        project = obj.projects.first()  # This gets the first project related to the Page
-        return project.id if project else None
 
 
 class CycleFavoriteLiteSerializer(serializers.ModelSerializer):
@@ -49,7 +37,6 @@ def get_entity_model_and_serializer(entity_type):
         "issue": (Issue, None),
         "module": (Module, ModuleFavoriteLiteSerializer),
         "view": (IssueView, ViewFavoriteSerializer),
-        "page": (Page, PageFavoriteLiteSerializer),
         "project": (Project, ProjectFavoriteLiteSerializer),
         "folder": (None, None),
     }

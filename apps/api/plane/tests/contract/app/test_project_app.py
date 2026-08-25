@@ -224,7 +224,6 @@ class TestProjectAPIPost(TestProjectBase):
             "cycle_view": True,
             "issue_views_view": False,
             "module_view": True,
-            "page_view": False,
             "inbox_view": True,
             "guest_view_all_features": True,
             "logo_props": {

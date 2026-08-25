@@ -40,30 +40,6 @@ def _require_slack_source(source: IdentitySource) -> None:
         raise SlackClientError("Identity source is not configured for Slack")
 
 
-def _schedule_live_user_revocation(user_id) -> None:
-    """Publish only after the authoritative projection is committed."""
-
-    def enqueue_revocation() -> None:
-        # Record when the committed access change became visible, rather than
-        # when a delayed Celery task eventually reaches Redis.
-        access_changed_at = timezone.now().isoformat()
-        try:
-            # Local import avoids a module cycle: the task imports this sync
-            # module for its Slack reconciliation entry points.
-            from plane.bgtasks.slack_sync import publish_live_user_revocation
-
-            publish_live_user_revocation.apply_async(
-                args=[str(user_id), access_changed_at],
-                retry=False,
-            )
-        except Exception:
-            # The Live message TTL check remains the durable fail-closed path
-            # if the broker is unavailable at commit time.
-            logger.exception("Failed to enqueue Live user revocation for %s", user_id)
-
-    transaction.on_commit(enqueue_revocation)
-
-
 def slack_role_for_user(payload: dict[str, Any]) -> int:
     """Map Slack's authoritative team role to Plane's workspace role."""
 
@@ -338,7 +314,6 @@ def deactivate_identity(
                 updated_at=now,
             )
         Session.objects.filter(user_id=str(identity.user_id)).delete()
-        _schedule_live_user_revocation(identity.user_id)
 
 
 def revoke_installation(
@@ -701,9 +676,6 @@ def sync_slack_user(
                 role=role,
                 updated_at=now,
             )
-
-        if workspace_access_changed:
-            _schedule_live_user_revocation(user.id)
 
         SlackUserTombstone.all_objects.filter(
             source=installation,

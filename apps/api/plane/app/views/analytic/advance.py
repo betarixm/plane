@@ -17,7 +17,6 @@ from plane.db.models import (
     Cycle,
     Module,
     IssueView,
-    ProjectPage,
     Workspace,
 )
 from plane.utils.build_chart import build_analytics_chart
@@ -194,7 +193,6 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         total_members = active_workspace_members().filter(
             workspace__slug=self._workspace_slug, **date_filter
         ).count()
-        total_pages = ProjectPage.objects.filter(**self.filters["base_filters"], **date_filter).count()
         total_views = IssueView.objects.filter(**self.filters["base_filters"], **date_filter).count()
 
         data = {
@@ -203,7 +201,6 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             "modules": total_modules,
             "intake": total_intake,
             "members": total_members,
-            "pages": total_pages,
             "views": total_views,
         }
 

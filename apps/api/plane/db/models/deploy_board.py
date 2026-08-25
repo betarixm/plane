@@ -22,7 +22,6 @@ class DeployBoard(WorkspaceBaseModel):
         ("issue", "Issue"),
         ("module", "Module"),
         ("cycle", "Task"),
-        ("page", "Page"),
         ("view", "View"),
         ("intake", "Intake"),
     )

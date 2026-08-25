@@ -113,7 +113,6 @@ class FileAssetSerializer(BaseSerializer):
             "project",
             "issue",
             "comment",
-            "page",
             "draft_issue",
             "user",
             "is_deleted",

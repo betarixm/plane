@@ -9,17 +9,12 @@ import re
 from django.db import models
 from django.db.models import (
     Q,
-    OuterRef,
-    Subquery,
     Value,
-    UUIDField,
     CharField,
     When,
     Case,
 )
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models.functions import Cast, Coalesce, Concat
+from django.db.models.functions import Cast, Concat
 from django.utils import timezone
 
 # Third party imports
@@ -35,9 +30,7 @@ from plane.db.models import (
     Issue,
     Cycle,
     Module,
-    Page,
     IssueView,
-    ProjectPage,
 )
 from plane.utils.identity_access import (
     active_project_members,
@@ -163,52 +156,6 @@ class GlobalSearchEndpoint(BaseAPIView):
             .values("name", "id", "project_id", "project__identifier", "workspace__slug")
         )
 
-    def filter_pages(self, query, slug, project_id, workspace_search):
-        fields = ["name"]
-        q = Q()
-        if query:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": query})
-
-        pages = (
-            Page.objects.filter(
-                q,
-                projects__project_projectmember__member=self.request.user,
-                projects__project_projectmember__is_active=True,
-                projects__archived_at__isnull=True,
-                workspace__slug=slug,
-            )
-            .annotate(
-                project_ids=Coalesce(
-                    ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
-                    Value([], output_field=ArrayField(UUIDField())),
-                )
-            )
-            .annotate(
-                project_identifiers=Coalesce(
-                    ArrayAgg(
-                        "projects__identifier",
-                        distinct=True,
-                        filter=~Q(projects__id=True),
-                    ),
-                    Value([], output_field=ArrayField(CharField())),
-                )
-            )
-        )
-
-        if workspace_search == "false" and project_id:
-            project_subquery = ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=project_id).values_list(
-                "project_id", flat=True
-            )[:1]
-
-            pages = pages.annotate(project_id=Subquery(project_subquery)).filter(project_id=project_id)
-
-        return (
-            pages.order_by("-created_at")
-            .distinct()
-            .values("name", "id", "project_ids", "project_identifiers", "workspace__slug")
-        )
-
     def filter_views(self, query, slug, project_id, workspace_search):
         fields = ["name"]
         q = Q()
@@ -283,7 +230,6 @@ class GlobalSearchEndpoint(BaseAPIView):
             "cycle": self.filter_cycles,
             "module": self.filter_modules,
             "issue_view": self.filter_views,
-            "page": self.filter_pages,
             "intake": self.filter_intakes,
         }
 
@@ -497,34 +443,6 @@ class SearchEndpoint(BaseAPIView):
                     )
                     response_data["module"] = list(modules)
 
-                elif query_type == "page":
-                    fields = ["name"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
-
-                    pages = (
-                        Page.objects.filter(
-                            q,
-                            projects__project_projectmember__member=self.request.user,
-                            projects__project_projectmember__is_active=True,
-                            projects__id=project_id,
-                            workspace__slug=slug,
-                            access=0,
-                        )
-                        .order_by("-created_at")
-                        .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "logo_props",
-                            "projects__id",
-                            "workspace__slug",
-                        )[:count]
-                    )
-                    response_data["page"] = list(pages)
             return Response(response_data, status=status.HTTP_200_OK)
 
         else:
@@ -697,32 +615,4 @@ class SearchEndpoint(BaseAPIView):
                     )
                     response_data["module"] = list(modules)
 
-                elif query_type == "page":
-                    fields = ["name"]
-                    q = Q()
-
-                    if query:
-                        for field in fields:
-                            q |= Q(**{f"{field}__icontains": query})
-
-                    pages = (
-                        Page.objects.filter(
-                            q,
-                            projects__project_projectmember__member=self.request.user,
-                            projects__project_projectmember__is_active=True,
-                            workspace__slug=slug,
-                            access=0,
-                            is_global=True,
-                        )
-                        .order_by("-created_at")
-                        .distinct()
-                        .values(
-                            "name",
-                            "id",
-                            "logo_props",
-                            "projects__id",
-                            "workspace__slug",
-                        )[:count]
-                    )
-                    response_data["page"] = list(pages)
             return Response(response_data, status=status.HTTP_200_OK)

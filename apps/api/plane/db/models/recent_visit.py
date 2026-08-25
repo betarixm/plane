@@ -12,7 +12,6 @@ from .workspace import WorkspaceBaseModel
 
 class EntityNameEnum(models.TextChoices):
     VIEW = "VIEW", "View"
-    PAGE = "PAGE", "Page"
     ISSUE = "ISSUE", "Issue"
     CYCLE = "CYCLE", "Cycle"
     MODULE = "MODULE", "Module"

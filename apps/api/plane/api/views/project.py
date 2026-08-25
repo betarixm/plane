@@ -36,7 +36,6 @@ from plane.db.models import (
     Issue,
     StateGroup,
     IntakeIssue,
-    ProjectPage,
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.utils.exception_logger import log_exception
@@ -837,7 +836,6 @@ ALLOWED_PROJECT_SUMMARY_FIELDS = [
     "modules",
     "issues",
     "intakes",
-    "pages",
 ]
 
 
@@ -872,10 +870,6 @@ class ProjectSummaryAPIEndpoint(BaseAPIView):
     # Getting all summary counts in one ORM query; only runs subqueries for requested fields.
     def _get_all_summary_counts(self, project_id, requested_fields):
         """Return requested summary counts in one ORM query; only runs subqueries for requested fields."""
-
-        # Using a different annotation name for 'pages' to avoid conflict with Project.pages (M2M from Page)
-        def _annotation_name(field):
-            return "pages_count" if field == "pages" else field
 
         subquery_builders = {
             "members": lambda: (
@@ -921,25 +915,19 @@ class ProjectSummaryAPIEndpoint(BaseAPIView):
                 .annotate(count=Count("*"))
                 .values("count")
             ),
-            "pages": lambda: (
-                ProjectPage.objects.filter(project_id=OuterRef("pk"))
-                .values("project_id")
-                .annotate(count=Count("*"))
-                .values("count")
-            ),
         }
 
         # Build annotations dictionary for the requested fields
         annotations = {
-            _annotation_name(field): Coalesce(Subquery(subquery_builders[field]()), 0) for field in requested_fields
+            field: Coalesce(Subquery(subquery_builders[field]()), 0) for field in requested_fields
         }
 
         # Prepare values list for the annotation names
         fields_list = sorted(requested_fields)
-        values_list = [_annotation_name(f) for f in fields_list]
+        values_list = fields_list
         # Execute the query and get the result
         query_result = Project.objects.filter(pk=project_id).annotate(**annotations).values(*values_list).first()
         if not query_result:
             return {field: 0 for field in requested_fields}
         # Return the result as a dictionary
-        return {field: query_result[_annotation_name(field)] for field in requested_fields}
+        return {field: query_result[field] for field in requested_fields}

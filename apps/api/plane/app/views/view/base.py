@@ -389,7 +389,7 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_type="view",
             ).delete()
-            # Delete the page from recent visit
+            # Delete the view from recent visits
             UserRecentVisit.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,

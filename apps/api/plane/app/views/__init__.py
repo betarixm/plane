@@ -104,14 +104,6 @@ from .notification.base import (
     UnreadNotificationEndpoint,
     UserNotificationPreferenceEndpoint,
 )
-from .page.base import (
-    PageDuplicateEndpoint,
-    PageFavoriteViewSet,
-    PageLiveEditAccessEndpoint,
-    PagesDescriptionViewSet,
-    PageViewSet,
-)
-from .page.version import PageVersionEndpoint
 from .project.base import (
     DeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,

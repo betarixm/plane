@@ -27,7 +27,6 @@ from plane.db.models import (
     Cycle,
     CycleIssue,
     ModuleIssue,
-    Page,
     WorkspaceMember,
 )
 
@@ -120,7 +119,6 @@ def _collect_and_push_metrics() -> None:
         cycle_count = Cycle.objects.count()
         cycle_issue_count = CycleIssue.objects.count()
         module_issue_count = ModuleIssue.objects.count()
-        page_count = Page.objects.count()
 
         # Derive domain from WEB_URL env var (e.g. https://plane.acmecorp.com -> plane.acmecorp.com).
         # Prepend "//" for scheme-less values (e.g. "plane.acmecorp.com") so urlparse
@@ -166,9 +164,6 @@ def _collect_and_push_metrics() -> None:
         def module_issues_callback(_options):
             yield metrics.Observation(module_issue_count, instance_attrs)
 
-        def pages_callback(_options):
-            yield metrics.Observation(page_count, instance_attrs)
-
         # Register observable gauges for instance metrics
         meter.create_observable_gauge(
             name="plane_instance_users_total",
@@ -210,15 +205,9 @@ def _collect_and_push_metrics() -> None:
             description="Total number of issues in modules",
             callbacks=[module_issues_callback],
         )
-        meter.create_observable_gauge(
-            name="plane_instance_pages_total",
-            description="Total number of pages",
-            callbacks=[pages_callback],
-        )
-
         # Collect workspace-level metrics (limited to WORKSPACE_METRICS_LIMIT).
         # Fetch workspaces in a deterministic order so the slice is stable across runs.
-        # Counts are batched into 6 aggregation queries instead of 6×N per-workspace
+        # Counts are batched into aggregation queries instead of N per-workspace
         # queries (avoids N+1 at scale when WORKSPACE_METRICS_LIMIT is large).
         instance_id_str = str(instance.instance_id or "")
         workspaces = list(Workspace.objects.order_by("created_at")[:WORKSPACE_METRICS_LIMIT])
@@ -254,13 +243,6 @@ def _collect_and_push_metrics() -> None:
             .annotate(count=Count("id"))
             .values_list("workspace_id", "count")
         )
-        page_counts = dict(
-            Page.objects.filter(workspace_id__in=workspace_ids)
-            .values("workspace_id")
-            .annotate(count=Count("id"))
-            .values_list("workspace_id", "count")
-        )
-
         workspace_metrics = []
         for workspace in workspaces:
             ws_id = workspace.id
@@ -273,7 +255,6 @@ def _collect_and_push_metrics() -> None:
                 "module_count": module_counts.get(ws_id, 0),
                 "cycle_count": cycle_counts.get(ws_id, 0),
                 "member_count": member_counts.get(ws_id, 0),
-                "page_count": page_counts.get(ws_id, 0),
             })
 
         def _ws_attrs(ws: dict) -> dict:
@@ -304,10 +285,6 @@ def _collect_and_push_metrics() -> None:
             for ws in workspace_metrics:
                 yield metrics.Observation(ws["member_count"], _ws_attrs(ws))
 
-        def ws_pages_callback(_options):
-            for ws in workspace_metrics:
-                yield metrics.Observation(ws["page_count"], _ws_attrs(ws))
-
         # Register observable gauges for workspace metrics
         meter.create_observable_gauge(
             name="plane_workspace_projects_total",
@@ -334,12 +311,6 @@ def _collect_and_push_metrics() -> None:
             description="Number of members per workspace",
             callbacks=[ws_members_callback],
         )
-        meter.create_observable_gauge(
-            name="plane_workspace_pages_total",
-            description="Number of pages per workspace",
-            callbacks=[ws_pages_callback],
-        )
-
         # Force a synchronous flush to ensure all metrics are exported
         # force_flush() blocks until all metrics are exported or timeout is reached
         flush_success = provider.force_flush(timeout_millis=FLUSH_TIMEOUT_MILLIS)

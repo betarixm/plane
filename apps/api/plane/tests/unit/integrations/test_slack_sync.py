@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-import json
 from datetime import timedelta
 from unittest.mock import patch
 from uuid import uuid4
@@ -14,7 +13,6 @@ from django.utils import timezone
 
 from plane.bgtasks.slack_sync import (
     delete_old_slack_event_receipts,
-    publish_live_user_revocation,
     reconcile_slack_installation,
 )
 from plane.db.models import (
@@ -1185,63 +1183,3 @@ def test_old_slack_event_receipts_are_hard_deleted():
 
     assert not SlackEventReceipt.all_objects.filter(pk=old_receipt.pk).exists()
     assert SlackEventReceipt.all_objects.filter(pk=current_receipt.pk).exists()
-
-
-@pytest.mark.django_db
-def test_deactivation_enqueues_live_user_revocation_after_commit(
-    installation,
-    django_capture_on_commit_callbacks,
-):
-    identity = sync_slack_user(installation, slack_user())
-    assert identity is not None
-
-    with patch(
-        "plane.bgtasks.slack_sync.publish_live_user_revocation.apply_async"
-    ) as apply_async:
-        with django_capture_on_commit_callbacks(execute=True):
-            deactivate_identity(identity)
-
-    apply_async.assert_called_once()
-    assert apply_async.call_args.kwargs["args"][0] == str(identity.user_id)
-    assert isinstance(apply_async.call_args.kwargs["args"][1], str)
-    assert apply_async.call_args.kwargs["retry"] is False
-
-
-@pytest.mark.django_db
-def test_workspace_role_change_enqueues_live_user_revocation_after_commit(
-    installation,
-    django_capture_on_commit_callbacks,
-):
-    identity = sync_slack_user(installation, slack_user())
-    assert identity is not None
-    promoted_payload = slack_user(is_admin=True)
-    promoted_payload["updated"] += 1
-
-    with patch(
-        "plane.bgtasks.slack_sync.publish_live_user_revocation.apply_async"
-    ) as apply_async:
-        with django_capture_on_commit_callbacks(execute=True):
-            sync_slack_user(installation, promoted_payload)
-
-    apply_async.assert_called_once()
-    assert apply_async.call_args.kwargs["args"][0] == str(identity.user_id)
-    assert apply_async.call_args.kwargs["retry"] is False
-
-
-def test_publish_live_user_revocation_uses_hocuspocus_server_channel():
-    with patch("plane.bgtasks.slack_sync.redis_instance") as redis_factory:
-        redis_client = redis_factory.return_value
-
-        publish_live_user_revocation.run(
-            "user-id",
-            "2026-08-24T00:00:00+00:00",
-        )
-
-    redis_client.publish.assert_called_once()
-    channel, raw_payload = redis_client.publish.call_args.args
-    payload = json.loads(raw_payload)
-    assert channel == "hocuspocus:server"
-    assert payload["command"] == "revoke_user"
-    assert payload["userId"] == "user-id"
-    assert payload["accessChangedAt"] == "2026-08-24T00:00:00+00:00"
-    redis_client.close.assert_called_once_with()

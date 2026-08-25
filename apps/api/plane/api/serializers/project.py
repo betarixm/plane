@@ -83,7 +83,6 @@ class ProjectCreateSerializer(BaseSerializer):
             "module_view",
             "cycle_view",
             "issue_views_view",
-            "page_view",
             "intake_view",
             "guest_view_all_features",
             "archive_in",

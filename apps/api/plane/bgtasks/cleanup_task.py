@@ -19,7 +19,6 @@ from celery import shared_task
 # Module imports
 from plane.db.models import (
     EmailNotificationLog,
-    PageVersion,
     APIActivityLog,
     IssueDescriptionVersion,
     WebhookLog,
@@ -104,27 +103,6 @@ def get_email_logs_queryset():
     )
 
 
-def get_page_versions_queryset():
-    """Get page versions beyond the maximum allowed (20 per page)."""
-    subq = (
-        PageVersion.all_objects.annotate(
-            row_num=Window(
-                expression=RowNumber(),
-                partition_by=[F("page_id")],
-                order_by=F("created_at").desc(),
-            )
-        )
-        .filter(row_num__gt=20)
-        .values("id")
-    )
-
-    return (
-        PageVersion.all_objects.filter(id__in=Subquery(subq))
-        .values_list("id", flat=True)
-        .iterator(chunk_size=BATCH_SIZE)
-    )
-
-
 def get_issue_description_versions_queryset():
     """Get issue description versions beyond the maximum allowed (20 per issue)."""
     subq = (
@@ -175,16 +153,6 @@ def delete_email_notification_logs():
         queryset_func=get_email_logs_queryset,
         model=EmailNotificationLog,
         task_name="Email Notification Log",
-    )
-
-
-@shared_task
-def delete_page_versions():
-    """Delete excess page versions."""
-    process_cleanup_task(
-        queryset_func=get_page_versions_queryset,
-        model=PageVersion,
-        task_name="Page Version",
     )
 
 

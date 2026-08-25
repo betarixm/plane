@@ -9,7 +9,7 @@ an incomplete fix of the GHSA-qw87 asset-IDOR cluster.
 
 The endpoint is authorized at the WORKSPACE level, so any workspace member or
 guest previously reached ``get``/``patch``/``delete`` for a project-bound asset
-(issue attachment / description, comment description, page description) even
+(issue attachment / description or comment description) even
 when they were not a member of that asset's project. The fix requires an active
 ``ProjectMember`` of ``asset.project_id`` for project-bound assets, while
 leaving workspace-level assets (WORKSPACE_LOGO, USER_AVATAR, USER_COVER, whose

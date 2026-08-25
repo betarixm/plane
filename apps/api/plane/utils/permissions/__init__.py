@@ -3,7 +3,6 @@
 # See the LICENSE file for details.
 
 from .base import ROLE, allow_permission
-from .page import ProjectPagePermission
 from .project import (
     ProjectAdminPermission,
     ProjectBasePermission,

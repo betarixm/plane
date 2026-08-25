@@ -231,10 +231,6 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         ]:
             return {"issue_id": entity_id}
 
-        # Page Description
-        if entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
-            return {"page_id": entity_id}
-
         # Comment Description
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return {"comment_id": entity_id}
@@ -578,9 +574,6 @@ class ProjectAssetEndpoint(BaseAPIView):
         ]:
             return {"issue_id": entity_id}
 
-        if entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
-            return {"page_id": entity_id}
-
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return {"comment_id": entity_id}
 
@@ -787,9 +780,6 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             except IntegrityError:
                 pass
 
-        if asset.entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
-            assets.update(page_id=entity_id)
-
         if asset.entity_type == FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION:
             # For some cases, the bulk api is called after the draft issue is deleted
             # creating an integrity error
@@ -833,10 +823,6 @@ class DuplicateAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
         ]:
             return {"issue_id": entity_id}
-
-        # Page Description
-        if entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
-            return {"page_id": entity_id}
 
         # Comment Description
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:

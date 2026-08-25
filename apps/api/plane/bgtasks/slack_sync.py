@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-import json
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from math import ceil
@@ -25,7 +24,6 @@ from plane.integrations.slack import (
     sync_slack_team_metadata,
     sync_slack_user,
 )
-from plane.settings.redis import redis_instance
 
 SLACK_EVENT_MAX_ATTEMPTS = 6
 SLACK_EVENT_LEASE = timedelta(minutes=1)
@@ -41,33 +39,6 @@ SLACK_DEFERRED_EVENT_TYPES = frozenset(
         "user_change",
     }
 )
-
-
-@shared_task(
-    autoretry_for=(Exception,),
-    retry_backoff=True,
-    retry_jitter=True,
-    retry_kwargs={"max_retries": 3},
-)
-def publish_live_user_revocation(user_id: str, access_changed_at: str) -> None:
-    """Notify every Live server to drop a user's cached authorization."""
-
-    redis_client = redis_instance()
-    try:
-        redis_client.publish(
-            "hocuspocus:server",
-            json.dumps(
-                {
-                    "command": "revoke_user",
-                    "userId": str(user_id),
-                    "accessChangedAt": access_changed_at,
-                    "originServer": "api",
-                    "timestamp": timezone.now().isoformat(),
-                }
-            ),
-        )
-    finally:
-        redis_client.close()
 
 
 class _SlackEventDeferred(Exception):
