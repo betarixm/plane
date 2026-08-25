@@ -7,19 +7,16 @@ import pytz
 from datetime import datetime
 
 # Django imports
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
+
 class TimezoneEndpoint(APIView):
     permission_classes = [AllowAny]
 
-    @method_decorator(cache_page(60 * 60 * 2))
     def get(self, request):
         timezone_locations = [
             ("Midway Island", "Pacific/Midway"),  # UTC-11:00

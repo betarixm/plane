@@ -220,30 +220,6 @@ if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
     MIDDLEWARE.append("plane.middleware.db_routing.ReadReplicaRoutingMiddleware")
 
 
-# Redis Config
-REDIS_URL = os.environ.get("REDIS_URL")
-REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
-
-if REDIS_SSL:
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
-            },
-        }
-    }
-else:
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL,
-            "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-        }
-    }
-
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static-assets", "collected-static")

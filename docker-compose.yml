@@ -37,7 +37,6 @@ services:
       IDENTITY_PROVIDER: ${IDENTITY_PROVIDER:-slack}
     depends_on:
       - plane-db
-      - plane-redis
 
   worker:
     container_name: bgworker
@@ -55,7 +54,6 @@ services:
     depends_on:
       - api
       - plane-db
-      - plane-redis
 
   beat-worker:
     container_name: beatworker
@@ -73,7 +71,6 @@ services:
     depends_on:
       - api
       - plane-db
-      - plane-redis
 
   migrator:
     container_name: plane-migrator
@@ -105,13 +102,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data
-
-  plane-redis:
-    container_name: plane-redis
-    image: valkey/valkey:7.2.11-alpine
-    restart: always
-    volumes:
-      - redisdata:/data
 
   plane-mq:
     container_name: plane-mq
@@ -157,6 +147,5 @@ services:
 
 volumes:
   pgdata:
-  redisdata:
   uploads:
   rabbitmq_data:

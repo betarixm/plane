@@ -40,7 +40,6 @@ from plane.integrations.slack import (
 )
 from plane.integrations.identity import configured_identity_provider
 from plane.license.models import Instance
-from plane.utils.cache import invalidate_cache_directly
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.utils.path_validator import get_safe_redirect_url, validate_next_path
 from plane.utils.identity_access import (
@@ -550,17 +549,10 @@ class SlackInstallCallbackEndpoint(View):
                 locked_instance.is_setup_done = True
                 locked_instance.save(update_fields=["instance_name", "is_setup_done", "updated_at"])
                 transaction.on_commit(
-                    lambda installation_id=str(installation.id): reconcile_slack_installation.delay(
-                        installation_id
-                    ),
+                    lambda installation_id=str(installation.id): reconcile_slack_installation.delay(installation_id),
                     robust=True,
                 )
 
-            invalidate_cache_directly(
-                path="/api/instances/",
-                user=False,
-                request=request,
-            )
             if not _login_current_external_identity(
                 request,
                 source_id=installation.id,

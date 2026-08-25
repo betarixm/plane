@@ -18,7 +18,6 @@ from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import State, Issue
-from plane.utils.cache import invalidate_cache
 
 
 class StateViewSet(BaseViewSet):
@@ -42,7 +41,6 @@ class StateViewSet(BaseViewSet):
             .distinct()
         )
 
-    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
@@ -101,7 +99,6 @@ class StateViewSet(BaseViewSet):
 
         return Response(states, status=status.HTTP_200_OK)
 
-    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def mark_as_default(self, request, slug, project_id, pk):
         # Select all the states which are marked as default
@@ -109,7 +106,6 @@ class StateViewSet(BaseViewSet):
         _ = State.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).update(default=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(is_triage=False, pk=pk, project_id=project_id, workspace__slug=slug)

@@ -13,13 +13,8 @@ from pythonjsonlogger.json import JsonFormatter
 from celery.signals import after_setup_logger, after_setup_task_logger
 from celery.schedules import crontab, schedule
 
-# Module imports
-from plane.settings.redis import redis_instance
-
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
-
-ri = redis_instance()
 
 # Configurable metrics push interval (in minutes)
 # Default: 360 (6 hours), set to 5 for development/testing

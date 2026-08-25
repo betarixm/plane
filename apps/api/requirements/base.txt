@@ -9,9 +9,6 @@ psycopg==3.3.4
 psycopg-binary==3.3.4
 psycopg-c==3.3.4
 dj-database-url==3.0.1
-# redis
-redis==5.0.4
-django-redis==7.0.0
 # cors
 django-cors-headers==4.9.0
 # celery

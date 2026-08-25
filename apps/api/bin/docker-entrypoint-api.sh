@@ -26,9 +26,6 @@ python manage.py register_instance "$MACHINE_SIGNATURE"
 # Create the default bucket
 python manage.py create_bucket
 
-# Clear Cache before starting to remove stale values
-python manage.py clear_cache
-
 # Collect static files
 python manage.py collectstatic --noinput
 

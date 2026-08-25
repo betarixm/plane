@@ -7,7 +7,7 @@ print_header(){
     echo "------------------------------------------------"
     echo ""
     echo "You are required to pass below environment variables to the script"
-    echo "    DOMAIN_NAME, DATABASE_URL, REDIS_URL, AMQP_URL"
+    echo "    DOMAIN_NAME, DATABASE_URL, AMQP_URL"
     echo "    AWS_REGION, AWS_ACCESS_KEY_ID"
     echo "    AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME"
     echo "    Slack provider: SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, SLACK_SIGNING_SECRET"
@@ -24,7 +24,7 @@ print_header(){
 
 check_required_env(){
     echo "Checking required environment variables..."
-    local keys=("DOMAIN_NAME" "DATABASE_URL" "REDIS_URL" "AMQP_URL"
+    local keys=("DOMAIN_NAME" "DATABASE_URL" "AMQP_URL"
                 "AWS_REGION" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY" "AWS_S3_BUCKET_NAME")
 
     IDENTITY_PROVIDER="${IDENTITY_PROVIDER:-slack}"
@@ -154,7 +154,6 @@ update_env_file(){
 
     # update database url
     update_env_value "DATABASE_URL" "$DATABASE_URL"
-    update_env_value "REDIS_URL" "$REDIS_URL"
     update_env_value "AMQP_URL" "$AMQP_URL"
     
     # update aws credentials

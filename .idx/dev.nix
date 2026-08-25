@@ -11,6 +11,4 @@
 
   services.docker.enable = true;
   services.postgres.enable = true;
-  services.redis.enable = true;
-
 }

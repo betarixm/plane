@@ -7,28 +7,6 @@ from unittest.mock import MagicMock, patch
 
 
 @pytest.fixture
-def mock_redis():
-    """
-    Mock Redis for testing without actual Redis connection.
-
-    This fixture patches the redis_instance function to return a MagicMock
-    that behaves like a Redis client.
-    """
-    mock_redis_client = MagicMock()
-
-    # Configure the mock to handle common Redis operations
-    mock_redis_client.get.return_value = None
-    mock_redis_client.set.return_value = True
-    mock_redis_client.delete.return_value = True
-    mock_redis_client.exists.return_value = 0
-    mock_redis_client.ttl.return_value = -1
-
-    # Start the patch
-    with patch("plane.settings.redis.redis_instance", return_value=mock_redis_client):
-        yield mock_redis_client
-
-
-@pytest.fixture
 def mock_elasticsearch():
     """
     Mock Elasticsearch for testing without actual ES connection.

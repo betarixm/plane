@@ -1,6 +1,6 @@
 # Running the API Test Suite
 
-This guide covers running the Django/pytest suite for `apps/api` inside Docker via `docker-compose-test.yml` at the repo root. The compose file boots an isolated stack — Postgres, Valkey (Redis), RabbitMQ, MinIO — with tmpfs-backed data dirs, so every run begins from a clean slate and a single teardown command removes everything.
+This guide covers running the Django/pytest suite for `apps/api` inside Docker via `docker-compose-test.yml` at the repo root. The compose file boots an isolated stack — Postgres, RabbitMQ, MinIO — with tmpfs-backed data dirs, so every run begins from a clean slate and a single teardown command removes everything.
 
 For background on the test layout, markers, and fixtures, see [`TESTING_GUIDE.md`](./TESTING_GUIDE.md) and [`README.md`](./README.md).
 
@@ -64,14 +64,13 @@ docker compose -f docker-compose-test.yml down -v
 | Service      | Image                                | Purpose                                       |
 | ------------ | ------------------------------------ | --------------------------------------------- |
 | `test-db`    | `postgres:15.7-alpine`               | Application database                          |
-| `test-redis` | `valkey/valkey:7.2.11-alpine`        | Cache / Celery broker                         |
 | `test-mq`    | `rabbitmq:3.13.6-management-alpine`  | Task queue                                    |
 | `test-minio` | `minio/minio`                        | S3-compatible object storage                  |
 | `api-tests`  | built from `apps/api/Dockerfile.dev` | Installs `requirements/test.txt`, runs pytest |
 
-All four dependencies expose health checks; `api-tests` waits for `service_healthy` on each via `depends_on`, so pytest only starts once the stack is ready.
+All three dependencies expose health checks; `api-tests` waits for `service_healthy` on each via `depends_on`, so pytest only starts once the stack is ready.
 
-Test-time env overrides live in the compose file itself (`POSTGRES_HOST=test-db`, `REDIS_URL=redis://test-redis:6379/`, `AWS_S3_ENDPOINT_URL=http://test-minio:9000`, `DJANGO_SETTINGS_MODULE=plane.settings.test`). Everything else is inherited from `apps/api/.env`.
+Test-time env overrides live in the compose file itself (`POSTGRES_HOST=test-db`, `AWS_S3_ENDPOINT_URL=http://test-minio:9000`, `DJANGO_SETTINGS_MODULE=plane.settings.test`). Everything else is inherited from `apps/api/.env`.
 
 ## Troubleshooting
 

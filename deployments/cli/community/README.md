@@ -393,10 +393,9 @@ Select a Service you want to view the logs for:
    5) Beat-Worker
    6) Migrator
    7) Proxy
-   8) Redis
-   9) Postgres
-   10) Minio
-   11) RabbitMQ
+   8) Postgres
+   9) Minio
+   10) RabbitMQ
    0) Back to Main Menu
 
 Service: 3
@@ -462,7 +461,6 @@ In response, you can find the backup folder
 
 ```bash
 Backing Up plane-app_pgdata
-Backing Up plane-app_redisdata
 Backing Up plane-app_uploads
 
 Backup completed successfully. Backup files are stored in /....../plane-app/backup/20240502-1120
@@ -505,10 +503,6 @@ When you want to restore the previously backed-up data, follow the instructions 
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/pgdata.tar.gz
    .....Restoring plane-app_pgdata
    .....Successfully restored volume plane-app_pgdata from pgdata.tar.gz
-
-   Found /opt/plane-selfhost/plane-app/backup/20240722-0914/redisdata.tar.gz
-   .....Restoring plane-app_redisdata
-   .....Successfully restored volume plane-app_redisdata from redisdata.tar.gz
 
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/uploads.tar.gz
    .....Restoring plane-app_uploads

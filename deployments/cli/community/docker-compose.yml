@@ -7,11 +7,6 @@ x-db-env: &db-env
   POSTGRES_PORT: ${POSTGRES_PORT:-5432}
   PGDATA: ${PGDATA:-/var/lib/postgresql/data}
 
-x-redis-env: &redis-env
-  REDIS_HOST: ${REDIS_HOST:-plane-redis}
-  REDIS_PORT: ${REDIS_PORT:-6379}
-  REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
-
 x-minio-env: &minio-env
   MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
   MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-secret-key}
@@ -91,10 +86,9 @@ services:
     volumes:
       - logs_api:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
       - plane-db
-      - plane-redis
       - plane-mq
 
   worker:
@@ -107,11 +101,10 @@ services:
     volumes:
       - logs_worker:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
       - api
       - plane-db
-      - plane-redis
       - plane-mq
 
   beat-worker:
@@ -124,11 +117,10 @@ services:
     volumes:
       - logs_beat-worker:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
       - api
       - plane-db
-      - plane-redis
       - plane-mq
 
   migrator:
@@ -141,10 +133,9 @@ services:
     volumes:
       - logs_migrator:/code/plane/logs
     environment:
-      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
+      <<: [*app-env, *db-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
       - plane-db
-      - plane-redis
 
   # Comment this if you already have a database running
   plane-db:
@@ -158,15 +149,6 @@ services:
       <<: *db-env
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-  plane-redis:
-    image: valkey/valkey:7.2.11-alpine
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-    volumes:
-      - redisdata:/data
 
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
@@ -220,7 +202,6 @@ services:
 
 volumes:
   pgdata:
-  redisdata:
   uploads:
   logs_api:
   logs_worker:

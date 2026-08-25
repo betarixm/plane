@@ -1,5 +1,4 @@
 node_modules
-.next
 .yarn
 
 ### NextJS ###
@@ -12,7 +11,6 @@ node_modules
 /coverage
 
 # Next.js
-/.next/
 /out/
 
 # Production
@@ -95,10 +93,6 @@ deploy/selfhost/plane-app/
 output.css
 
 dev-editor
-# Redis
-*.rdb
-*.rdb.gz
-
 storybook-static
 
 CLAUDE.md

@@ -487,16 +487,15 @@ function viewLogs(){
         echo "   5) Beat-Worker"
         echo "   6) Migrator"
         echo "   7) Proxy"
-        echo "   8) Redis"
-        echo "   9) Postgres"
-        echo "   10) Minio"
-        echo "   11) RabbitMQ"
+        echo "   8) Postgres"
+        echo "   9) Minio"
+        echo "   10) RabbitMQ"
         echo "   0) Back to Main Menu"
         echo 
         read -p "Service: " DOCKER_SERVICE_NAME
 
-        until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 11 )); do
-            echo "Invalid selection. Please enter a number between 0 and 11."
+        until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 10 )); do
+            echo "Invalid selection. Please enter a number between 0 and 10."
             read -p "Service: " DOCKER_SERVICE_NAME
         done
 
@@ -512,10 +511,9 @@ function viewLogs(){
                 5) viewSpecificLogs "beat-worker";;
                 6) viewSpecificLogs "migrator";;
                 7) viewSpecificLogs "proxy";;
-                8) viewSpecificLogs "plane-redis";;
-                9) viewSpecificLogs "plane-db";;
-                10) viewSpecificLogs "plane-minio";;
-                11) viewSpecificLogs "plane-mq";;
+                8) viewSpecificLogs "plane-db";;
+                9) viewSpecificLogs "plane-minio";;
+                10) viewSpecificLogs "plane-mq";;
                 0) askForAction;;
                 *) echo "INVALID SERVICE NAME SUPPLIED";;
             esac
@@ -531,7 +529,6 @@ function viewLogs(){
             beat-worker) viewSpecificLogs "beat-worker";;
             migrator) viewSpecificLogs "migrator";;
             proxy) viewSpecificLogs "proxy";;
-            redis) viewSpecificLogs "plane-redis";;
             postgres) viewSpecificLogs "plane-db";;
             minio) viewSpecificLogs "plane-minio";;
             rabbitmq) viewSpecificLogs "plane-mq";;
@@ -599,8 +596,6 @@ function backupData() {
     backup_container_dir "$BACKUP_FOLDER" "plane-db" "/var/lib/postgresql/data" "pgdata" || exit 1
     backup_container_dir "$BACKUP_FOLDER" "plane-minio" "/export" "uploads" || exit 1
     backup_container_dir "$BACKUP_FOLDER" "plane-mq" "/var/lib/rabbitmq" "rabbitmq_data" || exit 1
-    backup_container_dir "$BACKUP_FOLDER" "plane-redis" "/data" "redisdata" || exit 1
-
     echo ""
     echo "Backup completed successfully. Backup files are stored in $BACKUP_FOLDER"
     echo ""

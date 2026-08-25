@@ -21,7 +21,6 @@ from plane.app.permissions import ROLE, allow_permission
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import FileAsset, Project, ProjectMember, User, Workspace
 from plane.settings.storage import S3Storage
-from plane.utils.cache import invalidate_cache_directly
 from plane.utils.path_validator import sanitize_filename
 from plane.utils.external_assets import (
     EXTERNALLY_MANAGED_ASSET_ENTITY_TYPES,
@@ -56,13 +55,6 @@ class UserAssetsV2Endpoint(BaseAPIView):
             # Save the new avatar
             user.avatar_asset_id = asset_id
             user.save()
-            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
-            invalidate_cache_directly(
-                path="/api/users/me/settings/",
-                url_params=False,
-                user=True,
-                request=request,
-            )
             return
         # User Cover
         if entity_type == FileAsset.EntityTypeContext.USER_COVER:
@@ -74,13 +66,6 @@ class UserAssetsV2Endpoint(BaseAPIView):
             # Save the new cover image
             user.cover_image_asset_id = asset_id
             user.save()
-            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
-            invalidate_cache_directly(
-                path="/api/users/me/settings/",
-                url_params=False,
-                user=True,
-                request=request,
-            )
             return
         return
 
@@ -90,26 +75,12 @@ class UserAssetsV2Endpoint(BaseAPIView):
             user = User.objects.get(id=asset.user_id)
             user.avatar_asset_id = None
             user.save()
-            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
-            invalidate_cache_directly(
-                path="/api/users/me/settings/",
-                url_params=False,
-                user=True,
-                request=request,
-            )
             return
         # User Cover
         if entity_type == FileAsset.EntityTypeContext.USER_COVER:
             user = User.objects.get(id=asset.user_id)
             user.cover_image_asset_id = None
             user.save()
-            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
-            invalidate_cache_directly(
-                path="/api/users/me/settings/",
-                url_params=False,
-                user=True,
-                request=request,
-            )
             return
         return
 
@@ -260,13 +231,6 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace.logo = ""
             workspace.logo_asset_id = asset_id
             workspace.save()
-            invalidate_cache_directly(
-                path="/api/users/me/workspace/",
-                url_params=False,
-                user=True,
-                request=request,
-            )
-            invalidate_cache_directly(path="/api/instances/", url_params=False, user=False, request=request)
             return
 
         # Project Cover
@@ -293,13 +257,6 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 return
             workspace.logo_asset_id = None
             workspace.save()
-            invalidate_cache_directly(
-                path="/api/users/me/workspace/",
-                url_params=False,
-                user=True,
-                request=request,
-            )
-            invalidate_cache_directly(path="/api/instances/", url_params=False, user=False, request=request)
             return
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
@@ -742,9 +699,7 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             created_by=request.user,
         ).filter(Q(project_id=project_id) | Q(project_id__isnull=True))
 
-        if assets.filter(
-            entity_type__in=EXTERNALLY_MANAGED_ASSET_ENTITY_TYPES
-        ).exists():
+        if assets.filter(entity_type__in=EXTERNALLY_MANAGED_ASSET_ENTITY_TYPES).exists():
             return Response(
                 {"error": EXTERNALLY_MANAGED_ASSET_ERROR},
                 status=status.HTTP_403_FORBIDDEN,

@@ -40,7 +40,6 @@ This helps us triage and manage issues more efficiently.
 - Node.js version 20+ [LTS version](https://nodejs.org/en/about/previous-releases)
 - Python version 3.8+
 - Postgres version v14
-- Redis version v6.2.7
 - **Memory**: Minimum **12 GB RAM** recommended
   > ⚠️ Running the project on a system with only 8 GB RAM may lead to setup failures or memory crashes (especially during Docker container build/start or dependency install). Use cloud environments like GitHub Codespaces or upgrade local RAM if possible.
 

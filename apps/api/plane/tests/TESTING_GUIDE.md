@@ -97,9 +97,8 @@ Our test setup provides several useful fixtures:
 2. `api_key_client`: API client with API key authentication (for external API tests)
 3. `session_client`: API client with session authentication (for web app API tests)
 4. `create_user`: Creates and returns a test user
-5. `mock_redis`: Mocks Redis interactions
-6. `mock_elasticsearch`: Mocks Elasticsearch interactions
-7. `mock_celery`: Mocks Celery task execution
+5. `mock_elasticsearch`: Mocks Elasticsearch interactions
+6. `mock_celery`: Mocks Celery task execution
 
 ## Using Factory Boy
 

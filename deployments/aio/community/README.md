@@ -20,7 +20,6 @@ The AIO image contains the following services:
 The AIO image requires these external services to be running:
 
 - **PostgreSQL Database**: For data storage
-- **Redis**: For caching and session management
 - **RabbitMQ**: For message queuing
 - **S3-Compatible Storage**: For file uploads (AWS S3 or MinIO)
 
@@ -32,7 +31,6 @@ You must provide these environment variables:
 
 - `DOMAIN_NAME`: Your domain name or IP address
 - `DATABASE_URL`: PostgreSQL connection string
-- `REDIS_URL`: Redis connection string
 - `AMQP_URL`: RabbitMQ connection string
 
 #### Identity Source
@@ -62,7 +60,6 @@ docker run --name plane-aio --rm -it \
     -p 80:80 \
     -e DOMAIN_NAME=your-domain.com \
     -e DATABASE_URL=postgresql://user:pass@host:port/database \
-    -e REDIS_URL=redis://host:port \
     -e AMQP_URL=amqp://user:pass@host:port/vhost \
     -e IDENTITY_PROVIDER=slack \
     -e SLACK_CLIENT_ID=your-slack-client-id \
@@ -83,7 +80,6 @@ docker run --name myaio --rm -it \
     -p 80:80 \
     -e DOMAIN_NAME=${MYIP} \
     -e DATABASE_URL=postgresql://plane:plane@${MYIP}:15432/plane \
-    -e REDIS_URL=redis://${MYIP}:16379 \
     -e AMQP_URL=amqp://plane:plane@${MYIP}:15673/plane \
     -e IDENTITY_PROVIDER=slack \
     -e SLACK_CLIENT_ID=your-slack-client-id \
@@ -164,9 +160,8 @@ docker exec -it <container-name> supervisorctl status
 ### Common Issues
 
 1. **Database Connection Failed**: Ensure PostgreSQL is accessible and credentials are correct
-2. **Redis Connection Failed**: Verify Redis server is running and URL is correct
-3. **Slack Setup Unavailable**: Verify all three Slack credentials are set and restart the container
-4. **File Upload Issues**: Check S3 credentials and bucket permissions
+2. **Slack Setup Unavailable**: Verify all three Slack credentials are set and restart the container
+3. **File Upload Issues**: Check S3 credentials and bucket permissions
 
 ### Environment Validation
 

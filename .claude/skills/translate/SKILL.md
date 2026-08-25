@@ -117,7 +117,7 @@ Per CLDR for ru/ua: `one` fires for 1, 21, 31… (nom.sg.); `few` for 2–4, 22�
 
 ### Third-party products & standards (always Latin, every locale)
 
-GitHub, GitLab, Bitbucket, Slack, Discord, Zoom, Microsoft Teams, Jira, Linear, Asana, Notion, Confluence, Trello, Figma, Google, Google Drive, Google Calendar, Google Docs, Google Sheets, Gmail, YouTube, Dropbox, Zapier, Tiptap, ProseMirror, Yjs, Hocuspocus, Socket.IO, React, TypeScript, JavaScript, Python, Django, PostgreSQL, Redis, RabbitMQ.
+GitHub, GitLab, Bitbucket, Slack, Discord, Zoom, Microsoft Teams, Jira, Linear, Asana, Notion, Confluence, Trello, Figma, Google, Google Drive, Google Calendar, Google Docs, Google Sheets, Gmail, YouTube, Dropbox, Zapier, Tiptap, ProseMirror, Yjs, Hocuspocus, Socket.IO, React, TypeScript, JavaScript, Python, Django, PostgreSQL, RabbitMQ.
 
 Also preserve: OAuth, OIDC, SAML, SSO, LDAP, API, REST, GraphQL, URL, URI, ID, UUID, JSON, YAML, CSV, TSV, XML, HTML, PDF, PNG, JPG, SVG, CSS, HTTP, HTTPS, TLS, SSL, IP, CIDR, DNS, ARIA, WCAG.
 
