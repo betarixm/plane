@@ -71,9 +71,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
         {comment.actor_detail.avatar_url && comment.actor_detail.avatar_url !== "" ? (
           <img
             src={getFileURL(comment.actor_detail.avatar_url)}
-            alt={
-              comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name
-            }
+            alt={comment.actor_detail.display_name}
             height={30}
             width={30}
             className="grid size-7 place-items-center rounded-full border-2 border-strong-1"
@@ -82,9 +80,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           <div
             className={`bg-gray-500 grid size-7 place-items-center rounded-full border-2 border-strong-1 text-on-color`}
           >
-            {comment.actor_detail.is_bot
-              ? comment?.actor_detail?.first_name?.charAt(0)
-              : comment?.actor_detail?.display_name?.charAt(0)}
+            {comment?.actor_detail?.display_name?.charAt(0)}
           </div>
         )}
 
@@ -94,9 +90,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
       </div>
       <div className="min-w-0 flex-1">
         <div>
-          <div className="text-11">
-            {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
-          </div>
+          <div className="text-11">{comment.actor_detail.display_name}</div>
           <p className="mt-0.5 text-11 text-secondary">
             <>commented {timeAgo(comment.created_at)}</>
           </p>

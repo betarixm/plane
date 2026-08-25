@@ -28,13 +28,13 @@ type Props = {
   workspaceSlug: string;
 };
 
-type member = {
+type TProjectMemberFormValue = {
   role: EUserPermissions;
   member_id: string;
 };
 
 type FormValues = {
-  members: member[];
+  members: TProjectMemberFormValue[];
 };
 
 const defaultValues: FormValues = {
@@ -46,7 +46,7 @@ const defaultValues: FormValues = {
   ],
 };
 
-export const SendProjectInvitationModal = observer(function SendProjectInvitationModal(props: Props) {
+export const AddProjectMembersModal = observer(function AddProjectMembersModal(props: Props) {
   const { isOpen, onClose, onSuccess, projectId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -71,10 +71,10 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
   });
   // derived values
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
-  const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
+  const availablePeople = workspaceMemberIds?.filter((userId) => {
     const projectMemberDetails = getProjectMemberDetails(userId, projectId);
-    const isInvited = projectMemberDetails?.member.id && projectMemberDetails?.original_role;
-    return !isInvited;
+    const isMember = projectMemberDetails?.member.id && projectMemberDetails?.original_role;
+    return !isMember;
   });
 
   const onSubmit = async (formData: FormValues) => {
@@ -127,25 +127,20 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     }
   }, [fields, append]);
 
-  const options = uninvitedPeople
+  const options = availablePeople
     ?.map((userId) => {
       const memberDetails = getWorkspaceMemberDetails(userId);
 
       if (!memberDetails?.member) return;
       return {
         value: `${memberDetails?.member.id}`,
-        query: `${memberDetails?.member.first_name} ${
-          memberDetails?.member.last_name
-        } ${memberDetails?.member.display_name.toLowerCase()}`,
+        query: memberDetails.member.display_name.toLowerCase(),
         content: (
           <div className="flex w-full items-center gap-2">
             <div className="shrink-0 pt-0.5">
               <Avatar name={memberDetails?.member.display_name} src={getFileURL(memberDetails?.member.avatar_url)} />
             </div>
-            <div className="truncate">
-              {memberDetails?.member.display_name} (
-              {memberDetails?.member.first_name + " " + memberDetails?.member.last_name})
-            </div>
+            <div className="truncate">{memberDetails.member.display_name}</div>
           </div>
         ),
       };
@@ -162,12 +157,12 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(
+    const isGuestOrAdmin = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(
       currentMemberWorkspaceRole as EUserPermissions
     );
 
     return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))
+      Object.entries(ROLE).filter(([key]) => !isGuestOrAdmin || [currentMemberWorkspaceRole].includes(parseInt(key)))
     );
   };
 
@@ -175,11 +170,9 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)} className="p-5">
         <div className="space-y-5">
-          <h3 className="text-16 leading-6 font-medium text-primary">
-            {t("project_settings.members.invite_members.title")}
-          </h3>
+          <h3 className="text-16 leading-6 font-medium text-primary">Add project members</h3>
           <div className="mt-2">
-            <p className="text-13 text-secondary">{t("project_settings.members.invite_members.sub_heading")}</p>
+            <p className="text-13 text-secondary">Select people from the synchronized workspace member directory.</p>
           </div>
 
           <div className="mb-3 space-y-4">

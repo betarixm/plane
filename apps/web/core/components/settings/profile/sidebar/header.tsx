@@ -27,9 +27,7 @@ export const ProfileSettingsSidebarHeader = observer(function ProfileSettingsSid
         />
       </div>
       <div className="truncate">
-        <p className="truncate text-body-sm-medium">
-          {currentUser?.first_name} {currentUser?.last_name}
-        </p>
+        <p className="truncate text-body-sm-medium">{currentUser?.display_name}</p>
         <p className="truncate text-caption-md-regular">{currentUser?.email}</p>
       </div>
     </div>

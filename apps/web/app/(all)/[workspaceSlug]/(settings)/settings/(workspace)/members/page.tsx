@@ -6,23 +6,21 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// types
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { MessageSquare } from "lucide-react";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel, getIdentitySourceDescriptor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
 import { SearchIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { CountChip } from "@/components/common/count-chip";
 import { PageHead } from "@/components/core/page-title";
 import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
-import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { SendWorkspaceInvitationModal } from "@/components/workspace/members";
+import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -30,94 +28,52 @@ import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/page";
 import { MembersWorkspaceSettingsHeader } from "./header";
 
-const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
-  // states
-  const [inviteModal, setInviteModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  // router
-  const { workspaceSlug } = params;
-  // store hooks
+const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage(_props: Route.ComponentProps) {
+  const [searchQuery, setSearchQuery] = useState("");
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+  const { config } = useInstance();
   const {
-    workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
+    workspace: { workspaceMemberIds, filtersStore },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
+  const identitySource = config?.identity_source;
+  const descriptor = identitySource ? getIdentitySourceDescriptor(identitySource.provider) : undefined;
 
-  // derived values
-  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const canPerformWorkspaceMemberActions = allowPermissions(
+  const canViewWorkspaceMembers = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-
-  const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
-    try {
-      await inviteMembersToWorkspace(workspaceSlug, data);
-
-      setInviteModal(false);
-
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: t("workspace_settings.settings.members.invitations_sent_successfully"),
-      });
-    } catch (error: unknown) {
-      let message = undefined;
-      if (error instanceof Error) {
-        const err = error as Error & { error?: string };
-        message = err.error;
-      }
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: `${message ?? t("something_went_wrong_please_try_again")}`,
-      });
-
-      throw error;
-    }
-  };
-
-  // Handler for role filter updates
-  const handleRoleFilterUpdate = (role: string) => {
-    const currentFilters = filtersStore.filters;
-    const currentRoles = currentFilters?.roles || [];
-    const updatedRoles = currentRoles.includes(role) ? currentRoles.filter((r) => r !== role) : [...currentRoles, role];
-
-    filtersStore.updateFilters({
-      roles: updatedRoles.length > 0 ? updatedRoles : undefined,
-    });
-  };
-
-  // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
   const appliedRoleFilters = filtersStore.filters?.roles || [];
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
 
-  // if user is not authorized to view this page
-  if (workspaceUserInfo && !canPerformWorkspaceMemberActions) {
+  const handleRoleFilterUpdate = (role: string) => {
+    const currentRoles = filtersStore.filters?.roles || [];
+    const updatedRoles = currentRoles.includes(role)
+      ? currentRoles.filter((item) => item !== role)
+      : [...currentRoles, role];
+    filtersStore.updateFilters({ roles: updatedRoles.length > 0 ? updatedRoles : undefined });
+  };
+
+  if (workspaceUserInfo && !canViewWorkspaceMembers) {
     return <NotAuthorizedView section="settings" className="h-auto" />;
   }
 
   return (
     <SettingsContentWrapper header={<MembersWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
-      <SendWorkspaceInvitationModal
-        isOpen={inviteModal}
-        onClose={() => setInviteModal(false)}
-        onSubmit={handleWorkspaceInvite}
-      />
-      <section
-        className={cn("size-full", {
-          "opacity-60": !canPerformWorkspaceMemberActions,
-        })}
-      >
-        <div className="flex items-center justify-between gap-4 pb-3.5">
-          <h4 className="flex items-center gap-2.5 text-h3-medium">
-            {t("workspace_settings.settings.members.title")}
-            {workspaceMemberIds && workspaceMemberIds.length > 0 && (
-              <CountChip count={workspaceMemberIds.length} className="m-auto h-5" />
-            )}
-          </h4>
+      <section className={cn("size-full", { "opacity-60": !canViewWorkspaceMembers })}>
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-3.5">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h4 className="flex items-center gap-2.5 text-h3-medium">
+              {t("workspace_settings.settings.members.title")}
+              {!!workspaceMemberIds?.length && <CountChip count={workspaceMemberIds.length} className="m-auto h-5" />}
+            </h4>
+            <div className="flex items-center gap-1.5 rounded-full bg-layer-1 px-2.5 py-1 text-caption-sm-medium text-tertiary">
+              <MessageSquare className="size-3.5" />
+              Synced from {descriptor?.label ?? "identity source"}
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
               <SearchIcon className="h-3.5 w-3.5 text-placeholder" />
@@ -127,7 +83,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
                 value={searchQuery}
                 // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(event) => setSearchQuery(event.target.value)}
               />
             </div>
             <MemberListFiltersDropdown
@@ -135,14 +91,13 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
               handleUpdate={handleRoleFilterUpdate}
               memberType="workspace"
             />
-            {canPerformWorkspaceAdminActions && (
-              <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
-                {t("workspace_settings.settings.members.add_member")}
-              </Button>
-            )}
           </div>
         </div>
-        <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
+        <p className="mb-5 text-body-xs-regular text-tertiary">
+          Join, leave, and profile changes are managed in {descriptor?.label ?? "your identity source"} and synchronized
+          automatically.
+        </p>
+        <WorkspaceMembersList searchQuery={searchQuery} />
       </section>
     </SettingsContentWrapper>
   );

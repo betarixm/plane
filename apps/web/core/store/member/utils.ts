@@ -36,11 +36,6 @@ export const getMemberSortKey = (memberDetails: IUserLite, field: string, member
   switch (field) {
     case "display_name":
       return memberDetails.display_name?.toLowerCase() || "";
-    case "full_name": {
-      const firstName = memberDetails.first_name || "";
-      const lastName = memberDetails.last_name || "";
-      return `${firstName} ${lastName}`.toLowerCase().trim();
-    }
     case "email":
       return memberDetails.email?.toLowerCase() || "";
     case "joining_date": {

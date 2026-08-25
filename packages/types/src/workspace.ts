@@ -6,8 +6,7 @@
 
 import type { ICycle } from "./cycle";
 import type { TUserPermissions } from "./enums";
-import type { IUser, IUserLite } from "./users";
-import type { TLoginMediums } from "./instance";
+import type { IUserLite } from "./users";
 import type { IWorkspaceViewProps } from "./view-props";
 
 export enum EUserWorkspaceRoles {
@@ -18,17 +17,14 @@ export enum EUserWorkspaceRoles {
 
 export interface IWorkspace {
   readonly id: string;
-  readonly owner: IUser;
   readonly created_at: Date;
   readonly updated_at: Date;
-  name: string;
-  url: string;
-  logo_url: string | null;
+  readonly name: string;
+  readonly logo_url: string | null;
   readonly total_members: number;
   readonly slug: string;
   readonly created_by: string;
   readonly updated_by: string;
-  organization_size: string;
   total_projects?: number;
   role: number;
   timezone: string;
@@ -38,30 +34,6 @@ export interface IWorkspaceLite {
   readonly id: string;
   name: string;
   slug: string;
-}
-
-export interface IWorkspaceMemberInvitationPublic {
-  accepted: boolean;
-  email: string;
-  id: string;
-  message: string | null;
-  responded_at: string | null;
-  role: TUserPermissions;
-  workspace: {
-    id: string;
-    logo_url: string | null;
-    name: string;
-    slug: string;
-  };
-}
-
-export interface IWorkspaceMemberInvitation extends IWorkspaceMemberInvitationPublic {
-  token: string;
-  invite_link: string;
-}
-
-export interface IWorkspaceBulkInviteFormData {
-  emails: { email: string; role: TUserPermissions }[];
 }
 
 export type Properties = {
@@ -85,21 +57,12 @@ export interface IWorkspaceMember {
   member: IUserLite;
   role: TUserPermissions | EUserWorkspaceRoles;
   created_at?: string;
-  avatar_url?: string;
-  email?: string;
-  first_name?: string;
-  last_name?: string;
-  joining_date?: string;
-  display_name?: string;
-  last_login_medium?: TLoginMediums;
   is_active?: boolean;
 }
 
 export interface IWorkspaceMemberMe {
-  company_role: string | null;
   created_at: Date;
   created_by: string;
-  default_props: IWorkspaceViewProps;
   id: string;
   member: string;
   role: TUserPermissions | EUserWorkspaceRoles;
@@ -243,12 +206,3 @@ export interface IWorkspaceSidebarNavigationItem {
 export interface IWorkspaceSidebarNavigation {
   [key: string]: IWorkspaceSidebarNavigationItem;
 }
-
-export enum EOnboardingSteps {
-  PROFILE_SETUP = "PROFILE_SETUP",
-  ROLE_SETUP = "ROLE_SETUP",
-  USE_CASE_SETUP = "USE_CASE_SETUP",
-  WORKSPACE_JOIN = "WORKSPACE_JOIN",
-}
-
-export type TOnboardingStep = EOnboardingSteps;

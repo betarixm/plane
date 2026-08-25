@@ -78,7 +78,6 @@ export interface ActorDetail {
   avatar_url?: string;
   display_name?: string;
   first_name?: string;
-  is_bot?: boolean;
   id?: string;
   last_name?: string;
 }

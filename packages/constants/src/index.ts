@@ -6,7 +6,6 @@
 
 export * from "./ai";
 export * from "./analytics";
-export * from "./auth";
 export * from "./calendar";
 export * from "./chart";
 export * from "./cycle";
@@ -21,6 +20,7 @@ export * from "./filter";
 export * from "./gantt-chart";
 export * from "./graph";
 export * from "./icon";
+export * from "./identity-source";
 export * from "./instance";
 export * from "./intake";
 export * from "./issue";

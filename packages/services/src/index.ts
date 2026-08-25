@@ -14,7 +14,6 @@ export * from "./intake";
 export * from "./module";
 export * from "./user";
 export * from "./project";
-export * from "./workspace";
 export * from "./file";
 export * from "./label";
 export * from "./state";

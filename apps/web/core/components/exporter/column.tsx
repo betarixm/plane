@@ -22,7 +22,7 @@ export const useExportColumns = () => {
       key: "Exported By",
       content: "Exported By",
       tdRender: (rowData: RowData) => {
-        const { avatar_url, display_name, email } = rowData.initiated_by_detail;
+        const { avatar_url, display_name } = rowData.initiated_by_detail;
         return (
           <div className="flex items-center gap-x-2">
             <div>
@@ -31,12 +31,12 @@ export const useExportColumns = () => {
                   <img
                     src={getFileURL(avatar_url)}
                     className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                    alt={display_name || email}
+                    alt={display_name || undefined}
                   />
                 </span>
               ) : (
                 <span className="bg-gray-700 relative flex h-4 w-4 items-center justify-center rounded-full text-11 text-on-color capitalize">
-                  {(email ?? display_name ?? "?")[0]}
+                  {(display_name || "?")[0]}
                 </span>
               )}
             </div>

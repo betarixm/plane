@@ -63,7 +63,6 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
   const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
     provider: integration.provider,
     github_app_name: config?.github_app_name || "",
-    slack_client_id: config?.slack_client_id || "",
   });
 
   const { data: workspaceIntegrations } = useSWR(workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug) : null, () =>
@@ -82,7 +81,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
     await integrationService
       .deleteWorkspaceIntegration(workspaceSlug, workspaceIntegrationId ?? "")
       .then(() => {
-        mutate<IWorkspaceIntegration[]>(
+        void mutate<IWorkspaceIntegration[]>(
           WORKSPACE_INTEGRATIONS(workspaceSlug),
           (prevData) => prevData?.filter((i) => i.id !== workspaceIntegrationId),
           false
@@ -94,6 +93,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           title: "Deleted successfully!",
           message: `${integration.title} integration deleted successfully.`,
         });
+        return undefined;
       })
       .catch(() => {
         setDeletingIntegration(false);

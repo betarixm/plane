@@ -16,7 +16,5 @@ export interface IApiToken {
   updated_at: string;
   updated_by: string;
   user: string;
-  user_type: number;
   token?: string;
-  workspace: string;
 }

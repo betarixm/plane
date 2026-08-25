@@ -15,31 +15,6 @@ export const coreRoutes: RouteConfigEntry[] = [
   // Home - Sign In
   layout("./(home)/layout.tsx", [index("./(home)/page.tsx")]),
 
-  // Sign Up
-  layout("./(all)/sign-up/layout.tsx", [route("sign-up", "./(all)/sign-up/page.tsx")]),
-
-  // Account Routes - Password Management
-  layout("./(all)/accounts/forgot-password/layout.tsx", [
-    route("accounts/forgot-password", "./(all)/accounts/forgot-password/page.tsx"),
-  ]),
-  layout("./(all)/accounts/reset-password/layout.tsx", [
-    route("accounts/reset-password", "./(all)/accounts/reset-password/page.tsx"),
-  ]),
-  layout("./(all)/accounts/set-password/layout.tsx", [
-    route("accounts/set-password", "./(all)/accounts/set-password/page.tsx"),
-  ]),
-
-  // Onboarding
-  layout("./(all)/onboarding/layout.tsx", [route("onboarding", "./(all)/onboarding/page.tsx")]),
-
-  // Invitations
-  layout("./(all)/invitations/layout.tsx", [route("invitations", "./(all)/invitations/page.tsx")]),
-
-  // Workspace Invitations
-  layout("./(all)/workspace-invitations/layout.tsx", [
-    route("workspace-invitations", "./(all)/workspace-invitations/page.tsx"),
-  ]),
-
   // ========================================================================
   // ALL APP ROUTES
   // ========================================================================
@@ -358,45 +333,4 @@ export const coreRoutes: RouteConfigEntry[] = [
       route("settings/profile/:profileTabId", "./(all)/settings/profile/[profileTabId]/page.tsx"),
     ]),
   ]),
-
-  // ========================================================================
-  // REDIRECT ROUTES
-  // ========================================================================
-  // Legacy URL redirects for backward compatibility
-
-  // --------------------------------------------------------------------
-  // REDIRECT ROUTES
-  // --------------------------------------------------------------------
-
-  // Project settings redirect: /:workspaceSlug/projects/:projectId/settings/:path*
-  // → /:workspaceSlug/settings/projects/:projectId/:path*
-  route(":workspaceSlug/projects/:projectId/settings/*", "routes/redirects/core/project-settings.tsx"),
-
-  // Analytics redirect: /:workspaceSlug/analytics → /:workspaceSlug/analytics/overview
-  route(":workspaceSlug/analytics", "routes/redirects/core/analytics.tsx"),
-
-  // API tokens redirect: /:workspaceSlug/settings/api-tokens
-  // → /settings/profile/api-tokens
-  route(":workspaceSlug/settings/api-tokens", "routes/redirects/core/api-tokens.tsx"),
-
-  // Inbox redirect: /:workspaceSlug/projects/:projectId/inbox
-  // → /:workspaceSlug/projects/:projectId/intake
-  route(":workspaceSlug/projects/:projectId/inbox", "routes/redirects/core/inbox.tsx"),
-
-  // Sign-up redirects
-  route("accounts/sign-up", "routes/redirects/core/accounts-signup.tsx"),
-
-  // Sign-in redirects (all redirect to home page)
-  route("sign-in", "routes/redirects/core/sign-in.tsx"),
-  route("signin", "routes/redirects/core/signin.tsx"),
-  route("login", "routes/redirects/core/login.tsx"),
-
-  // Register redirect
-  route("register", "routes/redirects/core/register.tsx"),
-
-  // Profile settings redirects
-  route("profile/*", "routes/redirects/core/profile-settings.tsx"),
-
-  // Account settings redirects
-  route(":workspaceSlug/settings/account/*", "routes/redirects/core/workspace-account-settings.tsx"),
 ] satisfies RouteConfig;

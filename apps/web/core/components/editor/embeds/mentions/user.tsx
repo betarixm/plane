@@ -72,7 +72,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
               </div>
               <div>
                 <Link to={profileLink} className="not-prose text-13 font-medium text-primary hover:underline">
-                  {userDetails?.first_name} {userDetails?.last_name}
+                  {userDetails?.display_name}
                 </Link>
                 {roleDetails && <p className="text-11 text-secondary">{ROLE[roleDetails]}</p>}
               </div>

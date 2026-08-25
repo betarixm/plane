@@ -10,9 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceIntegration } from "@plane/types";
 // assets
 import GithubLogo from "@/app/assets/logos/github-square.png?url";
-import SlackLogo from "@/app/assets/services/slack.png?url";
 // components
-import { SelectChannel } from "@/components/integration/slack/select-channel";
 import { SelectRepository } from "@/components/integration/github/select-repository";
 // constants
 import { PROJECT_GITHUB_REPOSITORY } from "@plane/constants";
@@ -27,10 +25,6 @@ const integrationDetails: { [key: string]: any } = {
   github: {
     logo: GithubLogo,
     description: "Select GitHub repository to enable sync.",
-  },
-  slack: {
-    logo: SlackLogo,
-    description: "Get regular updates and control which notification you want to receive.",
   },
 };
 
@@ -64,13 +58,14 @@ export function IntegrationCard({ integration }: Props) {
         url: html_url,
       })
       .then(() => {
-        mutate(PROJECT_GITHUB_REPOSITORY(projectId));
+        void mutate(PROJECT_GITHUB_REPOSITORY(projectId));
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: `${login}/${name} repository synced with the project successfully.`,
         });
+        return undefined;
       })
       .catch((err) => {
         console.error(err);
@@ -81,6 +76,8 @@ export function IntegrationCard({ integration }: Props) {
         });
       });
   };
+
+  if (integration.integration_detail.provider !== "github") return null;
 
   return (
     <>
@@ -117,7 +114,6 @@ export function IntegrationCard({ integration }: Props) {
               onChange={handleChange}
             />
           )}
-          {integration.integration_detail.provider === "slack" && <SelectChannel integration={integration} />}
         </div>
       )}
     </>

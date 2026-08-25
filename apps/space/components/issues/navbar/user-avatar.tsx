@@ -74,12 +74,7 @@ export const UserAvatar = observer(function UserAvatar() {
                   size="sm"
                   showTooltip={false}
                 />
-                <h6 className="text-11 font-medium text-secondary">
-                  {currentUser?.display_name ||
-                    `${currentUser?.first_name} ${currentUser?.first_name}` ||
-                    currentUser?.email ||
-                    "User"}
-                </h6>
+                <h6 className="text-11 font-medium text-secondary">{currentUser?.display_name || "User"}</h6>
               </button>
             </Popover.Button>
             <Transition

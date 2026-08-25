@@ -124,17 +124,14 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                 />
               ) : (
                 <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary text-on-color capitalize">
-                  {userData?.first_name?.[0]}
+                  {(userData?.display_name || "?")[0]}
                 </div>
               )}
             </div>
           </div>
           <div className="px-5">
             <div className="mt-[38px]">
-              <h4 className="text-16 font-semibold">
-                {userData?.first_name} {userData?.last_name}
-              </h4>
-              <h6 className="text-13 text-secondary">({userData?.display_name})</h6>
+              <h4 className="text-16 font-semibold">{userData?.display_name}</h4>
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (

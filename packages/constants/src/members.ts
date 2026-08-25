@@ -9,8 +9,6 @@
 export type TMemberOrderByOptions =
   | "display_name"
   | "-display_name"
-  | "full_name"
-  | "-full_name"
   | "email"
   | "-email"
   | "joining_date"
@@ -19,7 +17,6 @@ export type TMemberOrderByOptions =
   | "-role";
 
 export interface IProjectMemberDisplayProperties {
-  full_name: boolean;
   display_name: boolean;
   email: boolean;
   joining_date: boolean;
@@ -37,15 +34,6 @@ export const MEMBER_PROPERTY_DETAILS: {
     isSortingAllowed: boolean;
   };
 } = {
-  full_name: {
-    i18n_title: "project_members.full_name",
-    ascendingOrderKey: "full_name",
-    ascendingOrderTitle: "A",
-    descendingOrderKey: "-full_name",
-    descendingOrderTitle: "Z",
-    iconName: "User",
-    isSortingAllowed: true,
-  },
   display_name: {
     i18n_title: "project_members.display_name",
     ascendingOrderKey: "display_name",

@@ -6,7 +6,7 @@
 
 import type React from "react";
 import type { LucideIcon } from "lucide-react";
-import { Bell, CircleUser, KeyRound, LockIcon, Settings2 } from "lucide-react";
+import { Bell, CircleUser, KeyRound, Settings2 } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "react-router";
 // plane imports
@@ -24,7 +24,6 @@ import { ProfileSettingsSidebarWorkspaceOptions } from "./workspace-options";
 
 const ICONS: Record<TProfileSettingsTabs, LucideIcon | React.FC<ISvgIcons>> = {
   general: CircleUser,
-  security: LockIcon,
   preferences: Settings2,
   notifications: Bell,
   "api-tokens": KeyRound,

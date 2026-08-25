@@ -30,7 +30,6 @@ export interface IUserProfileStore {
   // actions
   fetchUserProfile: () => Promise<TUserProfile | undefined>;
   updateUserProfile: (data: Partial<TUserProfile>) => Promise<TUserProfile | undefined>;
-  finishUserOnboarding: () => Promise<void>;
   updateTourCompleted: () => Promise<TUserProfile | undefined>;
   updateUserTheme: (data: Partial<IUserTheme>) => Promise<TUserProfile | undefined>;
 }
@@ -41,24 +40,13 @@ export class ProfileStore implements IUserProfileStore {
   data: TUserProfile = {
     id: undefined,
     user: undefined,
-    role: undefined,
     theme: {
       theme: undefined,
       primary: undefined,
       background: undefined,
       darkPalette: false,
     },
-    onboarding_step: {
-      workspace_join: false,
-      profile_complete: false,
-    },
-    is_onboarded: false,
     is_tour_completed: false,
-    use_case: undefined,
-    billing_address_country: undefined,
-    billing_address: undefined,
-    has_billing_address: false,
-    has_marketing_email_consent: false,
     created_at: "",
     updated_at: "",
     language: "",
@@ -154,46 +142,6 @@ export class ProfileStore implements IUserProfileStore {
   };
 
   /**
-   * @description finishes the user onboarding
-   * @returns { void }
-   */
-  finishUserOnboarding = async (): Promise<void> => {
-    try {
-      const dataToUpdate: Partial<TUserProfile> = {
-        onboarding_step: {
-          profile_complete: true,
-          workspace_join: true,
-        },
-      };
-
-      // update user onboarding steps
-      await this.userService.updateCurrentUserProfile(dataToUpdate);
-
-      // update user onboarding status
-      await this.userService.updateUserOnBoard();
-
-      // Wait for user settings to be refreshed with cache-busting before updating onboarding status
-      await Promise.all([
-        this.fetchUserProfile(),
-        this.store.user.userSettings.fetchCurrentUserSettings(true), // Cache-busting enabled
-      ]);
-
-      // Only after settings are refreshed, update the user profile store to mark as onboarded
-      runInAction(() => {
-        this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.error = {
-          status: "user-profile-onboard-finish-error",
-          message: "Failed to finish user onboarding",
-        };
-      });
-      throw error;
-    }
-  };
-
-  /**
    * @description updates the user tour completed status
    * @returns @returns {Promise<TUserProfile | undefined>}
    */
@@ -201,7 +149,7 @@ export class ProfileStore implements IUserProfileStore {
     const isUserProfileTourCompleted = this.data.is_tour_completed || false;
     try {
       this.mutateUserProfile({ is_tour_completed: true });
-      const userProfile = await this.userService.updateUserTourCompleted();
+      const userProfile = await this.userService.updateCurrentUserProfile({ is_tour_completed: true });
       return userProfile;
     } catch (error) {
       runInAction(() => {

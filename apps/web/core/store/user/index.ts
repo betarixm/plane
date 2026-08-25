@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // plane imports
 import { EUserPermissions, API_BASE_URL } from "@plane/constants";
@@ -17,7 +16,6 @@ import { UserPermissionStore } from "@/store/user/base-permissions.store";
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // stores
-import type { IAccountStore } from "@/store/user/account.store";
 import type { IUserProfileStore } from "@/store/user/profile.store";
 import { ProfileStore } from "@/store/user/profile.store";
 // local imports
@@ -38,17 +36,9 @@ export interface IUserStore {
   // store observables
   userProfile: IUserProfileStore;
   userSettings: IUserSettingsStore;
-  accounts: Record<string, IAccountStore>;
   permission: IUserPermissionStore;
   // actions
   fetchCurrentUser: () => Promise<IUser | undefined>;
-  updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
-  handleSetPassword: (csrfToken: string, data: { password: string }) => Promise<IUser | undefined>;
-  deactivateAccount: () => Promise<void>;
-  changePassword: (
-    csrfToken: string,
-    payload: { old_password?: string; new_password: string }
-  ) => Promise<IUser | undefined>;
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
@@ -65,7 +55,6 @@ export class UserStore implements IUserStore {
   // store observables
   userProfile: IUserProfileStore;
   userSettings: IUserSettingsStore;
-  accounts: Record<string, IAccountStore> = {};
   permission: IUserPermissionStore;
   // service
   userService: UserService;
@@ -89,14 +78,9 @@ export class UserStore implements IUserStore {
       data: observable,
       userProfile: observable,
       userSettings: observable,
-      accounts: observable,
       permission: observable,
       // actions
       fetchCurrentUser: action,
-      updateCurrentUser: action,
-      handleSetPassword: action,
-      deactivateAccount: action,
-      changePassword: action,
       reset: action,
       signOut: action,
       // computed
@@ -145,99 +129,6 @@ export class UserStore implements IUserStore {
       });
       throw error;
     }
-  };
-
-  /**
-   * @description updates the current user
-   * @param data
-   * @returns {Promise<IUser>}
-   */
-  updateCurrentUser = async (data: Partial<IUser>): Promise<IUser> => {
-    const currentUserData = cloneDeep(this.data);
-    try {
-      if (currentUserData) {
-        Object.keys(data).forEach((key: string) => {
-          const userKey: keyof IUser = key as keyof IUser;
-          if (this.data) set(this.data, userKey, data[userKey]);
-        });
-      }
-      const user = await this.userService.updateUser(data);
-      if (user && this.data) {
-        runInAction(() => {
-          Object.keys(user).forEach((key: string) => {
-            const userKey: keyof IUser = key as keyof IUser;
-            if (this.data) set(this.data, userKey, user[userKey]);
-          });
-        });
-      }
-      return user;
-    } catch (error) {
-      if (currentUserData) {
-        Object.keys(currentUserData).forEach((key: string) => {
-          const userKey: keyof IUser = key as keyof IUser;
-          if (this.data) set(this.data, userKey, currentUserData[userKey]);
-        });
-      }
-      runInAction(() => {
-        this.error = {
-          status: "user-update-error",
-          message: "Failed to update current user",
-        };
-      });
-      throw error;
-    }
-  };
-
-  /**
-   * @description update the user password
-   * @param data
-   * @returns {Promise<IUser>}
-   */
-  handleSetPassword = async (csrfToken: string, data: { password: string }): Promise<IUser | undefined> => {
-    const currentUserData = cloneDeep(this.data);
-    try {
-      if (currentUserData && currentUserData.is_password_autoset && this.data) {
-        const user = await this.authService.setPassword(csrfToken, { password: data.password });
-        set(this.data, ["is_password_autoset"], false);
-        return user;
-      }
-      return undefined;
-    } catch (error) {
-      if (this.data) set(this.data, ["is_password_autoset"], true);
-      runInAction(() => {
-        this.error = {
-          status: "user-update-error",
-          message: "Failed to update current user",
-        };
-      });
-      throw error;
-    }
-  };
-
-  changePassword = async (
-    csrfToken: string,
-    payload: {
-      old_password?: string;
-      new_password: string;
-    }
-  ): Promise<IUser | undefined> => {
-    try {
-      const user = await this.userService.changePassword(csrfToken, payload);
-      if (this.data) set(this.data, ["is_password_autoset"], false);
-      return user;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
-
-  /**
-   * @description deactivates the current user
-   * @returns {Promise<void>}
-   */
-  deactivateAccount = async (): Promise<void> => {
-    await this.userService.deactivateAccount();
-    this.store.resetOnSignOut();
   };
 
   /**

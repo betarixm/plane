@@ -20,7 +20,7 @@ type TInstanceWrapper = {
 const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrapper) {
   const { children } = props;
   // store
-  const { isLoading, instance, error, fetchInstanceInfo } = useInstance();
+  const { isLoading, instance, config, error, fetchInstanceInfo } = useInstance();
 
   const { isLoading: isInstanceSWRLoading, error: instanceSWRError } = useSWR(
     "INSTANCE_INFORMATION",
@@ -42,7 +42,7 @@ const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrappe
   if (error && error?.status === "error") return <>{children}</>;
 
   // instance is not ready and setup is not done
-  if (instance?.is_setup_done === false) return <InstanceNotReady />;
+  if (instance?.is_setup_done === false) return <InstanceNotReady identitySource={config?.identity_source} />;
 
   return <>{children}</>;
 });

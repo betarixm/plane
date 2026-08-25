@@ -12,16 +12,15 @@ import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
+import type { EUserProjectRoles, IUser } from "@plane/types";
 import { CustomMenu, CustomSelect } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
 
-export interface RowData extends Pick<TProjectMembership, "original_role"> {
-  member: IWorkspaceMember;
-}
+export type RowData = IProjectMemberDetails;
 
 type NameProps = {
   rowData: RowData;
@@ -41,7 +40,7 @@ type AccountTypeProps = {
 export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
   // derived values
-  const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
+  const { avatar_url, display_name, id } = rowData.member;
 
   return (
     <Disclosure>
@@ -55,18 +54,18 @@ export function NameColumn(props: NameProps) {
                     <img
                       src={getFileURL(avatar_url)}
                       className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                      alt={display_name || email}
+                      alt={display_name || undefined}
                     />
                   </span>
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
                   <span className="relative flex size-6 items-center justify-center rounded-full bg-layer-3 text-11 text-on-color capitalize">
-                    {(email ?? display_name ?? "?")[0]}
+                    {(display_name || "?")[0]}
                   </span>
                 </Link>
               )}
-              {first_name} {last_name}
+              {display_name}
             </div>
             {(isAdmin || id === currentUser?.id) && (
               <CustomMenu

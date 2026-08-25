@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { Mails } from "lucide-react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -34,15 +33,6 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
             isActive={false}
           />
         )}
-        <div className="mt-1.5">
-          <SettingsSidebarItem
-            as="link"
-            href="/invitations/"
-            icon={Mails}
-            label={t("workspace_invites")}
-            isActive={false}
-          />
-        </div>
       </div>
     </div>
   );

@@ -169,7 +169,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         workspaceSlug: workspaceSlug.toString(),
         entityIdentifier: project.id,
         entityType: EFileAssetType.PROJECT_COVER,
-        isUserAsset: false,
       });
 
       if (coverImagePayload) {

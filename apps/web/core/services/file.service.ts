@@ -39,17 +39,6 @@ export interface UnSplashImageUrls {
   small_s3: string;
 }
 
-export enum TFileAssetType {
-  COMMENT_DESCRIPTION = "COMMENT_DESCRIPTION",
-  ISSUE_ATTACHMENT = "ISSUE_ATTACHMENT",
-  ISSUE_DESCRIPTION = "ISSUE_DESCRIPTION",
-  PAGE_DESCRIPTION = "PAGE_DESCRIPTION",
-  PROJECT_COVER = "PROJECT_COVER",
-  USER_AVATAR = "USER_AVATAR",
-  USER_COVER = "USER_COVER",
-  WORKSPACE_LOGO = "WORKSPACE_LOGO",
-}
-
 export class FileService extends APIService {
   private cancelSource: any;
   private fileUploadService: FileUploadService;
@@ -91,14 +80,6 @@ export class FileService extends APIService {
         await this.updateWorkspaceAssetUploadStatus(workspaceSlug.toString(), signedURLResponse.asset_id);
         return signedURLResponse;
       })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteWorkspaceAsset(workspaceSlug: string, assetId: string): Promise<void> {
-    return this.delete(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`)
-      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -173,40 +154,6 @@ export class FileService extends APIService {
       });
   }
 
-  private async updateUserAssetUploadStatus(assetId: string): Promise<void> {
-    return this.patch(`/api/assets/v2/user-assets/${assetId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async uploadUserAsset(data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
-    const fileMetaData = await getFileMetaDataForUpload(file);
-    return this.post(`/api/assets/v2/user-assets/`, {
-      ...data,
-      ...fileMetaData,
-    })
-      .then(async (response) => {
-        const signedURLResponse: TFileSignedURLResponse = response?.data;
-        const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
-        await this.updateUserAssetUploadStatus(signedURLResponse.asset_id);
-        return signedURLResponse;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteUserAsset(assetId: string): Promise<void> {
-    return this.delete(`/api/assets/v2/user-assets/${assetId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async deleteNewAsset(assetPath: string): Promise<void> {
     return this.delete(assetPath)
       .then((response) => response?.data)
@@ -218,15 +165,6 @@ export class FileService extends APIService {
   async deleteOldWorkspaceAsset(workspaceId: string, src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
     return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
-      .then((response) => response?.status)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteOldUserAsset(src: string): Promise<any> {
-    const assetKey = getAssetIdFromUrl(src);
-    return this.delete(`/api/users/file-assets/${assetKey}/`)
       .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;

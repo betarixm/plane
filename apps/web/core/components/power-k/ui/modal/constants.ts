@@ -60,9 +60,6 @@ export const POWER_K_MODAL_PAGE_DETAILS: Record<TPowerKPageType, TPowerKModalPag
   "update-theme": {
     i18n_placeholder: "power_k.page_placeholders.update_theme",
   },
-  "update-timezone": {
-    i18n_placeholder: "power_k.page_placeholders.update_timezone",
-  },
   "update-start-of-week": {
     i18n_placeholder: "power_k.page_placeholders.update_start_of_week",
   },

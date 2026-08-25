@@ -6,7 +6,6 @@
 
 import type { TUserPermissions } from "./enums";
 import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
-import type { TLoginMediums } from "./instance";
 
 /**
  * @description The start of the week for the user
@@ -25,10 +24,9 @@ export enum EStartOfTheWeek {
 export interface IUserLite {
   avatar_url: string;
   display_name: string;
-  email?: string;
+  email?: string | null;
   first_name: string;
   id: string;
-  is_bot: boolean;
   last_name: string;
   joining_date?: string;
 }
@@ -39,62 +37,35 @@ export interface IUser extends IUserLite {
   // only for rendering the cover image
   cover_image_url: string | null;
   date_joined: string;
-  email: string;
+  email: string | null;
   is_active: boolean;
-  is_email_verified: boolean;
-  is_password_autoset: boolean;
-  is_tour_completed: boolean;
-  mobile_number: string | null;
   user_timezone: string;
-  username: string;
-  last_login_medium: TLoginMediums;
-  theme: IUserTheme;
-}
-
-export interface IUserAccount {
-  provider_account_id: string;
-  provider: string;
-  created_at: Date;
-  updated_at: Date;
 }
 
 export type TUserProfile = {
   id: string | undefined;
   user: string | undefined;
-  role: string | undefined;
   theme: {
     theme: string | undefined;
     primary: string | undefined;
     background: string | undefined;
     darkPalette: boolean | undefined;
   };
-  onboarding_step: TOnboardingSteps;
-  is_onboarded: boolean;
   is_tour_completed: boolean;
-  use_case: string | undefined;
-  billing_address_country: string | undefined;
-  billing_address: string | undefined;
-  has_billing_address: boolean;
-  has_marketing_email_consent: boolean;
   language: string;
   created_at: Date | string;
   updated_at: Date | string;
   start_of_the_week: EStartOfTheWeek;
 };
 
-export interface IWorkspaceAdminStatus {
-  is_workspace_admin: boolean;
-}
-
 export interface IUserSettings {
   id: string | undefined;
-  email: string | undefined;
+  email: string | null | undefined;
   workspace: {
     id: string | undefined;
     slug: string | undefined;
     name: string | undefined;
     logo: string | undefined;
-    invites: number | undefined;
   };
 }
 
@@ -106,7 +77,7 @@ export interface IUserTheme {
 }
 
 export interface IUserMemberLite extends IUserLite {
-  email?: string;
+  email?: string | null;
 }
 
 export interface IUserActivity {
@@ -136,17 +107,6 @@ export interface IUserActivityResponse {
   total_results: number;
 }
 
-export type UserAuth = {
-  isMember: boolean;
-  isOwner: boolean;
-  isGuest: boolean;
-};
-
-export type TOnboardingSteps = {
-  profile_complete: boolean;
-  workspace_join: boolean;
-};
-
 export interface IUserProfileData {
   assigned_issues: number;
   completed_issues: number;
@@ -165,7 +125,7 @@ export interface IUserProfileProjectSegregation {
     id: string;
     pending_issues: number;
   }[];
-  user_data: Pick<IUser, "avatar_url" | "cover_image_url" | "display_name" | "first_name" | "last_name"> & {
+  user_data: Pick<IUser, "avatar_url" | "cover_image_url" | "display_name"> & {
     date_joined: Date;
     user_timezone: string;
   };
@@ -191,33 +151,3 @@ export type TPublicMember = {
   member__display_name: string;
   member__avatar: string;
 };
-
-// export interface ICurrentUser {
-//   id: readonly string;
-//   avatar: string;
-//   first_name: string;
-//   last_name: string;
-//   username: string;
-//   email: string;
-//   mobile_number: string;
-//   is_email_verified: boolean;
-//   is_tour_completed: boolean;
-//   onboarding_step: TOnboardingSteps;
-//   is_onboarded: boolean;
-//   role: string;
-// }
-
-// export interface ICustomTheme {
-//   background: string;
-//   text: string;
-//   primary: string;
-//   sidebarBackground: string;
-//   sidebarText: string;
-//   darkPalette: boolean;
-//   palette: string;
-//   theme: string;
-// }
-
-// export interface ICurrentUserSettings {
-//   theme: ICustomTheme;
-// }

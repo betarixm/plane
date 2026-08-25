@@ -75,7 +75,6 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
             workspaceSlug: workspaceSlug.toString(),
             entityIdentifier: "",
             entityType: EFileAssetType.PROJECT_COVER,
-            isUserAsset: false,
           });
         } catch (error) {
           console.error("Error uploading cover image:", error);

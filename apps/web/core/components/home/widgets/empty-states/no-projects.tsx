@@ -14,12 +14,11 @@ import { Hotel } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { MembersPropertyIcon, CheckIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
+import { CheckIcon, ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 
@@ -31,11 +30,9 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
   const { toggleCreateProjectModal } = useCommandPalette();
   const { data: currentUser } = useUser();
   const { joinedProjectIds } = useProject();
-  const { currentWorkspace: activeWorkspace } = useWorkspace();
   // local storage
   const { storedValue, setValue } = useLocalStorage(`quickstart-guide-${workspaceSlug}`, {
     hide: false,
-    visited_members: false,
     visited_workspace: false,
     visited_profile: false,
   });
@@ -66,18 +63,6 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       },
     },
     {
-      id: "invite-team",
-      title: "home.empty.invite_team.title",
-      description: "home.empty.invite_team.description",
-      icon: <MembersPropertyIcon className="size-4" />,
-      flag: "visited_members",
-      cta: {
-        text: "home.empty.invite_team.cta",
-        link: `/${workspaceSlug}/settings/members`,
-        disabled: !isWorkspaceAdmin,
-      },
-    },
-    {
       id: "configure-workspace",
       title: "home.empty.configure_workspace.title",
       description: "home.empty.configure_workspace.description",
@@ -100,14 +85,14 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
               <img
                 src={getFileURL(currentUser?.avatar_url)}
                 className="absolute top-0 left-0 h-full w-full rounded-full object-cover"
-                alt={currentUser?.display_name || currentUser?.email}
+                alt={currentUser?.display_name || undefined}
               />
             </span>
           </Link>
         ) : (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
             <span className="relative flex size-4 items-center justify-center rounded-full bg-[#028375] p-4 text-13 text-on-color capitalize">
-              {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
+              {(currentUser?.display_name || "?")[0]}
             </span>
           </Link>
         ),
@@ -123,8 +108,6 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
     switch (type) {
       case "projects":
         return joinedProjectIds?.length > 0;
-      case "visited_members":
-        return (activeWorkspace?.total_members || 0) >= 2;
       case "visited_workspace":
         return storedValue?.visited_workspace;
       case "visited_profile":
@@ -132,7 +115,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
     }
   };
 
-  if (storedValue?.hide || (joinedProjectIds?.length > 0 && (activeWorkspace?.total_members || 0) >= 2)) return null;
+  if (storedValue?.hide || joinedProjectIds?.length > 0) return null;
 
   return (
     <div>

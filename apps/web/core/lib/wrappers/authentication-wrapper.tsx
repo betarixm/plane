@@ -10,18 +10,14 @@ import { useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
-// helpers
-import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser, useUserProfile } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-
-type TPageType = EPageTypes;
 
 type TAuthenticationWrapper = {
   children: ReactNode;
-  pageType?: TPageType;
+  mode?: "guest" | "authenticated";
 };
 
 const isSafeAppPath = (path: string): boolean => /^\/(?![\\/])/.test(path) && !path.includes("\\");
@@ -32,10 +28,9 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next_path");
   // props
-  const { children, pageType = EPageTypes.AUTHENTICATED } = props;
+  const { children, mode = "authenticated" } = props;
   // hooks
   const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
-  const { data: currentUserProfile } = useUserProfile();
   const { loader: workspaceLoader, workspace } = useWorkspace();
 
   const { isLoading: isUserSWRLoading } = useSWR("USER_INFORMATION", async () => await fetchCurrentUser(), {
@@ -43,18 +38,13 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
     shouldRetryOnError: false,
   });
 
-  const isUserOnboard =
-    currentUserProfile?.is_onboarded ||
-    (currentUserProfile?.onboarding_step?.profile_complete && currentUserProfile?.onboarding_step?.workspace_join) ||
-    false;
-
   const getWorkspaceRedirectionUrl = (): string => {
     // validating the nextPath from the router query
     if (nextPath && isSafeAppPath(nextPath.toString())) {
       return nextPath.toString();
     }
 
-    if (!workspace) return "/invitations";
+    if (!workspace) return "/";
 
     return `/${workspace.slug}`;
   };
@@ -66,60 +56,18 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
       </div>
     );
 
-  if (pageType === EPageTypes.PUBLIC) return <>{children}</>;
-
-  if (pageType === EPageTypes.NON_AUTHENTICATED) {
+  if (mode === "guest") {
     if (!currentUser?.id) return <>{children}</>;
     else {
-      if (currentUserProfile?.id && isUserOnboard) {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.push(currentRedirectRoute);
-        return <></>;
-      } else {
-        router.push("/onboarding");
-        return <></>;
-      }
-    }
-  }
-
-  if (pageType === EPageTypes.ONBOARDING) {
-    if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
-      return <></>;
-    } else {
-      if (currentUser && currentUserProfile?.id && isUserOnboard) {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.replace(currentRedirectRoute);
-        return <></>;
-      } else return <>{children}</>;
-    }
-  }
-
-  if (pageType === EPageTypes.SET_PASSWORD) {
-    if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
-      return <></>;
-    } else {
-      if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.push(currentRedirectRoute);
-        return <></>;
-      } else return <>{children}</>;
-    }
-  }
-
-  if (pageType === EPageTypes.AUTHENTICATED) {
-    if (currentUser?.id) {
-      if (currentUserProfile && currentUserProfile?.id && isUserOnboard) return <>{children}</>;
-      else {
-        router.push(`/onboarding`);
-        return <></>;
-      }
-    } else {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      const currentRedirectRoute = getWorkspaceRedirectionUrl();
+      router.push(currentRedirectRoute);
       return <></>;
     }
   }
 
-  return <>{children}</>;
+  if (currentUser?.id) return <>{children}</>;
+
+  const requestedPath = `${pathname || "/"}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+  router.push(`/?${new URLSearchParams({ next_path: requestedPath }).toString()}`);
+  return <></>;
 });

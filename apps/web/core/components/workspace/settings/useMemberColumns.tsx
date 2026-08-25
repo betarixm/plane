@@ -4,73 +4,41 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
 import { useParams } from "next/navigation";
-import { EUserPermissions, EUserPermissionsLevel, LOGIN_MEDIUM_LABELS } from "@plane/constants";
+// plane imports
+import { getIdentitySourceDescriptor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { renderFormattedDate } from "@plane/utils";
+// components
 import { MemberHeaderColumn } from "@/components/project/member-header-column";
 import type { RowData } from "@/components/workspace/settings/member-columns";
 import { AccountTypeColumn, NameColumn } from "@/components/workspace/settings/member-columns";
+// hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useMember } from "@/hooks/store/use-member";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import type { IMemberFilters } from "@/store/member/utils";
 
+const isSuspended = (rowData: RowData) => rowData.is_active === false;
+
 export const useMemberColumns = () => {
-  // states
-  const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
-
   const { workspaceSlug } = useParams();
-
-  const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const { config } = useInstance();
   const {
     workspace: {
       filtersStore: { filters, updateFilters },
     },
   } = useMember();
   const { t } = useTranslation();
+  const identitySource = config?.identity_source;
+  const descriptor = identitySource ? getIdentitySourceDescriptor(identitySource.provider) : undefined;
 
-  // derived values
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-
-  // oxlint-disable-next-line unicorn/consistent-function-scoping
-  const isSuspended = (rowData: RowData) => rowData.is_active === false;
-
-  // handlers
-  const handleDisplayFilterUpdate = (filterUpdates: Partial<IMemberFilters>) => {
-    updateFilters(filterUpdates);
-  };
+  const handleDisplayFilterUpdate = (filterUpdates: Partial<IMemberFilters>) => updateFilters(filterUpdates);
 
   const columns = [
     {
-      key: "Full name",
-      content: t("workspace_settings.settings.members.details.full_name"),
-      thClassName: "text-left",
-      thRender: () => (
-        <MemberHeaderColumn
-          property="full_name"
-          displayFilters={filters}
-          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-        />
-      ),
-      tdRender: (rowData: RowData) => (
-        <NameColumn
-          rowData={rowData}
-          workspaceSlug={workspaceSlug}
-          isAdmin={isAdmin}
-          currentUser={currentUser}
-          setRemoveMemberModal={setRemoveMemberModal}
-        />
-      ),
-    },
-
-    {
-      key: "Display name",
+      key: "Name",
       content: t("workspace_settings.settings.members.details.display_name"),
-      tdRender: (rowData: RowData) => (
-        <div className={`w-32 ${isSuspended(rowData) ? "text-placeholder" : ""}`}>{rowData.member.display_name}</div>
-      ),
+      thClassName: "text-left",
       thRender: () => (
         <MemberHeaderColumn
           property="display_name"
@@ -78,8 +46,8 @@ export const useMemberColumns = () => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
+      tdRender: (rowData: RowData) => <NameColumn rowData={rowData} workspaceSlug={workspaceSlug.toString()} />,
     },
-
     {
       key: "Email address",
       content: t("workspace_settings.settings.members.details.email_address"),
@@ -94,7 +62,6 @@ export const useMemberColumns = () => {
         />
       ),
     },
-
     {
       key: "Account type",
       content: t("workspace_settings.settings.members.details.account_type"),
@@ -105,25 +72,19 @@ export const useMemberColumns = () => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug} />,
+      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} />,
     },
-
     {
       key: "Authentication",
       content: t("workspace_settings.settings.members.details.authentication"),
-      tdRender: (rowData: RowData) => {
-        if (isSuspended(rowData)) return null;
-        const loginMedium = rowData.member.last_login_medium;
-        if (!loginMedium) return null;
-        return <div>{LOGIN_MEDIUM_LABELS[loginMedium]}</div>;
-      },
+      tdRender: (rowData: RowData) =>
+        isSuspended(rowData) ? null : <div>{descriptor?.label ?? "External identity source"}</div>,
     },
-
     {
       key: "Joining date",
       content: t("workspace_settings.settings.members.details.joining_date"),
       tdRender: (rowData: RowData) =>
-        isSuspended(rowData) ? null : <div>{renderFormattedDate(rowData?.member?.joining_date)}</div>,
+        isSuspended(rowData) ? null : <div>{renderFormattedDate(rowData.member.joining_date)}</div>,
       thRender: () => (
         <MemberHeaderColumn
           property="joining_date"
@@ -133,5 +94,6 @@ export const useMemberColumns = () => {
       ),
     },
   ];
-  return { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal };
+
+  return { columns };
 };

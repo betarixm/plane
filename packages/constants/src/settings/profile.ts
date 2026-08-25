@@ -33,10 +33,6 @@ export const PROFILE_SETTINGS: Record<
     key: "general",
     i18n_label: "profile.actions.profile",
   },
-  security: {
-    key: "security",
-    i18n_label: "profile.actions.security",
-  },
   preferences: {
     key: "preferences",
     i18n_label: "profile.actions.preferences",
@@ -51,7 +47,7 @@ export const PROFILE_SETTINGS: Record<
   },
 };
 
-export const PROFILE_SETTINGS_TABS: TProfileSettingsTabs[] = Object.keys(PROFILE_SETTINGS) as TProfileSettingsTabs[];
+export const PROFILE_SETTINGS_TABS: TProfileSettingsTabs[] = ["general", "preferences", "notifications", "api-tokens"];
 
 export const GROUPED_PROFILE_SETTINGS: Record<
   PROFILE_SETTINGS_CATEGORY,
@@ -61,7 +57,6 @@ export const GROUPED_PROFILE_SETTINGS: Record<
     PROFILE_SETTINGS["general"],
     PROFILE_SETTINGS["preferences"],
     PROFILE_SETTINGS["notifications"],
-    PROFILE_SETTINGS["security"],
   ],
   [PROFILE_SETTINGS_CATEGORY.DEVELOPER]: [PROFILE_SETTINGS["api-tokens"]],
 };

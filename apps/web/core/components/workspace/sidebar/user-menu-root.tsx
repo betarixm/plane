@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { LogOut, Settings, Settings2 } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar, CustomMenu } from "@plane/ui";
@@ -19,7 +18,7 @@ import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 
 export const UserMenuRoot = observer(function UserMenuRoot() {
   // states
@@ -28,10 +27,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
   const { toggleAnySidebarDropdown } = useAppTheme();
   const { data: currentUser } = useUser();
   const { signOut } = useUser();
-  const { allowPermissions } = useUserPermissions();
   const { toggleProfileSettingsModal } = useCommandPalette();
-  // derived values
-  const isAdministrator = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   // translation
   const { t } = useTranslation();
 
@@ -39,8 +35,8 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
     signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("auth.sign_out.toast.error.title"),
-        message: t("auth.sign_out.toast.error.message"),
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
       })
     );
   };
@@ -97,9 +93,7 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
               />
             </div>
             <div className="text-center">
-              <p className="text-body-sm-medium">
-                {currentUser?.first_name} {currentUser?.last_name}
-              </p>
+              <p className="text-body-sm-medium">{currentUser?.display_name}</p>
               <p className="text-caption-md-regular">{currentUser?.email}</p>
             </div>
           </div>
@@ -135,14 +129,6 @@ export const UserMenuRoot = observer(function UserMenuRoot() {
         <LogOut className="size-3.5 shrink-0" />
         {t("sign_out")}
       </CustomMenu.MenuItem>
-      {isAdministrator && (
-        <CustomMenu.MenuItem
-          onClick={() => window.location.assign(GOD_MODE_URL)}
-          className="bg-accent-primary/20 text-accent-primary hover:bg-accent-primary/30 hover:text-accent-secondary"
-        >
-          Administration
-        </CustomMenu.MenuItem>
-      )}
     </CustomMenu>
   );
 });

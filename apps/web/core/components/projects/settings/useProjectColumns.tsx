@@ -7,7 +7,6 @@
 import { useState } from "react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { IWorkspaceMember, TProjectMembership } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { MemberHeaderColumn } from "@/components/project/member-header-column";
@@ -15,11 +14,10 @@ import { AccountTypeColumn, NameColumn } from "@/components/project/settings/mem
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
 import type { IMemberFilters } from "@/store/member/utils";
 
-export interface RowData extends Pick<TProjectMembership, "original_role"> {
-  member: IWorkspaceMember;
-}
+export type RowData = IProjectMemberDetails;
 
 type TUseProjectColumnsProps = {
   projectId: string;
@@ -58,12 +56,12 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
 
   const columns = [
     {
-      key: "Full Name",
-      content: "Full name",
+      key: "Name",
+      content: "Name",
       thClassName: "text-left",
       thRender: () => (
         <MemberHeaderColumn
-          property="full_name"
+          property="display_name"
           displayFilters={displayFilters}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
@@ -77,18 +75,6 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
           setRemoveMemberModal={setRemoveMemberModal}
         />
       ),
-    },
-    {
-      key: "Display Name",
-      content: "Display name",
-      thRender: () => (
-        <MemberHeaderColumn
-          property="display_name"
-          displayFilters={displayFilters}
-          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-        />
-      ),
-      tdRender: (rowData: RowData) => <div className="w-32">{rowData.member.display_name}</div>,
     },
     {
       key: "Email",

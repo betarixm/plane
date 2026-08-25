@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { clone, set } from "lodash-es";
+import { clone } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
@@ -40,8 +40,7 @@ export interface IWorkspaceRootStore {
   // fetch actions
   fetchWorkspace: () => Promise<IWorkspace | undefined>;
   // update actions
-  updateWorkspace: (workspaceSlug: string, data: Partial<IWorkspace>) => Promise<IWorkspace>;
-  updateWorkspaceLogo: (workspaceSlug: string, logoURL: string) => void;
+  updateWorkspace: (workspaceSlug: string, data: Pick<IWorkspace, "timezone">) => Promise<IWorkspace>;
   fetchSidebarNavigationPreferences: (workspaceSlug: string) => Promise<void>;
   updateSidebarPreference: (
     workspaceSlug: string,
@@ -95,7 +94,6 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       // actions
       fetchWorkspace: action,
       updateWorkspace: action,
-      updateWorkspaceLogo: action,
       fetchSidebarNavigationPreferences: action,
       updateSidebarPreference: action,
       updateBulkSidebarPreferences: action,
@@ -115,7 +113,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
 
   /** Get the deterministic route for the instance workspace. */
   getWorkspaceRedirectionUrl = () => {
-    return this.workspace ? `/${this.workspace.slug}` : "/invitations";
+    return this.workspace ? `/${this.workspace.slug}` : "/";
   };
 
   /**
@@ -160,7 +158,7 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
    * @param workspaceSlug
    * @param data
    */
-  updateWorkspace = async (workspaceSlug: string, data: Partial<IWorkspace>) =>
+  updateWorkspace = async (workspaceSlug: string, data: Pick<IWorkspace, "timezone">) =>
     await this.workspaceService.updateWorkspace(workspaceSlug, data).then((res) => {
       if (res && res.id) {
         runInAction(() => {
@@ -169,21 +167,6 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       }
       return res;
     });
-
-  /**
-   * update workspace using the workspace slug and new workspace data
-   * @param {string} workspaceSlug
-   * @param {string} logoURL
-   */
-  updateWorkspaceLogo = (workspaceSlug: string, logoURL: string) => {
-    const workspace = this.workspace;
-    if (workspace?.slug !== workspaceSlug) {
-      throw new Error("Workspace not found");
-    }
-    runInAction(() => {
-      set(workspace, ["logo_url"], logoURL);
-    });
-  };
 
   fetchSidebarNavigationPreferences = async (workspaceSlug: string) => {
     try {

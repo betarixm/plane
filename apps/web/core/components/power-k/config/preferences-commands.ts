@@ -6,7 +6,7 @@
 
 import { useCallback } from "react";
 import { useTheme } from "next-themes";
-import { Calendar, Earth, Languages, Palette } from "lucide-react";
+import { Calendar, Languages, Palette } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -14,7 +14,7 @@ import type { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
-import { useUser, useUserProfile } from "@/hooks/store/user";
+import { useUserProfile } from "@/hooks/store/user";
 
 /**
  * Preferences commands - Preferences related commands
@@ -22,7 +22,6 @@ import { useUser, useUserProfile } from "@/hooks/store/user";
 export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
   // store hooks
   const { setTheme } = useTheme();
-  const { updateCurrentUser } = useUser();
   const { updateUserProfile, updateUserTheme } = useUserProfile();
   // translation
   const { t } = useTranslation();
@@ -52,30 +51,6 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [setTheme, updateUserTheme]
-  );
-
-  const handleUpdateTimezone = useCallback(
-    (value: string) => {
-      updateCurrentUser({ user_timezone: value })
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: t("toast.success"),
-            message: t("power_k.preferences_actions.toast.timezone.success"),
-          });
-          return;
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("toast.error"),
-            message: t("power_k.preferences_actions.toast.timezone.error"),
-          });
-          return;
-        });
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [updateCurrentUser]
   );
 
   const handleUpdateUserProfile = useCallback(
@@ -113,21 +88,6 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       onSelect: (data) => {
         const theme = data as string;
         void handleUpdateTheme(theme);
-      },
-      isEnabled: () => true,
-      isVisible: () => true,
-      closeOnSelect: true,
-    },
-    {
-      id: "update_timezone",
-      group: "preferences",
-      page: "update-timezone",
-      type: "change-page",
-      i18n_title: "power_k.preferences_actions.update_timezone",
-      icon: Earth,
-      onSelect: (data) => {
-        const timezone = data as string;
-        handleUpdateTimezone(timezone);
       },
       isEnabled: () => true,
       isVisible: () => true,

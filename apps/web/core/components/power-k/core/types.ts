@@ -47,7 +47,6 @@ export type TPowerKPageType =
   | "update-module-status"
   // preferences
   | "update-theme"
-  | "update-timezone"
   | "update-start-of-week"
   | "update-language";
 

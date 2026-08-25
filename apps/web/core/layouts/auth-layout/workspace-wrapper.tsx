@@ -11,8 +11,8 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { LogOut } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/propel/button";
+import { EUserPermissions, EUserPermissionsLevel, getIdentitySourceDescriptor } from "@plane/constants";
+import { getButtonStyling } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -34,6 +34,7 @@ import {
 } from "@plane/constants";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
+import { useInstance } from "@/hooks/store/use-instance";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -52,6 +53,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { workspaceSlug } = useParams();
   // store hooks
   const { signOut, data: currentUser } = useUser();
+  const { config } = useInstance();
   const { fetchPartialProjects } = useProject();
   const { fetchFavorite } = useFavorite();
   const {
@@ -69,6 +71,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   );
   const currentWorkspace = workspace?.slug === workspaceSlug ? workspace : undefined;
   const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
+  const identitySource = config?.identity_source;
+  const identitySourceDescriptor = identitySource ? getIdentitySourceDescriptor(identitySource.provider) : undefined;
 
   // fetching user workspace information
   useSWR(
@@ -155,7 +159,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
               <PlaneLogo className="h-9 w-auto text-primary" />
             </div>
             <div className="relative flex items-center gap-2">
-              <div className="text-13 font-medium">{currentUser?.email}</div>
+              <div className="text-13 font-medium">{currentUser?.display_name}</div>
               <button
                 type="button"
                 aria-label="Sign out"
@@ -187,11 +191,6 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
                   Visit Profile
                 </Link>
               )}
-              {!workspace && (
-                <Link href="/invitations/" className={cn(getButtonStyling("secondary", "base"))}>
-                  Check pending invites
-                </Link>
-              )}
             </div>
           </div>
 
@@ -210,16 +209,10 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             <div className="space-y-2">
               <h3 className="text-16 font-semibold">Not Authorized!</h3>
               <p className="mx-auto w-1/2 text-13 text-secondary">
-                You{"'"}re not a member of this workspace. Please contact an administrator for an invitation or check
-                your pending invitations.
+                Your {identitySourceDescriptor?.label ?? "external"} account is not a member of the workspace connected
+                to this Plane instance. Workspace membership is managed in{" "}
+                {identitySourceDescriptor?.label ?? "the identity source"}.
               </p>
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <Link href="/invitations">
-                <span>
-                  <Button variant="secondary">Check pending invites</Button>
-                </span>
-              </Link>
             </div>
           </div>
         </div>

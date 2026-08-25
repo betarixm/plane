@@ -202,10 +202,9 @@ export const uploadCoverImage = async (
     workspaceSlug?: string;
     entityIdentifier: string;
     entityType: EFileAssetType;
-    isUserAsset?: boolean;
   }
 ): Promise<string> => {
-  const { workspaceSlug, entityIdentifier, entityType, isUserAsset = false } = uploadConfig;
+  const { workspaceSlug, entityIdentifier, entityType } = uploadConfig;
 
   // Fetch the local image
   const response = await fetch(imageUrl);
@@ -224,31 +223,19 @@ export const uploadCoverImage = async (
   const fileName = imageUrl.split("/").pop()?.split("?")[0] || "image.jpg";
   const file = new File([blob], fileName, { type: blob.type });
 
-  // Upload based on context
-  if (isUserAsset) {
-    const uploadResult = await fileService.uploadUserAsset(
-      {
-        entity_identifier: entityIdentifier,
-        entity_type: entityType,
-      },
-      file
-    );
-    return uploadResult.asset_url;
-  } else {
-    if (!workspaceSlug) {
-      throw new Error("Workspace slug is required for workspace asset upload");
-    }
-
-    const uploadResult = await fileService.uploadWorkspaceAsset(
-      workspaceSlug,
-      {
-        entity_identifier: entityIdentifier,
-        entity_type: entityType,
-      },
-      file
-    );
-    return uploadResult.asset_url;
+  if (!workspaceSlug) {
+    throw new Error("Workspace slug is required for workspace asset upload");
   }
+
+  const uploadResult = await fileService.uploadWorkspaceAsset(
+    workspaceSlug,
+    {
+      entity_identifier: entityIdentifier,
+      entity_type: entityType,
+    },
+    file
+  );
+  return uploadResult.asset_url;
 };
 
 /**
@@ -261,7 +248,6 @@ export const handleCoverImageChange = async (
     workspaceSlug?: string;
     entityIdentifier: string;
     entityType: EFileAssetType;
-    isUserAsset?: boolean;
   }
 ): Promise<TCoverImagePayload | undefined> => {
   const analysis = analyzeCoverImageChange(currentImage, newImage);

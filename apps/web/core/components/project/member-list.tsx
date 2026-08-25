@@ -19,7 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { MemberListFiltersDropdown } from "./dropdowns/filters/member-list";
 import { ProjectMemberListItem } from "./member-list-item";
-import { SendProjectInvitationModal } from "./send-project-invitation-modal";
+import { AddProjectMembersModal } from "./add-project-members-modal";
 
 type TProjectMemberListProps = {
   projectId: string;
@@ -29,7 +29,7 @@ type TProjectMemberListProps = {
 export const ProjectMemberList = observer(function ProjectMemberList(props: TProjectMemberListProps) {
   const { projectId, workspaceSlug } = props;
   // states
-  const [inviteModal, setInviteModal] = useState(false);
+  const [addModal, setAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const {
     project: { projectMemberIds, getFilteredProjectMemberDetails, filters },
@@ -43,10 +43,9 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
 
     if (!memberDetails?.member || !memberDetails.original_role) return false;
 
-    const fullName = `${memberDetails?.member.first_name} ${memberDetails?.member.last_name}`.toLowerCase();
     const displayName = memberDetails?.member.display_name.toLowerCase();
 
-    return displayName?.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
+    return displayName?.includes(searchQuery.toLowerCase());
   });
 
   const memberDetails = searchedProjectMembers?.map((memberId) =>
@@ -75,9 +74,9 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
 
   return (
     <>
-      <SendProjectInvitationModal
-        isOpen={inviteModal}
-        onClose={() => setInviteModal(false)}
+      <AddProjectMembersModal
+        isOpen={addModal}
+        onClose={() => setAddModal(false)}
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       />
@@ -103,7 +102,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
             <Button
               variant="primary"
               onClick={() => {
-                setInviteModal(true);
+                setAddModal(true);
               }}
               data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
             >

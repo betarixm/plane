@@ -6,9 +6,8 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 // icons
-import { LogOut, Mails } from "lucide-react";
+import { LogOut } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
@@ -30,7 +29,7 @@ type WorkspaceMenuRootProps = {
 };
 
 export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot({ variant }: WorkspaceMenuRootProps) {
-  const { toggleSidebar, toggleAnySidebarDropdown } = useAppTheme();
+  const { toggleAnySidebarDropdown } = useAppTheme();
   const { data: currentUser, signOut } = useUser();
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
@@ -40,14 +39,10 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot({ variant }
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("auth.sign_out.toast.error.title"),
-        message: t("auth.sign_out.toast.error.message"),
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
       })
     );
-  };
-
-  const handleItemClick = () => {
-    if (window.innerWidth < 768) toggleSidebar();
   };
 
   useEffect(() => {
@@ -143,15 +138,6 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot({ variant }
                     </div>
                   </div>
                   <div className="flex w-full flex-col items-start justify-start gap-2 px-4 py-2 text-13">
-                    <Link href="/invitations" className="w-full" onClick={handleItemClick}>
-                      <Menu.Item
-                        as="div"
-                        className="flex items-center gap-2 rounded-sm px-2 py-1 text-13 font-medium text-secondary hover:bg-layer-transparent-hover"
-                      >
-                        <Mails className="size-4 shrink-0" />
-                        {t("workspace_invites")}
-                      </Menu.Item>
-                    </Link>
                     <Menu.Item
                       as="button"
                       type="button"

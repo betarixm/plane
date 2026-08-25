@@ -47,7 +47,6 @@ export type TIssueActivityUserDetail = {
   first_name: string;
   last_name: string;
   avatar_url: string;
-  is_bot: boolean;
   display_name: string;
 };
 

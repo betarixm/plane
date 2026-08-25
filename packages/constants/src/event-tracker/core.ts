@@ -237,51 +237,16 @@ export const PROJECT_PAGE_TRACKER_ELEMENTS = {
  * ===========================================================================
  */
 export const MEMBER_TRACKER_EVENTS = {
-  invite: "member_invited",
-  accept: "member_accepted",
   project: {
     add: "project_member_added",
     leave: "project_member_left",
   },
-  workspace: {
-    leave: "workspace_member_left",
-  },
 };
 export const MEMBER_TRACKER_ELEMENTS = {
   HEADER_ADD_BUTTON: "header_add_member_button",
-  ACCEPT_INVITATION_BUTTON: "accept_invitation_button",
-  ONBOARDING_JOIN_WORKSPACE: "workspace_join_continue_to_workspace_button",
-  ONBOARDING_INVITE_MEMBER: "invite_member_continue_button",
   SIDEBAR_PROJECT_QUICK_ACTIONS: "sidebar_project_quick_actions",
   PROJECT_MEMBER_TABLE_CONTEXT_MENU: "project_member_table_context_menu",
-  WORKSPACE_MEMBER_TABLE_CONTEXT_MENU: "workspace_member_table_context_menu",
-  WORKSPACE_INVITATIONS_LIST_CONTEXT_MENU: "workspace_invitations_list_context_menu",
 } as const;
-
-/**
- * ===========================================================================
- * Auth Events and Elements
- * ===========================================================================
- */
-export const AUTH_TRACKER_EVENTS = {
-  code_verify: "code_verified",
-  sign_up_with_password: "sign_up_with_password",
-  sign_in_with_password: "sign_in_with_password",
-  forgot_password: "forgot_password_clicked",
-  new_code_requested: "new_code_requested",
-  password_created: "password_created",
-};
-
-export const AUTH_TRACKER_ELEMENTS = {
-  NAVIGATE_TO_SIGN_UP: "navigate_to_sign_up",
-  FORGOT_PASSWORD_FROM_SIGNIN: "forgot_password_from_signin",
-  SIGNUP_FROM_FORGOT_PASSWORD: "signup_from_forgot_password",
-  SIGN_IN_FROM_SIGNUP: "sign_in_from_signup",
-  SIGN_IN_WITH_UNIQUE_CODE: "sign_in_with_unique_code",
-  REQUEST_NEW_CODE: "request_new_code",
-  VERIFY_CODE: "verify_code",
-  SET_PASSWORD_FORM: "set_password_form",
-};
 
 /**
  * ===========================================================================
@@ -327,21 +292,6 @@ export const PROJECT_VIEW_TRACKER_ELEMENTS = {
 
 /**
  * ===========================================================================
- * Product Tour Events and Elements
- * ===========================================================================
- */
-export const PRODUCT_TOUR_TRACKER_EVENTS = {
-  complete: "product_tour_completed",
-};
-
-export const PRODUCT_TOUR_TRACKER_ELEMENTS = {
-  START_BUTTON: "product_tour_start_button",
-  SKIP_BUTTON: "product_tour_skip_button",
-  CREATE_PROJECT_BUTTON: "product_tour_create_project_button",
-};
-
-/**
- * ===========================================================================
  * Notification Events and Elements
  * ===========================================================================
  */
@@ -364,25 +314,8 @@ export const NOTIFICATION_TRACKER_ELEMENTS = {
  * User Events
  * ===========================================================================
  */
-export const USER_TRACKER_EVENTS = {
-  add_details: "user_details_added",
-  onboarding_complete: "user_onboarding_completed",
-};
-
 export const USER_TRACKER_ELEMENTS = {
-  PRODUCT_CHANGELOG_MODAL: "product_changelog_modal",
   CHANGELOG_REDIRECTED: "changelog_redirected",
-};
-
-/**
- * ===========================================================================
- * Onboarding Events and Elements
- * ===========================================================================
- */
-export const ONBOARDING_TRACKER_ELEMENTS = {
-  PROFILE_SETUP_FORM: "onboarding_profile_setup_form",
-  PASSWORD_CREATION_SELECTED: "onboarding_password_creation_selected",
-  PASSWORD_CREATION_SKIPPED: "onboarding_password_creation_skipped",
 };
 
 /**
@@ -427,44 +360,7 @@ export const PROJECT_SETTINGS_TRACKER_EVENTS = {
   auto_archive_workitems: "auto_archive_workitems",
 };
 
-/**
- * ===========================================================================
- * Profile Settings Events and Elements
- * ===========================================================================
- */
-export const PROFILE_SETTINGS_TRACKER_EVENTS = {
-  // Account
-  deactivate_account: "deactivate_account",
-  update_profile: "update_profile",
-  // Preferences
-  first_day_updated: "first_day_updated",
-  language_updated: "language_updated",
-  timezone_updated: "timezone_updated",
-  theme_updated: "theme_updated",
-  // Notifications
-  notifications_updated: "notifications_updated",
-  // PAT
-  pat_created: "pat_created",
-  pat_deleted: "pat_deleted",
-};
-
 export const PROFILE_SETTINGS_TRACKER_ELEMENTS = {
-  // Account
-  SAVE_CHANGES_BUTTON: "save_changes_button",
-  DEACTIVATE_ACCOUNT_BUTTON: "deactivate_account_button",
-  // Preferences
-  THEME_DROPDOWN: "preferences_theme_dropdown",
-  FIRST_DAY_OF_WEEK_DROPDOWN: "preferences_first_day_of_week_dropdown",
-  LANGUAGE_DROPDOWN: "preferences_language_dropdown",
-  TIMEZONE_DROPDOWN: "preferences_timezone_dropdown",
-  // Notifications
-  PROPERTY_CHANGES_TOGGLE: "notifications_property_changes_toggle",
-  STATE_CHANGES_TOGGLE: "notifications_state_changes_toggle",
-  COMMENTS_TOGGLE: "notifications_comments_toggle",
-  MENTIONS_TOGGLE: "notifications_mentions_toggle",
-  // PAT
-  HEADER_ADD_PAT_BUTTON: "header_add_pat_button",
-  EMPTY_STATE_ADD_PAT_BUTTON: "empty_state_add_pat_button",
   LIST_ITEM_DELETE_ICON: "list_item_delete_icon",
 };
 

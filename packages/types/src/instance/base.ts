@@ -4,83 +4,50 @@
  * See the LICENSE file for details.
  */
 
-import type {
-  TInstanceAIConfigurationKeys,
-  TInstanceEmailConfigurationKeys,
-  TInstanceImageConfigurationKeys,
-  TInstanceAuthenticationKeys,
-  TCoreLoginMediums,
-} from "./";
-import type { TExtendedLoginMediums } from "./auth-ee";
-
 export interface IInstanceInfo {
   instance: IInstance;
   config: IInstanceConfig;
 }
 
 export interface IInstance {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  instance_name: string | undefined;
-  whitelist_emails: string | undefined;
-  instance_id: string | undefined;
-  license_key: string | undefined;
-  current_version: string | undefined;
-  latest_version: string | undefined;
-  last_checked_at: string | undefined;
-  namespace: string | undefined;
-  is_telemetry_enabled: boolean;
-  is_support_required: boolean;
-  is_activated: boolean;
   is_setup_done: boolean;
-  user_count: number | undefined;
-  is_verified: boolean;
-  created_by: string | undefined;
-  updated_by: string | undefined;
 }
 
+export type TIdentitySourceProvider = "slack" | "discord";
+
+export interface IIdentitySourceOrganization {
+  name: string;
+  domain: string | null;
+  icon_url: string | null;
+}
+
+interface IIdentitySourceConfigBase {
+  configured: boolean;
+  connected: boolean;
+  organization: IIdentitySourceOrganization | null;
+  last_synced_at: string | null;
+  sync_error?: string | null;
+  auth_url: string;
+  install_url: string;
+}
+
+export interface ISlackIdentitySourceConfig extends IIdentitySourceConfigBase {
+  provider: "slack";
+}
+
+/** Reserved contract for a future Discord identity adapter. */
+export interface IDiscordIdentitySourceConfig extends IIdentitySourceConfigBase {
+  provider: "discord";
+}
+
+export type IIdentitySourceConfig = ISlackIdentitySourceConfig | IDiscordIdentitySourceConfig;
+
 export interface IInstanceConfig {
-  enable_signup: boolean;
-  is_google_enabled: boolean;
-  is_github_enabled: boolean;
-  is_gitlab_enabled: boolean;
-  is_gitea_enabled: boolean;
-  is_magic_login_enabled: boolean;
-  is_email_password_enabled: boolean;
+  identity_source: IIdentitySourceConfig;
   github_app_name: string | undefined;
-  slack_client_id: string | undefined;
-  posthog_api_key: string | undefined;
-  posthog_host: string | undefined;
   has_unsplash_configured: boolean;
   has_llm_configured: boolean;
   file_size_limit: number | undefined;
-  is_smtp_configured: boolean;
-  app_base_url: string | undefined;
-  space_base_url: string | undefined;
-  admin_base_url: string | undefined;
   is_self_managed: boolean;
   instance_changelog_url?: string;
 }
-
-export type TInstanceConfigurationKeys =
-  | TInstanceAIConfigurationKeys
-  | TInstanceEmailConfigurationKeys
-  | TInstanceImageConfigurationKeys
-  | TInstanceAuthenticationKeys;
-
-export interface IInstanceConfiguration {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  key: TInstanceConfigurationKeys;
-  value: string;
-  created_by: string | null;
-  updated_by: string | null;
-}
-
-export type IFormattedInstanceConfiguration = {
-  [key in TInstanceConfigurationKeys]: string;
-};
-
-export type TLoginMediums = TCoreLoginMediums | TExtendedLoginMediums;

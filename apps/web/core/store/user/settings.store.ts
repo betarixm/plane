@@ -42,7 +42,6 @@ export class UserSettingsStore implements IUserSettingsStore {
       slug: undefined,
       name: undefined,
       logo: undefined,
-      invites: undefined,
     },
   };
   // services

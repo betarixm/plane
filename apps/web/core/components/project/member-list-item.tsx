@@ -14,6 +14,7 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useProjectColumns } from "@/components/projects/settings/useProjectColumns";
+import type { RowData } from "@/components/projects/settings/useProjectColumns";
 // store
 import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
 // local imports
@@ -78,9 +79,9 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
           onSubmit={() => handleRemove(removeMemberModal.member.id)}
         />
       )}
-      <Table
+      <Table<RowData>
         columns={columns}
-        data={(memberDetails?.filter((member): member is IProjectMemberDetails => member !== null) ?? []) as any}
+        data={memberDetails.filter((member): member is IProjectMemberDetails => member !== null)}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
         tHeadClassName="border-b border-subtle"
         thClassName="text-left font-medium divide-x-0 text-placeholder"

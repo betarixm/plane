@@ -9,11 +9,8 @@ import type {
   IWorkspace,
   IWorkspaceMemberMe,
   IWorkspaceMember,
-  IWorkspaceMemberInvitation,
-  IWorkspaceMemberInvitationPublic,
   IWorkspaceSearchResults,
   IProductUpdateResponse,
-  IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
   IUserProjectsRole,
   IWorkspaceView,
@@ -44,53 +41,10 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getWorkspace(workspaceSlug: string): Promise<IWorkspace> {
-    return this.get(`/api/workspaces/${workspaceSlug}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  async updateWorkspace(workspaceSlug: string, data: Partial<IWorkspace>): Promise<IWorkspace> {
+  async updateWorkspace(workspaceSlug: string, data: Pick<IWorkspace, "timezone">): Promise<IWorkspace> {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async inviteWorkspace(workspaceSlug: string, data: IWorkspaceBulkInviteFormData): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/invitations/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async joinWorkspace(workspaceSlug: string, invitationId: string, data: any): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/join/`, data, {
-      headers: {},
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async acceptWorkspaceInvitation(): Promise<void> {
-    return this.post("/api/users/me/workspace/invitation/")
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async userWorkspaceInvitation(): Promise<IWorkspaceMemberInvitationPublic | undefined> {
-    return this.get("/api/users/me/workspace/invitation/")
-      .then((response) => response?.data)
-      .catch((error) => {
-        if (error?.response?.status === 404) return undefined;
         throw error?.response?.data;
       });
   }
@@ -113,62 +67,6 @@ export class WorkspaceService extends APIService {
 
   async fetchWorkspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/members/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateWorkspaceMember(
-    workspaceSlug: string,
-    memberId: string,
-    data: Partial<IWorkspaceMember>
-  ): Promise<IWorkspaceMember> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/members/${memberId}/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteWorkspaceMember(workspaceSlug: string, memberId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/members/${memberId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async workspaceInvitations(workspaceSlug: string): Promise<IWorkspaceMemberInvitation[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/invitations/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getWorkspaceInvitation(workspaceSlug: string, invitationId: string): Promise<IWorkspaceMemberInvitationPublic> {
-    return this.get(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/join/`, { headers: {} })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateWorkspaceInvitation(
-    workspaceSlug: string,
-    invitationId: string,
-    data: Partial<IWorkspaceMember>
-  ): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteWorkspaceInvitations(workspaceSlug: string, invitationId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

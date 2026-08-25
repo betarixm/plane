@@ -8,60 +8,48 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // Plane Imports
-import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, getIdentitySourceDescriptor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EditIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
-import { CustomSelect, Input } from "@plane/ui";
-import { cn, copyUrlToClipboard, getFileURL, validateWorkspaceName } from "@plane/utils";
+import { Input } from "@plane/ui";
+import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 import { TimezoneSelect } from "@/components/global/timezone-select";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 
-const defaultValues: Partial<IWorkspace> = {
-  name: "",
-  url: "",
-  organization_size: "2-10",
-  logo_url: null,
+type TWorkspacePreferencesForm = Pick<IWorkspace, "timezone">;
+
+const defaultValues: TWorkspacePreferencesForm = {
   timezone: "UTC",
 };
 
 export const WorkspaceDetails = observer(function WorkspaceDetails() {
   // states
   const [isLoading, setIsLoading] = useState(false);
-  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
   const { currentWorkspace, updateWorkspace } = useWorkspace();
+  const { config } = useInstance();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
+  const identitySource = config?.identity_source;
+  const descriptor = identitySource ? getIdentitySourceDescriptor(identitySource.provider) : undefined;
 
   // form info
-  const {
-    handleSubmit,
-    control,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm<IWorkspace>({
-    defaultValues: { ...defaultValues, ...currentWorkspace },
+  const { handleSubmit, control, reset } = useForm<TWorkspacePreferencesForm>({
+    defaultValues: { timezone: currentWorkspace?.timezone ?? defaultValues.timezone },
   });
-  // derived values
-  const workspaceLogo = watch("logo_url");
-
-  const onSubmit = async (formData: IWorkspace) => {
+  const onSubmit = async (formData: TWorkspacePreferencesForm) => {
     if (!currentWorkspace) return;
 
     setIsLoading(true);
 
-    const payload: Partial<IWorkspace> = {
-      name: formData.name,
-      organization_size: formData.organization_size,
+    const payload: Pick<IWorkspace, "timezone"> = {
       timezone: formData.timezone,
     };
 
@@ -78,27 +66,6 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
       setTimeout(() => {
         setIsLoading(false);
       }, 300);
-    }
-  };
-
-  const handleRemoveLogo = async () => {
-    if (!currentWorkspace) return;
-
-    try {
-      await updateWorkspace(currentWorkspace.slug, {
-        logo_url: "",
-      });
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Workspace picture removed successfully.",
-      });
-    } catch {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "There was some error in deleting your profile picture. Please try again.",
-      });
     }
   };
 
@@ -119,7 +86,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
   };
 
   useEffect(() => {
-    if (currentWorkspace) reset({ ...currentWorkspace });
+    if (currentWorkspace) reset({ timezone: currentWorkspace.timezone });
   }, [currentWorkspace, reset]);
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -128,30 +95,14 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
 
   return (
     <>
-      <Controller
-        control={control}
-        name="logo_url"
-        render={({ field: { onChange, value } }) => (
-          <WorkspaceImageUploadModal
-            isOpen={isImageUploadModalOpen}
-            onClose={() => setIsImageUploadModalOpen(false)}
-            handleRemove={handleRemoveLogo}
-            onSuccess={(imageUrl) => {
-              onChange(imageUrl);
-              setIsImageUploadModalOpen(false);
-            }}
-            value={value}
-          />
-        )}
-      />
       <div className={cn("flex w-full flex-col gap-y-7", { "opacity-60": !isAdmin })}>
         <div className="flex items-center gap-5">
           <div className="flex shrink-0 flex-col gap-1">
-            <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
-              {workspaceLogo && workspaceLogo !== "" ? (
+            <div>
+              {currentWorkspace.logo_url ? (
                 <div className="relative flex size-14">
                   <img
-                    src={getFileURL(workspaceLogo)}
+                    src={getFileURL(currentWorkspace.logo_url)}
                     className="absolute top-0 left-0 size-full rounded-md object-cover"
                     alt="Workspace Logo"
                   />
@@ -161,107 +112,45 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}
-            </button>
+            </div>
           </div>
           <div className="flex flex-col gap-1">
-            <div className="mb:-my-5 text-h5-semibold leading-6">{watch("name")}</div>
+            <div className="mb:-my-5 text-h5-semibold leading-6">{currentWorkspace.name}</div>
             <button type="button" onClick={handleCopyUrl} className="text-left text-body-xs-regular tracking-tight">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
-            {isAdmin && (
-              <button
-                type="button"
-                className="flex items-center gap-1.5 text-left text-caption-sm-medium text-accent-primary"
-                onClick={() => setIsImageUploadModalOpen(true)}
-              >
-                {workspaceLogo && workspaceLogo !== "" ? (
-                  <>
-                    <EditIcon className="h-3 w-3" />
-                    {t("workspace_settings.settings.general.edit_logo")}
-                  </>
-                ) : (
-                  t("workspace_settings.settings.general.upload_logo")
-                )}
-              </button>
-            )}
+            <span className="text-caption-sm-regular text-tertiary">
+              Name and logo are managed by {descriptor?.label ?? "your identity source"}
+            </span>
           </div>
         </div>
         <div className="flex flex-col gap-7">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-2">
               <h4 className="text-body-sm-medium text-tertiary">{t("workspace_settings.settings.general.name")}</h4>
-              <Controller
-                control={control}
+              <Input
+                id="name"
                 name="name"
-                rules={{
-                  validate: (value) => validateWorkspaceName(value, true),
-                }}
-                render={({ field: { value, onChange, ref } }) => (
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.name)}
-                    placeholder={t("workspace_settings.settings.general.name")}
-                    className="w-full rounded-md"
-                    disabled={!isAdmin}
-                  />
-                )}
+                type="text"
+                value={currentWorkspace.name}
+                className="w-full cursor-not-allowed rounded-md !bg-layer-1"
+                disabled
               />
-              {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
-            </div>
-            <div className="flex flex-col gap-2">
-              <h4 className="text-body-sm-medium text-tertiary">
-                {t("workspace_settings.settings.general.company_size")}
-              </h4>
-              <Controller
-                name="organization_size"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={
-                      ORGANIZATION_SIZE.find((c) => c === value) ??
-                      t("workspace_settings.settings.general.errors.company_size.select_a_range")
-                    }
-                    buttonClassName="border border-subtle bg-layer-2 !shadow-none !rounded-md"
-                    input
-                    disabled={!isAdmin}
-                  >
-                    {ORGANIZATION_SIZE.map((item) => (
-                      <CustomSelect.Option key={item} value={item}>
-                        {item}
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                )}
-              />
+              <p className="text-caption-sm-regular text-tertiary">
+                Managed by {descriptor?.label ?? "your identity source"}
+              </p>
             </div>
             <div className="flex flex-col gap-2">
               <h4 className="text-body-sm-medium text-tertiary">{t("workspace_settings.settings.general.url")}</h4>
-              <Controller
-                control={control}
+              <Input
+                id="url"
                 name="url"
-                render={({ field: { onChange, ref } }) => (
-                  <Input
-                    id="url"
-                    name="url"
-                    type="url"
-                    value={`${
-                      typeof window !== "undefined" &&
-                      window.location.origin.replace("http://", "").replace("https://", "")
-                    }/${currentWorkspace.slug}`}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.url)}
-                    className="w-full cursor-not-allowed rounded-md !bg-layer-1"
-                    disabled
-                  />
-                )}
+                type="url"
+                value={`${
+                  typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
+                }/${currentWorkspace.slug}`}
+                className="w-full cursor-not-allowed rounded-md !bg-layer-1"
+                disabled
               />
             </div>
             <div className="flex flex-col gap-2">
