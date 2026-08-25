@@ -71,10 +71,10 @@ def test_project_and_recent_visit_member_projections_exclude_stale_slack_generat
     )
 
     project_response = session_client.get(
-        f"/api/workspaces/{workspace.slug}/projects/details/"
+        "/api/workspace/projects/details/"
     )
     recent_response = session_client.get(
-        f"/api/workspaces/{workspace.slug}/recent-visits/",
+        "/api/workspace/recent-visits/",
         {"entity_name": "project"},
     )
 

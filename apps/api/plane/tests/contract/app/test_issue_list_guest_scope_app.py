@@ -5,7 +5,7 @@
 """Contract tests for ``IssueListEndpoint`` guest scoping.
 
 Regression coverage for GHSA-32c7-84jc-4w67 (WEB-8074). ``IssueListEndpoint.get``
-(``/workspaces/<slug>/projects/<project_id>/issues/list/``) returned any issue
+(``/api/workspace/projects/<project_id>/issues/list/``) returned any issue
 whose id was passed in ``?issues=``, without applying the guest ``created_by``
 restriction that its sibling ``IssueViewSet.list`` enforces. A project GUEST on a
 project with ``guest_view_all_features=False`` could therefore read issues they
@@ -29,7 +29,7 @@ from plane.db.models import (
     WorkspaceMember,
 )
 
-LIST_URL = "/api/workspaces/{slug}/projects/{project_id}/issues/list/"
+LIST_URL = "/api/workspace/projects/{project_id}/issues/list/"
 
 
 @pytest.fixture
@@ -103,7 +103,7 @@ class TestIssueListGuestScope:
     def test_guest_cannot_read_foreign_issue(
         self, guest_client, workspace, project, own_issue, foreign_issue
     ):
-        url = LIST_URL.format(slug=workspace.slug, project_id=project.id)
+        url = LIST_URL.format(project_id=project.id)
         response = guest_client.get(url, {"issues": f"{own_issue.id},{foreign_issue.id}"})
 
         assert response.status_code == status.HTTP_200_OK, (
@@ -120,7 +120,7 @@ class TestIssueListGuestScope:
         self, session_client, workspace, project, own_issue, foreign_issue
     ):
         """Positive control: a full member still gets every requested issue."""
-        url = LIST_URL.format(slug=workspace.slug, project_id=project.id)
+        url = LIST_URL.format(project_id=project.id)
         response = session_client.get(url, {"issues": f"{own_issue.id},{foreign_issue.id}"})
 
         assert response.status_code == status.HTTP_200_OK
@@ -135,7 +135,7 @@ class TestIssueListGuestScope:
         project.guest_view_all_features = True
         project.save(update_fields=["guest_view_all_features"])
 
-        url = LIST_URL.format(slug=workspace.slug, project_id=project.id)
+        url = LIST_URL.format(project_id=project.id)
         response = guest_client.get(url, {"issues": f"{own_issue.id},{foreign_issue.id}"})
 
         assert response.status_code == status.HTTP_200_OK

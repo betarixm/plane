@@ -19,19 +19,18 @@ from plane.db.models import (
 
 
 class TestProjectBase:
-    def get_project_url(self, workspace_slug: str, pk: uuid.UUID = None, details: bool = False) -> str:
+    def get_project_url(self, pk: uuid.UUID = None, details: bool = False) -> str:
         """
-        Constructs the project endpoint URL for the given workspace as reverse() is
-        unreliable due to  duplicate 'name' values in URL patterns ('api' and 'app').
+        Constructs the singleton workspace project endpoint URL; reverse() is
+        unreliable due to duplicate 'name' values in URL patterns ('api' and 'app').
 
         Args:
-            workspace_slug (str): The slug of the workspace.
             pk (uuid.UUID, optional): The primary key of a specific project.
             details (bool, optional): If True, constructs the URL for the
             project details endpoint. Defaults to False.
         """
         # Establish the common base URL for all project-related endpoints.
-        base_url = f"/api/workspaces/{workspace_slug}/projects/"
+        base_url = "/api/workspace/projects/"
 
         # Specific project instance URL.
         if pk:
@@ -53,7 +52,7 @@ class TestProjectAPIPost(TestProjectBase):
     def test_create_project_empty_data(self, session_client, workspace):
         """Test creating a project with empty data"""
 
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
 
         # Test with empty data
         response = session_client.post(url, {}, format="json")
@@ -61,7 +60,7 @@ class TestProjectAPIPost(TestProjectBase):
 
     @pytest.mark.django_db
     def test_create_project_valid_data(self, session_client, workspace, create_user):
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
 
         project_data = {
             "name": "New Project Test",
@@ -118,7 +117,7 @@ class TestProjectAPIPost(TestProjectBase):
             source_generation=external_identity_source.source.generation,
         )
 
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         project_data = {
             "name": "Project with Lead",
             "identifier": "PWL",
@@ -144,7 +143,7 @@ class TestProjectAPIPost(TestProjectBase):
 
         session_client.force_authenticate(user=guest_user)
 
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         project_data = {
             "name": "Guest Project",
             "identifier": "GP",
@@ -158,7 +157,7 @@ class TestProjectAPIPost(TestProjectBase):
     @pytest.mark.django_db
     def test_create_project_unauthenticated(self, client, workspace):
         """Test unauthenticated access"""
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         project_data = {
             "name": "Unauth Project",
             "identifier": "UP",
@@ -174,7 +173,7 @@ class TestProjectAPIPost(TestProjectBase):
         # Create first project
         Project.objects.create(name="Duplicate Name", identifier="DN1", workspace=workspace)
 
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         project_data = {
             "name": "Duplicate Name",
             "identifier": "DN2",
@@ -189,7 +188,7 @@ class TestProjectAPIPost(TestProjectBase):
         """Test creating project with duplicate identifier"""
         Project.objects.create(name="First Project", identifier="DUP", workspace=workspace)
 
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         project_data = {
             "name": "Second Project",
             "identifier": "DUP",
@@ -202,7 +201,7 @@ class TestProjectAPIPost(TestProjectBase):
     @pytest.mark.django_db
     def test_create_project_missing_required_fields(self, session_client, workspace, create_user):
         """Test validation with missing required fields"""
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
 
         # Test missing name
         response = session_client.post(url, {"identifier": "MN"}, format="json")
@@ -215,7 +214,7 @@ class TestProjectAPIPost(TestProjectBase):
     @pytest.mark.django_db
     def test_create_project_with_all_optional_fields(self, session_client, workspace, create_user):
         """Test creating project with all optional fields"""
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         project_data = {
             "name": "Full Project",
             "identifier": "FP",
@@ -254,7 +253,7 @@ class TestProjectAPIGet(TestProjectBase):
         # Add user as project member
         ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         response = session_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -280,7 +279,7 @@ class TestProjectAPIGet(TestProjectBase):
 
         session_client.force_authenticate(user=guest_user)
 
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         response = session_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -292,7 +291,7 @@ class TestProjectAPIGet(TestProjectBase):
     @pytest.mark.django_db
     def test_list_projects_unauthenticated(self, client, workspace):
         """Test listing projects without authentication"""
-        url = self.get_project_url(workspace.slug)
+        url = self.get_project_url()
         response = client.get(url)
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -311,7 +310,7 @@ class TestProjectAPIGet(TestProjectBase):
         # Add user as project member
         ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug, details=True)
+        url = self.get_project_url(details=True)
         response = session_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -334,7 +333,7 @@ class TestProjectAPIGet(TestProjectBase):
         # Add user as project member
         ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         response = session_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -347,7 +346,7 @@ class TestProjectAPIGet(TestProjectBase):
     def test_retrieve_project_not_found(self, session_client, workspace, create_user):
         """Test retrieving a non-existent project"""
         fake_uuid = uuid.uuid4()
-        url = self.get_project_url(workspace.slug, pk=fake_uuid)
+        url = self.get_project_url(pk=fake_uuid)
         response = session_client.get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -366,7 +365,7 @@ class TestProjectAPIGet(TestProjectBase):
         # Add user as project member
         ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         response = session_client.get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -390,7 +389,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
         # Add user as project administrator
         ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         update_data = {
             "name": "Updated Project",
             "description": "Updated description",
@@ -422,7 +421,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         session_client.force_authenticate(user=member_user)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         update_data = {"name": "Hacked Project"}
 
         response = session_client.patch(url, update_data, format="json")
@@ -438,7 +437,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         ProjectMember.objects.create(project=project2, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug, pk=project2.id)
+        url = self.get_project_url(pk=project2.id)
         update_data = {"name": "Project One"}  # Duplicate name
 
         response = session_client.patch(url, update_data, format="json")
@@ -454,7 +453,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         ProjectMember.objects.create(project=project2, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug, pk=project2.id)
+        url = self.get_project_url(pk=project2.id)
         update_data = {"identifier": "P1"}  # Duplicate identifier
 
         response = session_client.patch(url, update_data, format="json")
@@ -468,7 +467,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         update_data = {"name": ""}
 
         response = session_client.patch(url, update_data, format="json")
@@ -482,7 +481,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         ProjectMember.objects.create(project=project, member=create_user, role=20, is_active=True)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         response = session_client.delete(url)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -505,7 +504,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         session_client.force_authenticate(user=workspace_admin)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         response = session_client.delete(url)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -524,7 +523,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         session_client.force_authenticate(user=member_user)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         response = session_client.delete(url)
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -535,7 +534,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
         """Test unauthenticated project deletion"""
         project = Project.objects.create(name="Protected Project", identifier="PP", workspace=workspace)
 
-        url = self.get_project_url(workspace.slug, pk=project.id)
+        url = self.get_project_url(pk=project.id)
         response = client.delete(url)
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

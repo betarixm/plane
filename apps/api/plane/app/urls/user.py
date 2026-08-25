@@ -16,6 +16,7 @@ from plane.app.views import (
     ## Workspaces
     UserWorkspaceEndpoint,
 )
+from plane.middleware.singleton_workspace import singleton_workspace_path
 
 urlpatterns = [
     # User Profile
@@ -36,18 +37,18 @@ urlpatterns = [
     # singleton workspace membership
     path("users/me/workspace/", UserWorkspaceEndpoint.as_view(), name="user-workspace"),
     # User Graphs
-    path(
-        "users/me/workspaces/<str:slug>/activity-graph/",
+    singleton_workspace_path(
+        "users/me/workspace/activity-graph/",
         UserActivityGraphEndpoint.as_view(),
         name="user-activity-graph",
     ),
-    path(
-        "users/me/workspaces/<str:slug>/issues-completed-graph/",
+    singleton_workspace_path(
+        "users/me/workspace/issues-completed-graph/",
         UserIssueCompletedGraphEndpoint.as_view(),
         name="completed-graph",
     ),
-    path(
-        "users/me/workspaces/<str:slug>/dashboard/",
+    singleton_workspace_path(
+        "users/me/workspace/dashboard/",
         UserWorkspaceDashboardEndpoint.as_view(),
         name="user-workspace-dashboard",
     ),

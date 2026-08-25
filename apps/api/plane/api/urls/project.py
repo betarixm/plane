@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path as path
 
 from plane.api.views import (
     ProjectListCreateAPIEndpoint,
@@ -14,27 +14,27 @@ from plane.api.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/",
+        "workspace/projects/",
         ProjectListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="project",
     ),
     path(
-        "workspaces/<str:slug>/projects-lite/",
+        "workspace/projects-lite/",
         ProjectListLiteAPIEndpoint.as_view(http_method_names=["get"]),
         name="project-lite",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:pk>/",
+        "workspace/projects/<uuid:pk>/",
         ProjectDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="project",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
+        "workspace/projects/<uuid:project_id>/archive/",
         ProjectArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["post", "delete"]),
         name="project-archive-unarchive",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/summary/",
+        "workspace/projects/<uuid:project_id>/summary/",
         ProjectSummaryAPIEndpoint.as_view(http_method_names=["get"]),
         name="project-summary",
     ),

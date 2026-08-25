@@ -13,8 +13,8 @@ from plane.db.models import FileAsset
 @pytest.mark.contract
 class TestGenericAssetSingletonWorkspace:
 
-    def detail_url(self, slug, asset_id):
-        return f"/api/v1/workspaces/{slug}/assets/{asset_id}/"
+    def detail_url(self, asset_id):
+        return f"/api/v1/workspace/assets/{asset_id}/"
 
     @pytest.mark.django_db
     def test_member_can_patch_own_workspace_asset(self, api_key_client, workspace, create_user):
@@ -30,7 +30,7 @@ class TestGenericAssetSingletonWorkspace:
             is_uploaded=False,
             storage_metadata={"size": 10},
         )
-        url = self.detail_url(workspace.slug, asset.id)
+        url = self.detail_url(asset.id)
 
         response = api_key_client.patch(url, {"is_uploaded": True}, format="json")
 

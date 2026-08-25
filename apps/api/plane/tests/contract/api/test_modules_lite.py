@@ -4,7 +4,7 @@
 
 """Contract tests for the modules-lite endpoint.
 
-GET /api/v1/workspaces/<slug>/projects/<project_id>/modules-lite/
+GET /api/v1/workspace/projects/<project_id>/modules-lite/
 """
 
 import pytest
@@ -14,8 +14,8 @@ from rest_framework import status
 from plane.db.models import Module, Project, ProjectMember
 
 
-def _url(slug, project_id):
-    return f"/api/v1/workspaces/{slug}/projects/{project_id}/modules-lite/"
+def _url(project_id):
+    return f"/api/v1/workspace/projects/{project_id}/modules-lite/"
 
 
 @pytest.fixture
@@ -53,7 +53,7 @@ def modules(db, project):
 class TestModulesLite:
     @pytest.mark.django_db
     def test_paginated_and_excludes_archived(self, api_key_client, workspace, project, modules):
-        response = api_key_client.get(_url(workspace.slug, project.id))
+        response = api_key_client.get(_url(project.id))
         assert response.status_code == status.HTTP_200_OK
         assert "results" in response.data
         names = {item["name"] for item in response.data["results"]}

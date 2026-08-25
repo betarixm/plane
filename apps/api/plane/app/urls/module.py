@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path as path
 
 
 from plane.app.views import (
@@ -17,12 +17,12 @@ from plane.app.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/",
+        "workspace/projects/<uuid:project_id>/modules/",
         ModuleViewSet.as_view({"get": "list", "post": "create"}),
         name="project-modules",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:pk>/",
+        "workspace/projects/<uuid:project_id>/modules/<uuid:pk>/",
         ModuleViewSet.as_view(
             {
                 "get": "retrieve",
@@ -34,17 +34,17 @@ urlpatterns = [
         name="project-modules",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/modules/",
+        "workspace/projects/<uuid:project_id>/issues/<uuid:issue_id>/modules/",
         ModuleIssueViewSet.as_view({"post": "create_issue_modules"}),
         name="issue-module",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/issues/",
+        "workspace/projects/<uuid:project_id>/modules/<uuid:module_id>/issues/",
         ModuleIssueViewSet.as_view({"post": "create_module_issues", "get": "list"}),
         name="project-module-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/issues/<uuid:issue_id>/",
+        "workspace/projects/<uuid:project_id>/modules/<uuid:module_id>/issues/<uuid:issue_id>/",
         ModuleIssueViewSet.as_view(
             {
                 "get": "retrieve",
@@ -56,12 +56,12 @@ urlpatterns = [
         name="project-module-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/",
+        "workspace/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/",
         ModuleLinkViewSet.as_view({"get": "list", "post": "create"}),
         name="project-issue-module-links",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/<uuid:pk>/",
+        "workspace/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/<uuid:pk>/",
         ModuleLinkViewSet.as_view(
             {
                 "get": "retrieve",
@@ -73,32 +73,32 @@ urlpatterns = [
         name="project-issue-module-links",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-modules/",
+        "workspace/projects/<uuid:project_id>/user-favorite-modules/",
         ModuleFavoriteViewSet.as_view({"get": "list", "post": "create"}),
         name="user-favorite-module",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-modules/<uuid:module_id>/",
+        "workspace/projects/<uuid:project_id>/user-favorite-modules/<uuid:module_id>/",
         ModuleFavoriteViewSet.as_view({"delete": "destroy"}),
         name="user-favorite-module",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/user-properties/",
+        "workspace/projects/<uuid:project_id>/modules/<uuid:module_id>/user-properties/",
         ModuleUserPropertiesEndpoint.as_view(),
         name="cycle-user-filters",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/archive/",
+        "workspace/projects/<uuid:project_id>/modules/<uuid:module_id>/archive/",
         ModuleArchiveUnarchiveEndpoint.as_view(),
         name="module-archive-unarchive",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-modules/",
+        "workspace/projects/<uuid:project_id>/archived-modules/",
         ModuleArchiveUnarchiveEndpoint.as_view(),
         name="module-archive-unarchive",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-modules/<uuid:pk>/",
+        "workspace/projects/<uuid:project_id>/archived-modules/<uuid:pk>/",
         ModuleArchiveUnarchiveEndpoint.as_view(),
         name="module-archive-unarchive",
     ),

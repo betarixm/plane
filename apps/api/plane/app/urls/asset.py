@@ -4,7 +4,6 @@
 
 from django.urls import path
 
-
 from plane.app.views import (
     FileAssetEndpoint,
     FileAssetViewSet,
@@ -19,37 +18,40 @@ from plane.app.views import (
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
 )
+from plane.middleware.singleton_workspace import singleton_workspace_path
 
 
 urlpatterns = [
-    path(
-        "workspaces/<str:slug>/file-assets/",
+    singleton_workspace_path(
+        "workspace/file-assets/",
         FileAssetEndpoint.as_view(),
         name="file-assets",
     ),
-    path(
-        "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/",
+    singleton_workspace_path(
+        "workspace/file-assets/<str:asset_key>/",
         FileAssetEndpoint.as_view(),
         name="file-assets",
+        workspace_kwarg="workspace_id",
     ),
-    path(
-        "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/restore/",
+    singleton_workspace_path(
+        "workspace/file-assets/<str:asset_key>/restore/",
         FileAssetViewSet.as_view({"post": "restore"}),
         name="file-assets-restore",
+        workspace_kwarg="workspace_id",
     ),
     # V2 Endpoints
-    path(
-        "assets/v2/workspaces/<str:slug>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/",
         WorkspaceFileAssetEndpoint.as_view(),
         name="workspace-file-assets",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/<uuid:asset_id>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/<uuid:asset_id>/",
         WorkspaceFileAssetEndpoint.as_view(),
         name="workspace-file-assets",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/restore/<uuid:asset_id>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/restore/<uuid:asset_id>/",
         AssetRestoreEndpoint.as_view(),
         name="asset-restore",
     ),
@@ -58,38 +60,38 @@ urlpatterns = [
         StaticFileAssetEndpoint.as_view(),
         name="static-file-asset",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/projects/<uuid:project_id>/",
         ProjectAssetEndpoint.as_view(),
         name="bulk-asset-update",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:pk>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/projects/<uuid:project_id>/<uuid:pk>/",
         ProjectAssetEndpoint.as_view(),
         name="bulk-asset-update",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/<uuid:entity_id>/bulk/",
+    singleton_workspace_path(
+        "assets/v2/workspace/projects/<uuid:project_id>/<uuid:entity_id>/bulk/",
         ProjectBulkAssetEndpoint.as_view(),
         name="bulk-asset-update",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/check/<uuid:asset_id>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/check/<uuid:asset_id>/",
         AssetCheckEndpoint.as_view(),
         name="asset-check",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/duplicate-assets/<uuid:asset_id>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/duplicate-assets/<uuid:asset_id>/",
         DuplicateAssetEndpoint.as_view(),
         name="duplicate-assets",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/download/<uuid:asset_id>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/download/<uuid:asset_id>/",
         WorkspaceAssetDownloadEndpoint.as_view(),
         name="workspace-asset-download",
     ),
-    path(
-        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/download/<uuid:asset_id>/",
+    singleton_workspace_path(
+        "assets/v2/workspace/projects/<uuid:project_id>/download/<uuid:asset_id>/",
         ProjectAssetDownloadEndpoint.as_view(),
         name="project-asset-download",
     ),

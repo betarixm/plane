@@ -4,7 +4,7 @@
 
 """Contract tests for the cycles-lite endpoint.
 
-GET /api/v1/workspaces/<slug>/projects/<project_id>/cycles-lite/
+GET /api/v1/workspace/projects/<project_id>/cycles-lite/
 """
 
 from datetime import timedelta
@@ -16,8 +16,8 @@ from rest_framework import status
 from plane.db.models import Cycle, Project, ProjectMember
 
 
-def _url(slug, project_id):
-    return f"/api/v1/workspaces/{slug}/projects/{project_id}/cycles-lite/"
+def _url(project_id):
+    return f"/api/v1/workspace/projects/{project_id}/cycles-lite/"
 
 
 @pytest.fixture
@@ -64,7 +64,7 @@ def cycles(db, project, create_user):
 class TestCyclesLite:
     @pytest.mark.django_db
     def test_paginated_and_excludes_archived(self, api_key_client, workspace, project, cycles):
-        response = api_key_client.get(_url(workspace.slug, project.id))
+        response = api_key_client.get(_url(project.id))
         assert response.status_code == status.HTTP_200_OK
         assert "results" in response.data
         names = {item["name"] for item in response.data["results"]}

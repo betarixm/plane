@@ -41,7 +41,7 @@ INJECTION_PAYLOADS = [
 
 @pytest.mark.unit
 class TestProjectOrderBySanitization:
-    """order_by sanitization for GET /api/v1/workspaces/<slug>/projects/."""
+    """order_by sanitization for GET /api/v1/workspace/projects/."""
 
     DEFAULT = "sort_order"
 
@@ -84,7 +84,7 @@ class TestProjectOrderBySanitization:
 @pytest.mark.unit
 class TestIssueOrderBySanitization:
     """order_by sanitization for
-    GET /api/v1/workspaces/<slug>/projects/<project_id>/issues/."""
+    GET /api/v1/workspace/projects/<project_id>/issues/."""
 
     DEFAULT = "-created_at"
 

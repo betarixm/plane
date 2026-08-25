@@ -29,8 +29,8 @@ from plane.db.models import (
     WorkspaceMember,
 )
 
-CYCLES_URL = "/api/workspaces/{slug}/cycles/"
-MODULES_URL = "/api/workspaces/{slug}/modules/"
+CYCLES_URL = "/api/workspace/cycles/"
+MODULES_URL = "/api/workspace/modules/"
 
 
 @pytest.fixture
@@ -89,7 +89,7 @@ class TestWorkspaceCyclesModulesProjectScope:
 
     @pytest.mark.django_db
     def test_cycles_hidden_from_non_project_member(self, outsider_client, workspace, cycle):
-        response = outsider_client.get(CYCLES_URL.format(slug=workspace.slug))
+        response = outsider_client.get(CYCLES_URL)
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
@@ -97,7 +97,7 @@ class TestWorkspaceCyclesModulesProjectScope:
 
     @pytest.mark.django_db
     def test_modules_hidden_from_non_project_member(self, outsider_client, workspace, module):
-        response = outsider_client.get(MODULES_URL.format(slug=workspace.slug))
+        response = outsider_client.get(MODULES_URL)
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
@@ -106,7 +106,7 @@ class TestWorkspaceCyclesModulesProjectScope:
     @pytest.mark.django_db
     def test_cycles_visible_to_project_member(self, session_client, workspace, cycle):
         """Positive control: an active project member still sees the cycle."""
-        response = session_client.get(CYCLES_URL.format(slug=workspace.slug))
+        response = session_client.get(CYCLES_URL)
         assert response.status_code == status.HTTP_200_OK
         ids = {str(row["id"]) for row in response.data}
         assert str(cycle.id) in ids, f"Expected cycle {cycle.id} in {response.data!r}"
@@ -114,7 +114,7 @@ class TestWorkspaceCyclesModulesProjectScope:
     @pytest.mark.django_db
     def test_modules_visible_to_project_member(self, session_client, workspace, module):
         """Positive control: an active project member still sees the module."""
-        response = session_client.get(MODULES_URL.format(slug=workspace.slug))
+        response = session_client.get(MODULES_URL)
         assert response.status_code == status.HTTP_200_OK
         ids = {str(row["id"]) for row in response.data}
         assert str(module.id) in ids, f"Expected module {module.id} in {response.data!r}"

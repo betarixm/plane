@@ -70,13 +70,13 @@ class TestIssueNotificationContract:
     notified the same way the web app does. See makeplane/plane#9306.
     """
 
-    def get_list_url(self, workspace_slug, project_id):
+    def get_list_url(self, project_id):
         """Helper to build the work item list/create endpoint URL."""
-        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/"
+        return f"/api/v1/workspace/projects/{project_id}/issues/"
 
-    def get_detail_url(self, workspace_slug, project_id, issue_id):
+    def get_detail_url(self, project_id, issue_id):
         """Helper to build the work item detail endpoint URL."""
-        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/"
+        return f"/api/v1/workspace/projects/{project_id}/issues/{issue_id}/"
 
     @pytest.mark.django_db
     def test_create_issue_triggers_notification(
@@ -87,7 +87,7 @@ class TestIssueNotificationContract:
         django_capture_on_commit_callbacks,
     ):
         """Creating a work item via the external API dispatches a notifying activity."""
-        url = self.get_list_url(workspace.slug, project.id)
+        url = self.get_list_url(project.id)
 
         with (
             patch("plane.api.views.issue.issue_activity") as mock_issue_activity,
@@ -113,7 +113,7 @@ class TestIssueNotificationContract:
         django_capture_on_commit_callbacks,
     ):
         """Updating a work item via the external API dispatches a notifying activity."""
-        url = self.get_detail_url(workspace.slug, project.id, create_issue.id)
+        url = self.get_detail_url(project.id, create_issue.id)
 
         with (
             patch("plane.api.views.issue.issue_activity") as mock_issue_activity,
@@ -147,7 +147,7 @@ class TestIssueNotificationContract:
             role=15,  # Member role
             is_active=True,
         )
-        url = self.get_detail_url(workspace.slug, project.id, create_issue.id)
+        url = self.get_detail_url(project.id, create_issue.id)
 
         with (
             patch("plane.api.views.issue.issue_activity") as mock_issue_activity,

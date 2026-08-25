@@ -53,10 +53,10 @@ def outsider_user(db):
 
 @pytest.mark.contract
 class TestProjectListCreateAPIEndpoint:
-    """Contract tests for POST /api/v1/workspaces/{slug}/projects/."""
+    """Contract tests for POST /api/v1/workspace/projects/."""
 
-    def get_url(self, workspace_slug):
-        return f"/api/v1/workspaces/{workspace_slug}/projects/"
+    def get_url(self):
+        return "/api/v1/workspace/projects/"
 
     @pytest.mark.django_db
     def test_create_project_with_lead_as_creator(self, api_key_client, workspace, create_user):
@@ -70,7 +70,7 @@ class TestProjectListCreateAPIEndpoint:
         but had already persisted the Project row without states or members,
         leaving an unusable orphan.
         """
-        url = self.get_url(workspace.slug)
+        url = self.get_url()
         payload = {
             "name": "Self Lead Project",
             "identifier": "SL",
@@ -96,7 +96,7 @@ class TestProjectListCreateAPIEndpoint:
     ):
         """When project_lead is a different workspace member, both creator
         and lead become admins of the project."""
-        url = self.get_url(workspace.slug)
+        url = self.get_url()
         payload = {
             "name": "Other Lead Project",
             "identifier": "OL",
@@ -117,7 +117,7 @@ class TestProjectListCreateAPIEndpoint:
     def test_create_project_without_lead(self, api_key_client, workspace, create_user):
         """Baseline regression: omitting project_lead must succeed and the
         creator becomes the sole admin."""
-        url = self.get_url(workspace.slug)
+        url = self.get_url()
         payload = {
             "name": "Basic Project",
             "identifier": "BP",
@@ -135,7 +135,7 @@ class TestProjectListCreateAPIEndpoint:
         """When project_lead refers to a user that is NOT a member of the
         target workspace, the endpoint must reject the request with a 400
         carrying a field-shaped error and must not persist the Project."""
-        url = self.get_url(workspace.slug)
+        url = self.get_url()
         payload = {
             "name": "Outsider Lead Project",
             "identifier": "OUT",
@@ -162,7 +162,7 @@ class TestProjectListCreateAPIEndpoint:
         where the original ghost-create bug would have committed a partial
         Project — and verify the response is 500 with no side effects.
         """
-        url = self.get_url(workspace.slug)
+        url = self.get_url()
         payload = {
             "name": "Rollback Probe",
             "identifier": "RB",
@@ -208,7 +208,7 @@ class TestProjectListCreateAPIEndpoint:
         )
         ProjectMember.objects.create(project=Project.objects.get(identifier="OP"), member=create_user, role=20)
 
-        url = self.get_url(workspace.slug)
+        url = self.get_url()
         response = api_key_client.get(url, {"order_by": "not_a_field"})
 
         assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
@@ -232,7 +232,7 @@ class TestProjectListCreateAPIEndpoint:
         )
         ProjectMember.objects.create(project=project, member=create_user, role=20)
 
-        url = self.get_url(workspace.slug)
+        url = self.get_url()
         response = api_key_client.get(url, {"order_by": "created_by__email"})
 
         assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
@@ -248,7 +248,7 @@ class TestProjectListCreateAPIEndpoint:
         Uses ``transaction=True`` so the surrounding test transaction is
         actually committed and the ``on_commit`` callback fires (the
         default ``django_db`` wrapper would suppress it via rollback)."""
-        url = self.get_url(workspace.slug)
+        url = self.get_url()
         payload = {
             "name": "Broker Down",
             "identifier": "BD",
@@ -272,8 +272,8 @@ class TestProjectListCreateAPIEndpoint:
 
 @pytest.mark.contract
 class TestProjectArchiveUnarchiveAPIEndpoint:
-    def get_url(self, workspace_slug, project_id):
-        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/archive/"
+    def get_url(self, project_id):
+        return f"/api/v1/workspace/projects/{project_id}/archive/"
 
     @pytest.mark.django_db
     def test_workspace_member_cannot_archive_project_without_membership(
@@ -293,7 +293,7 @@ class TestProjectArchiveUnarchiveAPIEndpoint:
         )
         ProjectMember.objects.create(project=project, member=other_workspace_member, role=20)
 
-        response = api_key_client.post(self.get_url(workspace.slug, project.id), {}, format="json")
+        response = api_key_client.post(self.get_url(project.id), {}, format="json")
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
         project.refresh_from_db()
@@ -316,7 +316,7 @@ class TestProjectArchiveUnarchiveAPIEndpoint:
         )
         ProjectMember.objects.create(project=project, member=create_user, role=15)
 
-        response = api_key_client.post(self.get_url(workspace.slug, project.id), {}, format="json")
+        response = api_key_client.post(self.get_url(project.id), {}, format="json")
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         project.refresh_from_db()

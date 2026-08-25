@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path as path
 
 from plane.app.views import (
     WebhookEndpoint,
@@ -12,19 +12,19 @@ from plane.app.views import (
 
 
 urlpatterns = [
-    path("workspaces/<str:slug>/webhooks/", WebhookEndpoint.as_view(), name="webhooks"),
+    path("workspace/webhooks/", WebhookEndpoint.as_view(), name="webhooks"),
     path(
-        "workspaces/<str:slug>/webhooks/<uuid:pk>/",
+        "workspace/webhooks/<uuid:pk>/",
         WebhookEndpoint.as_view(),
         name="webhooks",
     ),
     path(
-        "workspaces/<str:slug>/webhooks/<uuid:pk>/regenerate/",
+        "workspace/webhooks/<uuid:pk>/regenerate/",
         WebhookSecretRegenerateEndpoint.as_view(),
         name="webhooks",
     ),
     path(
-        "workspaces/<str:slug>/webhook-logs/<uuid:webhook_id>/",
+        "workspace/webhook-logs/<uuid:webhook_id>/",
         WebhookLogsEndpoint.as_view(),
         name="webhooks",
     ),

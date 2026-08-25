@@ -16,6 +16,7 @@ from plane.space.views import (
     ProjectMembersEndpoint,
     ProjectMetaDataEndpoint,
 )
+from plane.middleware.singleton_workspace import singleton_workspace_path
 
 urlpatterns = [
     path(
@@ -33,8 +34,8 @@ urlpatterns = [
         ProjectIssuesPublicEndpoint.as_view(),
         name="project-deploy-board",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/anchor/",
+    singleton_workspace_path(
+        "workspace/projects/<uuid:project_id>/anchor/",
         WorkspaceProjectAnchorEndpoint.as_view(),
         name="project-deploy-board",
     ),

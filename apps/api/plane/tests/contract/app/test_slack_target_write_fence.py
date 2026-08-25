@@ -104,7 +104,7 @@ def test_issue_target_is_rechecked_after_source_lock_and_before_save(
     )
 
     response = session_client.post(
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/",
+        f"/api/workspace/projects/{project.id}/issues/",
         {"name": "Linearized issue", "assignee_ids": [str(target.id)]},
         format="json",
     )

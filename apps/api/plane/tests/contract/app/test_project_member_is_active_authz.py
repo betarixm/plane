@@ -29,8 +29,8 @@ from plane.db.models import (
 )
 
 
-def _member_detail_url(slug: str, project_id: uuid.UUID, pk: uuid.UUID) -> str:
-    return f"/api/workspaces/{slug}/projects/{project_id}/members/{pk}/"
+def _member_detail_url(project_id: uuid.UUID, pk: uuid.UUID) -> str:
+    return f"/api/workspace/projects/{project_id}/members/{pk}/"
 
 
 def _make_user(email: str) -> User:
@@ -105,7 +105,7 @@ class TestProjectMemberIsActiveAuthz:
         client.force_authenticate(user=sole_admin)
 
         response = client.post(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/members/",
+            f"/api/workspace/projects/{project.id}/members/",
             {"members": [{"member_id": str(sole_admin.id), "role": 15}]},
             format="json",
         )
@@ -125,7 +125,7 @@ class TestProjectMemberIsActiveAuthz:
         client.force_authenticate(user=create_user)
 
         response = client.post(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/members/leave/"
+            f"/api/workspace/projects/{project.id}/members/leave/"
         )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -154,7 +154,7 @@ class TestProjectMemberIsActiveAuthz:
         client.force_authenticate(user=outsider)
 
         response = client.put(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/",
+            f"/api/workspace/projects/{project.id}/",
             {"name": "Unauthorized replacement"},
             format="json",
         )
@@ -181,7 +181,7 @@ class TestProjectMemberIsActiveAuthz:
         client.force_authenticate(user=create_user)
 
         response = client.post(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/members/",
+            f"/api/workspace/projects/{project.id}/members/",
             {"members": [{"member_id": str(guest.id), "role": "20"}]},
             format="json",
         )
@@ -203,7 +203,7 @@ class TestProjectMemberIsActiveAuthz:
         client.force_authenticate(user=attacker)
 
         response = client.patch(
-            _member_detail_url(workspace.slug, project.id, victim.id),
+            _member_detail_url(project.id, victim.id),
             {"deleted_at": "2026-08-24T00:00:00Z"},
             format="json",
         )
@@ -224,7 +224,7 @@ class TestProjectMemberIsActiveAuthz:
         client = APIClient()
         client.force_authenticate(user=attacker)
         response = client.patch(
-            _member_detail_url(workspace.slug, project.id, victim.id),
+            _member_detail_url(project.id, victim.id),
             {"is_active": False},
             format="json",
         )
@@ -242,7 +242,7 @@ class TestProjectMemberIsActiveAuthz:
         client = APIClient()
         client.force_authenticate(user=attacker)
         response = client.patch(
-            _member_detail_url(workspace.slug, project.id, victim.id),
+            _member_detail_url(project.id, victim.id),
             {"is_active": False},
             format="json",
         )
@@ -261,7 +261,7 @@ class TestProjectMemberIsActiveAuthz:
         client = APIClient()
         client.force_authenticate(user=attacker)
         response = client.patch(
-            _member_detail_url(workspace.slug, project.id, peer_member.id),
+            _member_detail_url(project.id, peer_member.id),
             {"is_active": False},
             format="json",
         )
@@ -282,7 +282,7 @@ class TestProjectMemberIsActiveAuthz:
         client = APIClient()
         client.force_authenticate(user=admin)
         response = client.patch(
-            _member_detail_url(workspace.slug, project.id, target_member.id),
+            _member_detail_url(project.id, target_member.id),
             {"is_active": False},
             format="json",
         )
@@ -311,7 +311,7 @@ class TestProjectMemberIsActiveAuthz:
         client = APIClient()
         client.force_authenticate(user=ws_admin)
         response = client.patch(
-            _member_detail_url(workspace.slug, project.id, victim.id),
+            _member_detail_url(project.id, victim.id),
             {"is_active": False},
             format="json",
         )

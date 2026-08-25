@@ -20,11 +20,11 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import Project, ProjectMember, User, WorkspaceMember
+from plane.db.models import DeployBoard, Project, ProjectMember, User, WorkspaceMember
 
 
-def deploy_board_url(slug, project_id):
-    return f"/api/workspaces/{slug}/projects/{project_id}/project-deploy-boards/"
+def deploy_board_url(project_id):
+    return f"/api/workspace/projects/{project_id}/project-deploy-boards/"
 
 
 @pytest.fixture
@@ -75,7 +75,7 @@ def outsider_client(db, workspace, create_user):
 class TestDeployBoardProjectScope:
     @pytest.mark.django_db
     def test_non_project_member_cannot_read_deploy_board(self, outsider_client, workspace, project):
-        response = outsider_client.get(deploy_board_url(workspace.slug, project.id))
+        response = outsider_client.get(deploy_board_url(project.id))
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
@@ -83,7 +83,30 @@ class TestDeployBoardProjectScope:
     @pytest.mark.django_db
     def test_project_member_can_read_deploy_board(self, session_client, workspace, project):
         """Positive control: an active project member is not blocked."""
-        response = session_client.get(deploy_board_url(workspace.slug, project.id))
+        response = session_client.get(deploy_board_url(project.id))
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_public_project_boards_use_the_singleton_workspace_route(
+    client, workspace, project
+):
+    DeployBoard.objects.create(
+        workspace=workspace,
+        project=project,
+        entity_identifier=project.id,
+        entity_name="project",
+    )
+
+    response = client.get("/api/public/workspace/project-boards/")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert {str(item["id"]) for item in response.json()} == {str(project.id)}
+
+    legacy_response = client.get(
+        f"/api/public/workspaces/{workspace.slug}/project-boards/"
+    )
+    assert legacy_response.status_code == status.HTTP_404_NOT_FOUND

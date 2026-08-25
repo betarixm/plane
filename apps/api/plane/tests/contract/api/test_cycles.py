@@ -66,14 +66,14 @@ def create_cycle(db, project, create_user):
 class TestCycleListCreateAPIEndpoint:
     """Test Cycle List and Create API Endpoint"""
 
-    def get_cycle_url(self, workspace_slug, project_id):
+    def get_cycle_url(self, project_id):
         """Helper to get cycle endpoint URL"""
-        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/cycles/"
+        return f"/api/v1/workspace/projects/{project_id}/cycles/"
 
     @pytest.mark.django_db
     def test_create_cycle_success(self, api_key_client, workspace, project, cycle_data):
         """Test successful cycle creation"""
-        url = self.get_cycle_url(workspace.slug, project.id)
+        url = self.get_cycle_url(project.id)
 
         response = api_key_client.post(url, cycle_data, format="json")
 
@@ -90,7 +90,7 @@ class TestCycleListCreateAPIEndpoint:
     @pytest.mark.django_db
     def test_create_cycle_invalid_data(self, api_key_client, workspace, project):
         """Test cycle creation with invalid data"""
-        url = self.get_cycle_url(workspace.slug, project.id)
+        url = self.get_cycle_url(project.id)
 
         # Test with empty data
         response = api_key_client.post(url, {}, format="json")
@@ -103,7 +103,7 @@ class TestCycleListCreateAPIEndpoint:
     @pytest.mark.django_db
     def test_create_cycle_invalid_date_combination(self, api_key_client, workspace, project):
         """Test cycle creation with invalid date combination (only start_date)"""
-        url = self.get_cycle_url(workspace.slug, project.id)
+        url = self.get_cycle_url(project.id)
 
         invalid_data = {
             "name": "Invalid Cycle",
@@ -118,7 +118,7 @@ class TestCycleListCreateAPIEndpoint:
     @pytest.mark.django_db
     def test_create_cycle_with_external_id(self, api_key_client, workspace, project):
         """Test creating cycle with external ID"""
-        url = self.get_cycle_url(workspace.slug, project.id)
+        url = self.get_cycle_url(project.id)
 
         cycle_data = {
             "name": "External Cycle",
@@ -137,7 +137,7 @@ class TestCycleListCreateAPIEndpoint:
     @pytest.mark.django_db
     def test_create_cycle_duplicate_external_id(self, api_key_client, workspace, project, create_user):
         """Test creating cycle with duplicate external ID"""
-        url = self.get_cycle_url(workspace.slug, project.id)
+        url = self.get_cycle_url(project.id)
 
         # Create first cycle
         Cycle.objects.create(
@@ -165,7 +165,7 @@ class TestCycleListCreateAPIEndpoint:
     @pytest.mark.django_db
     def test_list_cycles_success(self, api_key_client, workspace, project, create_cycle, create_user):
         """Test successful cycle listing"""
-        url = self.get_cycle_url(workspace.slug, project.id)
+        url = self.get_cycle_url(project.id)
 
         # Create additional cycles
         Cycle.objects.create(
@@ -194,7 +194,7 @@ class TestCycleListCreateAPIEndpoint:
     @pytest.mark.django_db
     def test_list_cycles_with_view_filter(self, api_key_client, workspace, project, create_user):
         """Test cycle listing with different view filters"""
-        url = self.get_cycle_url(workspace.slug, project.id)
+        url = self.get_cycle_url(project.id)
 
         # Create cycles in different states
         now = timezone.now()
@@ -266,14 +266,14 @@ class TestCycleListCreateAPIEndpoint:
 class TestCycleDetailAPIEndpoint:
     """Test Cycle Detail API Endpoint"""
 
-    def get_cycle_detail_url(self, workspace_slug, project_id, cycle_id):
+    def get_cycle_detail_url(self, project_id, cycle_id):
         """Helper to get cycle detail endpoint URL"""
-        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/cycles/{cycle_id}/"
+        return f"/api/v1/workspace/projects/{project_id}/cycles/{cycle_id}/"
 
     @pytest.mark.django_db
     def test_get_cycle_success(self, api_key_client, workspace, project, create_cycle):
         """Test successful cycle retrieval"""
-        url = self.get_cycle_detail_url(workspace.slug, project.id, create_cycle.id)
+        url = self.get_cycle_detail_url(project.id, create_cycle.id)
 
         response = api_key_client.get(url)
 
@@ -286,7 +286,7 @@ class TestCycleDetailAPIEndpoint:
     def test_get_cycle_not_found(self, api_key_client, workspace, project):
         """Test getting non-existent cycle"""
         fake_id = uuid4()
-        url = self.get_cycle_detail_url(workspace.slug, project.id, fake_id)
+        url = self.get_cycle_detail_url(project.id, fake_id)
 
         response = api_key_client.get(url)
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -294,7 +294,7 @@ class TestCycleDetailAPIEndpoint:
     @pytest.mark.django_db
     def test_update_cycle_success(self, api_key_client, workspace, project, create_cycle):
         """Test successful cycle update"""
-        url = self.get_cycle_detail_url(workspace.slug, project.id, create_cycle.id)
+        url = self.get_cycle_detail_url(project.id, create_cycle.id)
 
         update_data = {
             "name": f"Updated Cycle {uuid4()}",
@@ -312,7 +312,7 @@ class TestCycleDetailAPIEndpoint:
     @pytest.mark.django_db
     def test_update_cycle_invalid_data(self, api_key_client, workspace, project, create_cycle):
         """Test cycle update with invalid data"""
-        url = self.get_cycle_detail_url(workspace.slug, project.id, create_cycle.id)
+        url = self.get_cycle_detail_url(project.id, create_cycle.id)
 
         update_data = {"name": ""}
         response = api_key_client.patch(url, update_data, format="json")
@@ -325,7 +325,7 @@ class TestCycleDetailAPIEndpoint:
         self, api_key_client, workspace, project, create_cycle, create_user
     ):
         """Test cycle update with conflicting external ID"""
-        url = self.get_cycle_detail_url(workspace.slug, project.id, create_cycle.id)
+        url = self.get_cycle_detail_url(project.id, create_cycle.id)
 
         # Create another cycle with external ID
         Cycle.objects.create(
@@ -351,7 +351,7 @@ class TestCycleDetailAPIEndpoint:
     @pytest.mark.django_db
     def test_delete_cycle_success(self, api_key_client, workspace, project, create_cycle):
         """Test successful cycle deletion"""
-        url = self.get_cycle_detail_url(workspace.slug, project.id, create_cycle.id)
+        url = self.get_cycle_detail_url(project.id, create_cycle.id)
 
         response = api_key_client.delete(url)
 
@@ -361,7 +361,7 @@ class TestCycleDetailAPIEndpoint:
     @pytest.mark.django_db
     def test_cycle_metrics_annotation(self, api_key_client, workspace, project, create_cycle):
         """Test that cycle includes issue metrics annotations"""
-        url = self.get_cycle_detail_url(workspace.slug, project.id, create_cycle.id)
+        url = self.get_cycle_detail_url(project.id, create_cycle.id)
 
         response = api_key_client.get(url)
 

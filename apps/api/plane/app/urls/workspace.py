@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path as path
 
 from plane.app.views import (
     ExportWorkspaceUserActivityEndpoint,
@@ -34,7 +34,7 @@ from plane.app.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/",
+        "workspace/",
         WorkSpaceViewSet.as_view(
             {
                 "get": "retrieve",
@@ -45,165 +45,165 @@ urlpatterns = [
     ),
     # The configured external provider is the source of truth for the roster.
     path(
-        "workspaces/<str:slug>/members/",
+        "workspace/members/",
         WorkSpaceMemberViewSet.as_view({"get": "list"}),
         name="workspace-member",
     ),
     path(
-        "workspaces/<str:slug>/project-members/",
+        "workspace/project-members/",
         WorkspaceProjectMemberEndpoint.as_view(),
         name="workspace-member-roles",
     ),
     path(
-        "workspaces/<str:slug>/members/<uuid:pk>/",
+        "workspace/members/<uuid:pk>/",
         WorkSpaceMemberViewSet.as_view({"get": "retrieve"}),
         name="workspace-member",
     ),
     path(
-        "workspaces/<str:slug>/workspace-members/me/",
+        "workspace/workspace-members/me/",
         WorkspaceMemberUserEndpoint.as_view(),
         name="workspace-member-details",
     ),
     path(
-        "workspaces/<str:slug>/workspace-views/",
+        "workspace/workspace-views/",
         WorkspaceMemberUserViewsEndpoint.as_view(),
         name="workspace-member-views-details",
     ),
     path(
-        "workspaces/<str:slug>/workspace-themes/",
+        "workspace/workspace-themes/",
         WorkspaceThemeViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace-themes",
     ),
     path(
-        "workspaces/<str:slug>/workspace-themes/<uuid:pk>/",
+        "workspace/workspace-themes/<uuid:pk>/",
         WorkspaceThemeViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-themes",
     ),
     path(
-        "workspaces/<str:slug>/user-stats/<uuid:user_id>/",
+        "workspace/user-stats/<uuid:user_id>/",
         WorkspaceUserProfileStatsEndpoint.as_view(),
         name="workspace-user-stats",
     ),
     path(
-        "workspaces/<str:slug>/user-activity/<uuid:user_id>/",
+        "workspace/user-activity/<uuid:user_id>/",
         WorkspaceUserActivityEndpoint.as_view(),
         name="workspace-user-activity",
     ),
     path(
-        "workspaces/<str:slug>/user-activity/<uuid:user_id>/export/",
+        "workspace/user-activity/<uuid:user_id>/export/",
         ExportWorkspaceUserActivityEndpoint.as_view(),
         name="export-workspace-user-activity",
     ),
     path(
-        "workspaces/<str:slug>/user-profile/<uuid:user_id>/",
+        "workspace/user-profile/<uuid:user_id>/",
         WorkspaceUserProfileEndpoint.as_view(),
         name="workspace-user-profile-page",
     ),
     path(
-        "workspaces/<str:slug>/user-issues/<uuid:user_id>/",
+        "workspace/user-issues/<uuid:user_id>/",
         WorkspaceUserProfileIssuesEndpoint.as_view(),
         name="workspace-user-profile-issues",
     ),
     path(
-        "workspaces/<str:slug>/labels/",
+        "workspace/labels/",
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
     ),
     path(
-        "workspaces/<str:slug>/user-properties/",
+        "workspace/user-properties/",
         WorkspaceUserPropertiesEndpoint.as_view(),
         name="workspace-user-filters",
     ),
     path(
-        "workspaces/<str:slug>/states/",
+        "workspace/states/",
         WorkspaceStatesEndpoint.as_view(),
         name="workspace-state",
     ),
     path(
-        "workspaces/<str:slug>/estimates/",
+        "workspace/estimates/",
         WorkspaceEstimatesEndpoint.as_view(),
         name="workspace-estimate",
     ),
     path(
-        "workspaces/<str:slug>/modules/",
+        "workspace/modules/",
         WorkspaceModulesEndpoint.as_view(),
         name="workspace-modules",
     ),
     path(
-        "workspaces/<str:slug>/cycles/",
+        "workspace/cycles/",
         WorkspaceCyclesEndpoint.as_view(),
         name="workspace-cycles",
     ),
     path(
-        "workspaces/<str:slug>/user-favorites/",
+        "workspace/user-favorites/",
         WorkspaceFavoriteEndpoint.as_view(),
         name="workspace-user-favorites",
     ),
     path(
-        "workspaces/<str:slug>/user-favorites/<uuid:favorite_id>/",
+        "workspace/user-favorites/<uuid:favorite_id>/",
         WorkspaceFavoriteEndpoint.as_view(),
         name="workspace-user-favorites",
     ),
     path(
-        "workspaces/<str:slug>/user-favorites/<uuid:favorite_id>/group/",
+        "workspace/user-favorites/<uuid:favorite_id>/group/",
         WorkspaceFavoriteGroupEndpoint.as_view(),
         name="workspace-user-favorites-groups",
     ),
     path(
-        "workspaces/<str:slug>/draft-issues/",
+        "workspace/draft-issues/",
         WorkspaceDraftIssueViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace-draft-issues",
     ),
     path(
-        "workspaces/<str:slug>/draft-issues/<uuid:pk>/",
+        "workspace/draft-issues/<uuid:pk>/",
         WorkspaceDraftIssueViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-drafts-issues",
     ),
     path(
-        "workspaces/<str:slug>/draft-to-issue/<uuid:draft_id>/",
+        "workspace/draft-to-issue/<uuid:draft_id>/",
         WorkspaceDraftIssueViewSet.as_view({"post": "create_draft_to_issue"}),
         name="workspace-drafts-issues",
     ),
     # quick link
     path(
-        "workspaces/<str:slug>/quick-links/",
+        "workspace/quick-links/",
         QuickLinkViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace-quick-links",
     ),
     path(
-        "workspaces/<str:slug>/quick-links/<uuid:pk>/",
+        "workspace/quick-links/<uuid:pk>/",
         QuickLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-quick-links",
     ),
     # Widgets
     path(
-        "workspaces/<str:slug>/home-preferences/",
+        "workspace/home-preferences/",
         WorkspaceHomePreferenceViewSet.as_view(),
         name="workspace-home-preference",
     ),
     path(
-        "workspaces/<str:slug>/home-preferences/<str:key>/",
+        "workspace/home-preferences/<str:key>/",
         WorkspaceHomePreferenceViewSet.as_view(),
         name="workspace-home-preference",
     ),
     path(
-        "workspaces/<str:slug>/recent-visits/",
+        "workspace/recent-visits/",
         UserRecentVisitViewSet.as_view({"get": "list"}),
         name="workspace-recent-visits",
     ),
     path(
-        "workspaces/<str:slug>/stickies/",
+        "workspace/stickies/",
         WorkspaceStickyViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace-sticky",
     ),
     path(
-        "workspaces/<str:slug>/stickies/<uuid:pk>/",
+        "workspace/stickies/<uuid:pk>/",
         WorkspaceStickyViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-sticky",
     ),
     # User Preference
     path(
-        "workspaces/<str:slug>/sidebar-preferences/",
+        "workspace/sidebar-preferences/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
     ),

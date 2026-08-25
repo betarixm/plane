@@ -104,8 +104,8 @@ def workspace_logo_asset(db, workspace, create_user):
     )
 
 
-def detail_url(slug, asset_id):
-    return f"/api/assets/v2/workspaces/{slug}/{asset_id}/"
+def detail_url(asset_id):
+    return f"/api/assets/v2/workspace/{asset_id}/"
 
 
 @pytest.mark.contract
@@ -118,7 +118,7 @@ class TestWorkspaceFileAssetProjectScope:
     ):
         """GET on a project asset by a non-project-member must 403, not mint a
         presigned download URL."""
-        url = detail_url(workspace.slug, project_asset.id)
+        url = detail_url(project_asset.id)
 
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
             mock_storage.return_value.generate_presigned_url.return_value = (
@@ -137,7 +137,7 @@ class TestWorkspaceFileAssetProjectScope:
     ):
         """PATCH on a project asset by a non-project-member must 403 and leave
         the asset untouched."""
-        url = detail_url(workspace.slug, project_asset.id)
+        url = detail_url(project_asset.id)
         project_asset.is_uploaded = False
         project_asset.save(update_fields=["is_uploaded"])
 
@@ -158,7 +158,7 @@ class TestWorkspaceFileAssetProjectScope:
     ):
         """DELETE on a project asset by a non-project-member must 403 and must
         not soft-delete the asset."""
-        url = detail_url(workspace.slug, project_asset.id)
+        url = detail_url(project_asset.id)
 
         response = outsider_client.delete(url)
 
@@ -174,7 +174,7 @@ class TestWorkspaceFileAssetProjectScope:
     ):
         """Positive control: an active project member can still download the
         asset, so the fix does not over-block legitimate callers."""
-        url = detail_url(workspace.slug, project_asset.id)
+        url = detail_url(project_asset.id)
 
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
             mock_storage.return_value.generate_presigned_url.return_value = (
@@ -193,7 +193,7 @@ class TestWorkspaceFileAssetProjectScope:
     ):
         """Exemption control: a workspace-level asset (project_id NULL) stays
         accessible to any workspace member."""
-        url = detail_url(workspace.slug, workspace_logo_asset.id)
+        url = detail_url(workspace_logo_asset.id)
 
         with mock.patch(S3_STORAGE_PATH) as mock_storage:
             mock_storage.return_value.generate_presigned_url.return_value = (

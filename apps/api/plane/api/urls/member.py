@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path as path
 
 from plane.api.views import (
     ProjectMemberListCreateAPIEndpoint,
@@ -15,37 +15,37 @@ from plane.api.views import (
 urlpatterns = [
     # Project members
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/members/",
+        "workspace/projects/<uuid:project_id>/members/",
         ProjectMemberListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="project-members",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/members/<uuid:pk>/",
+        "workspace/projects/<uuid:project_id>/members/<uuid:pk>/",
         ProjectMemberDetailAPIEndpoint.as_view(http_method_names=["patch", "delete", "get"]),
         name="project-member",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/",
+        "workspace/projects/<uuid:project_id>/project-members/",
         ProjectMemberListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="project-members",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members-lite/",
+        "workspace/projects/<uuid:project_id>/project-members-lite/",
         ProjectMemberLiteAPIEndpoint.as_view(http_method_names=["get"]),
         name="project-members-lite",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/<uuid:pk>/",
+        "workspace/projects/<uuid:project_id>/project-members/<uuid:pk>/",
         ProjectMemberDetailAPIEndpoint.as_view(http_method_names=["patch", "delete", "get"]),
         name="project-member",
     ),
     path(
-        "workspaces/<str:slug>/members/",
+        "workspace/members/",
         WorkspaceMemberAPIEndpoint.as_view(http_method_names=["get"]),
         name="workspace-members",
     ),
     path(
-        "workspaces/<str:slug>/members-lite/",
+        "workspace/members-lite/",
         WorkspaceMemberLiteAPIEndpoint.as_view(http_method_names=["get"]),
         name="workspace-members-lite",
     ),

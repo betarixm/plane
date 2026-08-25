@@ -88,13 +88,13 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/static/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"  # noqa: E501
+            return f"/api/assets/v2/workspace/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"  # noqa: E501
 
         if self.entity_type in [
             self.EntityTypeContext.ISSUE_DESCRIPTION,
             self.EntityTypeContext.COMMENT_DESCRIPTION,
             self.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
         ]:
-            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
+            return f"/api/assets/v2/workspace/projects/{self.project_id}/{self.id}/"
 
         return None

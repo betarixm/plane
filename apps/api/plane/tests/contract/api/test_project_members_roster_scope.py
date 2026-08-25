@@ -7,7 +7,7 @@
 Regression coverage for GHSA-w2vf-m9x9-mvmc (WEB-8075). The SAFE_METHODS branch
 of ``ProjectMemberPermission`` only checked workspace membership, so a workspace
 member who was NOT a member of a project could ``GET
-/workspaces/<slug>/projects/<pid>/members/`` and read that project's full roster.
+/api/v1/workspace/projects/<pid>/members/`` and read that project's full roster.
 
 The fix scopes the SAFE_METHODS check to ``project_id=view.project_id`` so a
 non-member is rejected with 403.
@@ -21,8 +21,8 @@ from rest_framework import status
 from plane.db.models import Project, ProjectMember, User
 
 
-def members_url(slug, project_id):
-    return f"/api/v1/workspaces/{slug}/projects/{project_id}/members/"
+def members_url(project_id):
+    return f"/api/v1/workspace/projects/{project_id}/members/"
 
 
 @pytest.fixture
@@ -74,7 +74,7 @@ class TestProjectMemberRosterScope:
     def test_non_project_member_cannot_list_roster(
         self, api_key_client, workspace, attacker_membership, foreign_project
     ):
-        response = api_key_client.get(members_url(workspace.slug, foreign_project.id))
+        response = api_key_client.get(members_url(foreign_project.id))
         assert response.status_code == status.HTTP_403_FORBIDDEN, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )
@@ -91,7 +91,7 @@ class TestProjectMemberRosterScope:
         ProjectMember.objects.create(
             project=project, member=create_user, workspace=workspace, role=20
         )
-        response = api_key_client.get(members_url(workspace.slug, project.id))
+        response = api_key_client.get(members_url(project.id))
         assert response.status_code == status.HTTP_200_OK, (
             f"Got {response.status_code}: {getattr(response, 'data', None)!r}"
         )

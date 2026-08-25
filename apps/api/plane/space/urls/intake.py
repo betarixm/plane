@@ -9,6 +9,7 @@ from plane.space.views import (
     IntakeIssuePublicViewSet,
     WorkspaceProjectDeployBoardEndpoint,
 )
+from plane.middleware.singleton_workspace import singleton_workspace_path
 
 
 urlpatterns = [
@@ -27,8 +28,8 @@ urlpatterns = [
         IntakeIssuePublicViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="intake-issue",
     ),
-    path(
-        "workspaces/<str:slug>/project-boards/",
+    singleton_workspace_path(
+        "workspace/project-boards/",
         WorkspaceProjectDeployBoardEndpoint.as_view(),
         name="workspace-project-boards",
     ),

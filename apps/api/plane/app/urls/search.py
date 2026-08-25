@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path as path
 
 
 from plane.app.views import GlobalSearchEndpoint, IssueSearchEndpoint, SearchEndpoint
@@ -10,17 +10,17 @@ from plane.app.views import GlobalSearchEndpoint, IssueSearchEndpoint, SearchEnd
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/search/",
+        "workspace/search/",
         GlobalSearchEndpoint.as_view(),
         name="global-search",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/search-issues/",
+        "workspace/projects/<uuid:project_id>/search-issues/",
         IssueSearchEndpoint.as_view(),
         name="project-issue-search",
     ),
     path(
-        "workspaces/<str:slug>/entity-search/",
+        "workspace/entity-search/",
         SearchEndpoint.as_view(),
         name="entity-search",
     ),

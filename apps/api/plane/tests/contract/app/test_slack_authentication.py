@@ -30,6 +30,7 @@ from plane.app.serializers.issue import (
 )
 from plane.app.serializers.module import ModuleWriteSerializer
 from plane.authentication.middleware.session import SessionMiddleware
+from plane.authentication.views.slack import _login_current_external_identity
 from plane.db.models import (
     APIToken,
     Cycle,
@@ -227,7 +228,7 @@ def test_install_bootstraps_singleton_from_slack_identity(
         )
 
     assert response.status_code == 302
-    assert response.url == "https://app.example.com/acme/"
+    assert response.url == "https://app.example.com/home/"
     workspace = Workspace.objects.get()
     installation = IdentitySource.objects.get()
     identity = ExternalIdentity.objects.select_related("user").get()
@@ -273,7 +274,7 @@ def test_install_callback_does_not_create_a_session_after_lifecycle_revocation(
 ):
     query = _initiate(client, "/auth/slack/install/")
 
-    def revoke_before_login(**_kwargs):
+    def revoke_before_login(*_args, **_kwargs):
         installation = IdentitySource.objects.get()
         revoke_installation(
             installation,
@@ -281,9 +282,13 @@ def test_install_callback_does_not_create_a_session_after_lifecycle_revocation(
             expected_generation=installation.generation,
         )
 
+    def login_after_revocation(*args, **kwargs):
+        revoke_before_login()
+        return _login_current_external_identity(*args, **kwargs)
+
     with patch(
-        "plane.authentication.views.slack.invalidate_cache_directly",
-        side_effect=revoke_before_login,
+        "plane.authentication.views.slack._login_current_external_identity",
+        side_effect=login_after_revocation,
     ):
         response = client.get(
             "/auth/slack/install/callback/",
@@ -363,7 +368,7 @@ def test_revoked_installation_can_be_reconnected_only_to_the_bound_team(
         )
 
     assert response.status_code == 302
-    assert response.url == "https://app.example.com/test-workspace/"
+    assert response.url == "https://app.example.com/home/"
     installation.refresh_from_db()
     identity.refresh_from_db()
     membership.refresh_from_db()
@@ -534,7 +539,7 @@ def test_oidc_login_pins_team_refreshes_full_member_and_consumes_state(
         "https://slack.com/user_id": "UADMIN",
     }
 
-    query = _initiate(client, "/auth/slack/?next_path=/test-workspace/issues")
+    query = _initiate(client, "/auth/slack/?next_path=/projects/current/issues")
     assert query["scope"] == ["openid profile email"]
     assert query["team"] == [installation.external_organization_id]
     response = client.get(
@@ -543,7 +548,7 @@ def test_oidc_login_pins_team_refreshes_full_member_and_consumes_state(
     )
 
     assert response.status_code == 302
-    assert response.url == "https://app.example.com/test-workspace/issues"
+    assert response.url == "https://app.example.com/projects/current/issues"
     identity = ExternalIdentity.objects.select_related("user").get(external_user_id="UADMIN")
     assert identity.source_id == installation.id
     assert identity.user.display_name == "slack-owner"
@@ -818,15 +823,18 @@ def test_external_identity_profile_and_workspace_assets_are_read_only(
         source_generation=installation.generation,
     )
     _force_slack_session(client, _workspace_admin(workspace), installation)
-    assert client.patch(
-        "/api/users/me/",
-        {"display_name": "Locally changed"},
-        content_type="application/json",
-    ).status_code == 405
+    assert (
+        client.patch(
+            "/api/users/me/",
+            {"display_name": "Locally changed"},
+            content_type="application/json",
+        ).status_code
+        == 405
+    )
     assert client.delete("/api/users/me/").status_code == 405
     assert (
         client.post(
-            f"/api/assets/v2/workspaces/{workspace.slug}/",
+            "/api/assets/v2/workspace/",
             {"entity_type": FileAsset.EntityTypeContext.WORKSPACE_LOGO},
             content_type="application/json",
         ).status_code
@@ -841,7 +849,7 @@ def test_external_identity_profile_and_workspace_assets_are_read_only(
         created_by=_workspace_admin(workspace),
         entity_type=FileAsset.EntityTypeContext.WORKSPACE_LOGO,
     )
-    local_logo_url = f"/api/assets/v2/workspaces/{workspace.slug}/{local_logo.id}/"
+    local_logo_url = f"/api/assets/v2/workspace/{local_logo.id}/"
     assert client.patch(local_logo_url, {}, content_type="application/json").status_code == 403
     assert client.delete(local_logo_url).status_code == 403
     local_logo.refresh_from_db()
@@ -873,7 +881,7 @@ def test_deactivated_slack_member_is_hidden_and_cannot_be_added_to_a_project(
     )
     _force_slack_session(client, _workspace_admin(workspace), installation)
 
-    response = client.get(f"/api/workspaces/{workspace.slug}/members/")
+    response = client.get("/api/workspace/members/")
 
     assert response.status_code == 200
     returned_user_ids = {str(item["member"]["id"]) for item in response.json()}
@@ -1007,9 +1015,7 @@ def test_issue_and_draft_assignees_intersect_the_current_slack_project_roster(
     workspace,
     unconfigured_instance,
 ):
-    _installation, project, stale_user = _stale_slack_project_roster(
-        workspace, unconfigured_instance
-    )
+    _installation, project, stale_user = _stale_slack_project_roster(workspace, unconfigured_instance)
     requested_ids = [_workspace_admin(workspace).id, stale_user.id]
 
     app_issue = AppIssueCreateSerializer(
@@ -1031,20 +1037,16 @@ def test_issue_and_draft_assignees_intersect_the_current_slack_project_roster(
     assert list(app_issue.validated_data["assignee_ids"]) == [_workspace_admin(workspace).id]
     assert list(draft_issue.validated_data["assignee_ids"]) == [_workspace_admin(workspace).id]
     assert list(api_issue.validated_data["assignees"]) == [_workspace_admin(workspace).id]
-    assert set(
-        active_project_members()
-        .filter(project=project)
-        .values_list("member_id", flat=True)
-    ) == {_workspace_admin(workspace).id}
+    assert set(active_project_members().filter(project=project).values_list("member_id", flat=True)) == {
+        _workspace_admin(workspace).id
+    }
 
 
 def test_stale_slack_default_assignee_is_not_reapplied(
     workspace,
     unconfigured_instance,
 ):
-    _installation, project, stale_user = _stale_slack_project_roster(
-        workspace, unconfigured_instance
-    )
+    _installation, project, stale_user = _stale_slack_project_roster(workspace, unconfigured_instance)
     context = {
         "project_id": project.id,
         "workspace_id": workspace.id,
@@ -1070,9 +1072,7 @@ def test_module_targets_intersect_the_current_slack_project_roster(
     workspace,
     unconfigured_instance,
 ):
-    _installation, project, stale_user = _stale_slack_project_roster(
-        workspace, unconfigured_instance
-    )
+    _installation, project, stale_user = _stale_slack_project_roster(workspace, unconfigured_instance)
     requested_ids = [_workspace_admin(workspace).id, stale_user.id]
     app_members = ModuleWriteSerializer(
         data={"name": "App roster module", "member_ids": requested_ids},
@@ -1085,9 +1085,7 @@ def test_module_targets_intersect_the_current_slack_project_roster(
 
     assert app_members.is_valid(), app_members.errors
     assert api_members.is_valid(), api_members.errors
-    assert [member.id for member in app_members.validated_data["member_ids"]] == [
-        _workspace_admin(workspace).id
-    ]
+    assert [member.id for member in app_members.validated_data["member_ids"]] == [_workspace_admin(workspace).id]
     assert list(api_members.validated_data["members"]) == [_workspace_admin(workspace).id]
 
     app_lead = ModuleWriteSerializer(
@@ -1108,9 +1106,7 @@ def test_subscriber_and_cycle_owner_require_the_current_slack_project_roster(
     workspace,
     unconfigured_instance,
 ):
-    _installation, project, stale_user = _stale_slack_project_roster(
-        workspace, unconfigured_instance
-    )
+    _installation, project, stale_user = _stale_slack_project_roster(workspace, unconfigured_instance)
     subscriber = IssueSubscriberSerializer(
         data={"subscriber": stale_user.id},
         context={"project_id": project.id},
@@ -1142,9 +1138,7 @@ def test_cycle_update_preserves_omitted_owner_and_maps_explicit_null_to_requeste
     workspace,
     unconfigured_instance,
 ):
-    installation, project, _stale_user = _stale_slack_project_roster(
-        workspace, unconfigured_instance
-    )
+    installation, project, _stale_user = _stale_slack_project_roster(workspace, unconfigured_instance)
     preserved_owner = User.objects.create(
         email="current-cycle-owner@example.com",
         username="current-cycle-owner",
@@ -1313,10 +1307,7 @@ def test_instance_config_exposes_only_safe_slack_status(
     _force_slack_session(client, _workspace_admin(workspace), installation)
     admin_response = client.get("/api/instances/")
     assert admin_response.status_code == 200
-    assert (
-        admin_response.json()["config"]["identity_source"]["sync_error"]
-        == installation.sync_error
-    )
+    assert admin_response.json()["config"]["identity_source"]["sync_error"] == installation.sync_error
 
 
 def test_instance_config_reports_environment_credentials(

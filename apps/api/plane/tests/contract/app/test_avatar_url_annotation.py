@@ -139,7 +139,7 @@ class TestAvatarUrlAnnotation:
     def test_module_retrieve_builds_avatar_url_from_asset(
         self, session_client, workspace, project, module, user_with_avatar_asset
     ):
-        response = session_client.get(f"/api/workspaces/{workspace.slug}/projects/{project.id}/modules/{module.id}/")
+        response = session_client.get(f"/api/workspace/projects/{project.id}/modules/{module.id}/")
         assert response.status_code == status.HTTP_200_OK
 
         assignees = list(response.data["distribution"]["assignees"])
@@ -150,47 +150,47 @@ class TestAvatarUrlAnnotation:
     @pytest.mark.django_db
     def test_archived_module_retrieve(self, session_client, workspace, project, archived_module):
         response = session_client.get(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/archived-modules/{archived_module.id}/"
+            f"/api/workspace/projects/{project.id}/archived-modules/{archived_module.id}/"
         )
         assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
     def test_archived_cycle_retrieve(self, session_client, workspace, project, archived_cycle):
         response = session_client.get(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/archived-cycles/{archived_cycle.id}/"
+            f"/api/workspace/projects/{project.id}/archived-cycles/{archived_cycle.id}/"
         )
         assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
     def test_cycle_analytics(self, session_client, workspace, project, cycle):
         response = session_client.get(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/cycles/{cycle.id}/analytics/?type=issues"
+            f"/api/workspace/projects/{project.id}/cycles/{cycle.id}/analytics/?type=issues"
         )
         assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
     def test_workspace_analytics(self, session_client, workspace, project, assigned_issue):
         response = session_client.get(
-            f"/api/workspaces/{workspace.slug}/analytics/?x_axis=assignees__id&y_axis=issue_count"
+            "/api/workspace/analytics/?x_axis=assignees__id&y_axis=issue_count"
         )
         assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
     def test_default_analytics(self, session_client, workspace, project, assigned_issue):
-        response = session_client.get(f"/api/workspaces/{workspace.slug}/default-analytics/")
+        response = session_client.get("/api/workspace/default-analytics/")
         assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
     def test_project_advance_analytics_stats(self, session_client, workspace, project, assigned_issue):
         response = session_client.get(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/advance-analytics-stats/?type=work-items"
+            f"/api/workspace/projects/{project.id}/advance-analytics-stats/?type=work-items"
         )
         assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.django_db
     def test_entity_search_user_mention(self, session_client, workspace, project):
         response = session_client.get(
-            f"/api/workspaces/{workspace.slug}/entity-search/"
+            "/api/workspace/entity-search/"
             f"?query_type=user_mention&query=Test&project_id={project.id}"
         )
         assert response.status_code == status.HTTP_200_OK
@@ -206,7 +206,7 @@ class TestAvatarUrlAnnotation:
             end_date=timezone.now() + timezone.timedelta(days=14),
         )
         response = session_client.post(
-            f"/api/workspaces/{workspace.slug}/projects/{project.id}/cycles/{cycle.id}/transfer-issues/",
+            f"/api/workspace/projects/{project.id}/cycles/{cycle.id}/transfer-issues/",
             {"new_cycle_id": str(new_cycle.id)},
             format="json",
         )

@@ -4,8 +4,8 @@
 
 """Contract tests for the workspace/project members-lite endpoints.
 
-GET /api/v1/workspaces/<slug>/members-lite/
-GET /api/v1/workspaces/<slug>/projects/<project_id>/project-members-lite/
+GET /api/v1/workspace/members-lite/
+GET /api/v1/workspace/projects/<project_id>/project-members-lite/
 """
 
 import pytest
@@ -26,12 +26,12 @@ _LITE_MEMBER_FIELDS = (
 )
 
 
-def _ws_url(slug):
-    return f"/api/v1/workspaces/{slug}/members-lite/"
+def _ws_url():
+    return "/api/v1/workspace/members-lite/"
 
 
-def _project_url(slug, project_id):
-    return f"/api/v1/workspaces/{slug}/projects/{project_id}/project-members-lite/"
+def _project_url(project_id):
+    return f"/api/v1/workspace/projects/{project_id}/project-members-lite/"
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ def project(db, workspace, create_user):
 class TestWorkspaceMembersLite:
     @pytest.mark.django_db
     def test_returns_paginated_member(self, api_key_client, workspace):
-        response = api_key_client.get(_ws_url(workspace.slug))
+        response = api_key_client.get(_ws_url())
         assert response.status_code == status.HTTP_200_OK
         assert "results" in response.data
         emails = {item["email"] for item in response.data["results"]}
@@ -64,7 +64,7 @@ class TestWorkspaceMembersLite:
 
     @pytest.mark.django_db
     def test_lite_member_shape(self, api_key_client, workspace):
-        response = api_key_client.get(_ws_url(workspace.slug))
+        response = api_key_client.get(_ws_url())
         assert response.status_code == status.HTTP_200_OK
         item = response.data["results"][0]
         for key in _LITE_MEMBER_FIELDS:
@@ -73,20 +73,21 @@ class TestWorkspaceMembersLite:
         assert item["role"] == 20
 
     @pytest.mark.django_db
-    def test_unknown_workspace_is_rejected(self, api_key_client):
-        response = api_key_client.get(_ws_url("does-not-exist"))
-        assert response.status_code in (
-            status.HTTP_400_BAD_REQUEST,
-            status.HTTP_403_FORBIDDEN,
-            status.HTTP_404_NOT_FOUND,
+    def test_legacy_workspace_slug_route_is_not_resolved(
+        self, api_key_client, workspace
+    ):
+        response = api_key_client.get(
+            f"/api/v1/workspaces/{workspace.slug}/members-lite/"
         )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 @pytest.mark.contract
 class TestProjectMembersLite:
     @pytest.mark.django_db
     def test_returns_paginated_member(self, api_key_client, workspace, project):
-        response = api_key_client.get(_project_url(workspace.slug, project.id))
+        response = api_key_client.get(_project_url(project.id))
         assert response.status_code == status.HTTP_200_OK
         assert "results" in response.data
         emails = {item["email"] for item in response.data["results"]}
@@ -94,7 +95,7 @@ class TestProjectMembersLite:
 
     @pytest.mark.django_db
     def test_lite_member_shape(self, api_key_client, workspace, project):
-        response = api_key_client.get(_project_url(workspace.slug, project.id))
+        response = api_key_client.get(_project_url(project.id))
         assert response.status_code == status.HTTP_200_OK
         item = response.data["results"][0]
         for key in _LITE_MEMBER_FIELDS:

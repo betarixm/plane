@@ -41,7 +41,7 @@ class TestAPITokenLogMiddleware:
 
     def _captured_log_data(self, middleware, request_factory):
         request = request_factory.get(
-            "/api/v1/workspaces/",
+            "/api/v1/workspace/",
             HTTP_X_API_KEY=self.API_KEY,
             HTTP_AUTHORIZATION=self.AUTHORIZATION,
             HTTP_COOKIE=self.COOKIE,
@@ -72,7 +72,7 @@ class TestAPITokenLogMiddleware:
         assert "[REDACTED]" in log_data["headers"]
 
     def test_no_log_without_api_key(self, middleware, request_factory):
-        request = request_factory.get("/api/v1/workspaces/")
+        request = request_factory.get("/api/v1/workspace/")
         request.user = AnonymousUser()
         with patch("plane.middleware.logger.process_logs") as process_logs:
             middleware.process_request(request, HttpResponse(b"{}"), request_body=b"")

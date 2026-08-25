@@ -97,8 +97,8 @@ def victim_project_scope(db, workspace):
 
 @pytest.mark.contract
 class TestCycleIssueCrossTenantBOLA:
-    def get_url(self, workspace_slug, project_id, cycle_id):
-        return f"/api/workspaces/{workspace_slug}/projects/{project_id}/cycles/{cycle_id}/cycle-issues/"
+    def get_url(self, project_id, cycle_id):
+        return f"/api/workspace/projects/{project_id}/cycles/{cycle_id}/cycle-issues/"
 
     @pytest.mark.django_db
     def test_foreign_project_cycle_issue_not_reassigned(
@@ -119,7 +119,7 @@ class TestCycleIssueCrossTenantBOLA:
         victim_cycle = victim_project_scope["cycle"]
         victim_cycle_issue = victim_project_scope["cycle_issue"]
 
-        url = self.get_url(workspace.slug, attacker_project.id, attacker_cycle.id)
+        url = self.get_url(attacker_project.id, attacker_cycle.id)
         response = session_client.post(url, {"issues": [str(victim_issue.id)]}, format="json")
 
         # The endpoint reports success regardless; the security property is that
@@ -163,7 +163,7 @@ class TestCycleIssueCrossTenantBOLA:
             created_by=create_user,
         )
 
-        url = self.get_url(workspace.slug, attacker_project.id, attacker_cycle.id)
+        url = self.get_url(attacker_project.id, attacker_cycle.id)
         response = session_client.post(url, {"issues": [str(own_issue.id)]}, format="json")
 
         assert response.status_code in (status.HTTP_201_CREATED, status.HTTP_200_OK), (

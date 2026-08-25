@@ -108,7 +108,7 @@ def test_legacy_asset_create_delete_and_restore_are_slack_fenced(
 ):
     managed_count = FileAsset.all_objects.filter(entity_type=entity_type).count()
     create_response = session_client.post(
-        f"/api/workspaces/{workspace.slug}/file-assets/",
+        "/api/workspace/file-assets/",
         {"entity_type": entity_type},
         format="json",
     )
@@ -120,9 +120,9 @@ def test_legacy_asset_create_delete_and_restore_are_slack_fenced(
 
     asset = asset_factory(entity_type)
     asset_key = asset.asset.name.removeprefix(f"{workspace.id}/")
-    detail_url = f"/api/workspaces/file-assets/{workspace.id}/{asset_key}/"
+    detail_url = f"/api/workspace/file-assets/{asset_key}/"
     restore_url = (
-        f"/api/workspaces/file-assets/{workspace.id}/{asset_key}/restore/"
+        f"/api/workspace/file-assets/{asset_key}/restore/"
     )
 
     assert_slack_managed(session_client.delete(detail_url))
@@ -145,7 +145,7 @@ def test_workspace_asset_mutations_are_slack_fenced(
     managed_count = FileAsset.all_objects.filter(entity_type=entity_type).count()
     assert_slack_managed(
         session_client.post(
-            f"/api/assets/v2/workspaces/{workspace.slug}/",
+            "/api/assets/v2/workspace/",
             {"entity_type": entity_type},
             format="json",
         )
@@ -156,7 +156,7 @@ def test_workspace_asset_mutations_are_slack_fenced(
     )
 
     asset = asset_factory(entity_type)
-    detail_url = f"/api/assets/v2/workspaces/{workspace.slug}/{asset.id}/"
+    detail_url = f"/api/assets/v2/workspace/{asset.id}/"
     assert_slack_managed(session_client.patch(detail_url, {}, format="json"))
     assert_slack_managed(session_client.delete(detail_url))
 
@@ -164,7 +164,7 @@ def test_workspace_asset_mutations_are_slack_fenced(
     asset.deleted_at = timezone.now()
     asset.save(update_fields=["is_deleted", "deleted_at"])
     restore_url = (
-        f"/api/assets/v2/workspaces/{workspace.slug}/restore/{asset.id}/"
+        f"/api/assets/v2/workspace/restore/{asset.id}/"
     )
     assert_slack_managed(session_client.post(restore_url, {}, format="json"))
 
@@ -185,7 +185,7 @@ def test_project_and_duplicate_asset_mutations_are_slack_fenced(
     entity_type,
 ):
     project_url = (
-        f"/api/assets/v2/workspaces/{workspace.slug}/projects/{project.id}/"
+        f"/api/assets/v2/workspace/projects/{project.id}/"
     )
     managed_count = FileAsset.all_objects.filter(entity_type=entity_type).count()
     assert_slack_managed(
@@ -221,7 +221,7 @@ def test_project_and_duplicate_asset_mutations_are_slack_fenced(
         is_uploaded=True,
     )
     duplicate_url = (
-        f"/api/assets/v2/workspaces/{workspace.slug}/duplicate-assets/"
+        "/api/assets/v2/workspace/duplicate-assets/"
         f"{source.id}/"
     )
     managed_count = FileAsset.all_objects.filter(entity_type=entity_type).count()
@@ -305,7 +305,7 @@ def test_public_api_generic_patch_is_slack_fenced(
 ):
     asset = asset_factory(entity_type)
     response = api_key_client.patch(
-        f"/api/v1/workspaces/{workspace.slug}/assets/{asset.id}/",
+        f"/api/v1/workspace/assets/{asset.id}/",
         {"is_uploaded": True},
         format="json",
     )
@@ -327,15 +327,15 @@ def test_issue_attachment_routes_cannot_mutate_managed_assets(
 ):
     asset = asset_factory(entity_type, project=project, issue=issue)
     app_legacy_url = (
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/"
+        f"/api/workspace/projects/{project.id}/issues/"
         f"{issue.id}/issue-attachments/{asset.id}/"
     )
     app_v2_url = (
-        f"/api/assets/v2/workspaces/{workspace.slug}/projects/{project.id}/"
+        f"/api/assets/v2/workspace/projects/{project.id}/"
         f"issues/{issue.id}/attachments/{asset.id}/"
     )
     api_url = (
-        f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/work-items/"
+        f"/api/v1/workspace/projects/{project.id}/work-items/"
         f"{issue.id}/attachments/{asset.id}/"
     )
 
@@ -354,3 +354,27 @@ def test_issue_attachment_routes_cannot_mutate_managed_assets(
     asset.refresh_from_db()
     assert asset.is_deleted is False
     assert asset.is_uploaded is False
+
+
+def test_file_asset_urls_use_the_slugless_singleton_workspace_route(
+    workspace, project, issue, asset_factory
+):
+    attachment = asset_factory(
+        FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+        project=project,
+        issue=issue,
+    )
+    description = asset_factory(
+        FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+        project=project,
+    )
+
+    assert attachment.asset_url == (
+        f"/api/assets/v2/workspace/projects/{project.id}/issues/{issue.id}/"
+        f"attachments/{attachment.id}/"
+    )
+    assert description.asset_url == (
+        f"/api/assets/v2/workspace/projects/{project.id}/{description.id}/"
+    )
+    assert workspace.slug not in attachment.asset_url
+    assert workspace.slug not in description.asset_url

@@ -4,7 +4,7 @@
 
 """Contract tests for the projects-lite endpoint.
 
-GET /api/v1/workspaces/<slug>/projects-lite/
+GET /api/v1/workspace/projects-lite/
 """
 
 import pytest
@@ -14,8 +14,8 @@ from rest_framework import status
 from plane.db.models import Project, ProjectMember
 
 
-def _url(slug):
-    return f"/api/v1/workspaces/{slug}/projects-lite/"
+def _url():
+    return "/api/v1/workspace/projects-lite/"
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def archived_project(db, workspace, create_user):
 class TestProjectsLite:
     @pytest.mark.django_db
     def test_returns_paginated_results(self, api_key_client, workspace, project):
-        response = api_key_client.get(_url(workspace.slug))
+        response = api_key_client.get(_url())
         assert response.status_code == status.HTTP_200_OK
         assert "results" in response.data
         ids = {str(item["id"]) for item in response.data["results"]}
@@ -69,7 +69,7 @@ class TestProjectsLite:
 
     @pytest.mark.django_db
     def test_returns_only_lite_fields(self, api_key_client, workspace, project):
-        response = api_key_client.get(_url(workspace.slug))
+        response = api_key_client.get(_url())
         assert response.status_code == status.HTTP_200_OK
         item = response.data["results"][0]
         # Trimmed shape — archived_at present, heavy computed fields absent.
@@ -79,7 +79,7 @@ class TestProjectsLite:
 
     @pytest.mark.django_db
     def test_archived_excluded_by_default(self, api_key_client, workspace, project, archived_project):
-        response = api_key_client.get(_url(workspace.slug))
+        response = api_key_client.get(_url())
         assert response.status_code == status.HTTP_200_OK
         ids = {str(item["id"]) for item in response.data["results"]}
         assert str(project.id) in ids
@@ -87,17 +87,18 @@ class TestProjectsLite:
 
     @pytest.mark.django_db
     def test_include_archived_returns_all(self, api_key_client, workspace, project, archived_project):
-        response = api_key_client.get(_url(workspace.slug), {"include_archived": "true"})
+        response = api_key_client.get(_url(), {"include_archived": "true"})
         assert response.status_code == status.HTTP_200_OK
         ids = {str(item["id"]) for item in response.data["results"]}
         assert str(project.id) in ids
         assert str(archived_project.id) in ids
 
     @pytest.mark.django_db
-    def test_unknown_workspace_is_rejected(self, api_key_client, project):
-        response = api_key_client.get(_url("does-not-exist"))
-        assert response.status_code in (
-            status.HTTP_400_BAD_REQUEST,
-            status.HTTP_403_FORBIDDEN,
-            status.HTTP_404_NOT_FOUND,
+    def test_legacy_workspace_slug_route_is_not_resolved(
+        self, api_key_client, workspace
+    ):
+        response = api_key_client.get(
+            f"/api/v1/workspaces/{workspace.slug}/projects-lite/"
         )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND

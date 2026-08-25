@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
+from plane.middleware.singleton_workspace import singleton_workspace_path as path
 
 
 from plane.app.views import (
@@ -15,12 +15,12 @@ from plane.app.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
+        "workspace/projects/<uuid:project_id>/views/",
         IssueViewViewSet.as_view({"get": "list", "post": "create"}),
         name="project-view",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
+        "workspace/projects/<uuid:project_id>/views/<uuid:pk>/",
         IssueViewViewSet.as_view(
             {
                 "get": "retrieve",
@@ -32,12 +32,12 @@ urlpatterns = [
         name="project-view",
     ),
     path(
-        "workspaces/<str:slug>/views/",
+        "workspace/views/",
         WorkspaceViewViewSet.as_view({"get": "list", "post": "create"}),
         name="global-view",
     ),
     path(
-        "workspaces/<str:slug>/views/<uuid:pk>/",
+        "workspace/views/<uuid:pk>/",
         WorkspaceViewViewSet.as_view(
             {
                 "get": "retrieve",
@@ -49,17 +49,17 @@ urlpatterns = [
         name="global-view",
     ),
     path(
-        "workspaces/<str:slug>/issues/",
+        "workspace/issues/",
         WorkspaceViewIssuesViewSet.as_view({"get": "list"}),
         name="global-view-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
+        "workspace/projects/<uuid:project_id>/user-favorite-views/",
         IssueViewFavoriteViewSet.as_view({"get": "list", "post": "create"}),
         name="user-favorite-view",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
+        "workspace/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
         IssueViewFavoriteViewSet.as_view({"delete": "destroy"}),
         name="user-favorite-view",
     ),

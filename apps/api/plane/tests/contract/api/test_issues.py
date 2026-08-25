@@ -51,7 +51,7 @@ def issue(db, workspace, project, state, create_user):
 @pytest.mark.contract
 class TestIssueListOrderByInjection:
     """Regression tests for GHSA-p885-6jpg-cr2p on the work-item list
-    endpoint: GET /api/v1/workspaces/{slug}/projects/{project_id}/issues/.
+    endpoint: GET /api/v1/workspace/projects/{project_id}/issues/.
 
     The raw ``order_by`` query parameter fell through the endpoint's hardcoded
     branch logic to ``issue_queryset.order_by(order_by_param)``, letting an
@@ -60,14 +60,14 @@ class TestIssueListOrderByInjection:
     against ISSUE_ORDER_BY_ALLOWLIST before the branch logic runs.
     """
 
-    def get_url(self, workspace_slug, project_id):
-        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/"
+    def get_url(self, project_id):
+        return f"/api/v1/workspace/projects/{project_id}/issues/"
 
     @pytest.mark.django_db
     def test_invalid_order_by_does_not_500(self, api_key_client, workspace, project, issue):
         """Unknown field used to raise FieldError → HTTP 500; now sanitized to
         the safe default and returns 200 (DoS half of the advisory)."""
-        url = self.get_url(workspace.slug, project.id)
+        url = self.get_url(project.id)
         response = api_key_client.get(url, {"order_by": "not_a_field"})
 
         assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
@@ -78,7 +78,7 @@ class TestIssueListOrderByInjection:
         reach ``.order_by()`` raw, forming a blind ordering oracle. It is now
         neutralized to the safe default. (Deterministic neutralization is
         asserted in tests/unit/utils/test_order_by_sanitize.py.)"""
-        url = self.get_url(workspace.slug, project.id)
+        url = self.get_url(project.id)
         response = api_key_client.get(url, {"order_by": "created_by__email"})
 
         assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
@@ -87,7 +87,7 @@ class TestIssueListOrderByInjection:
     def test_legitimate_order_by_still_works(self, api_key_client, workspace, project, issue):
         """A valid, allowlisted ordering value continues to return 200 —
         the sanitizer must not break legitimate ordering."""
-        url = self.get_url(workspace.slug, project.id)
+        url = self.get_url(project.id)
 
         for value in ["-created_at", "priority", "state__group", "sequence_id"]:
             response = api_key_client.get(url, {"order_by": value})
