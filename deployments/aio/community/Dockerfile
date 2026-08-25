@@ -9,7 +9,6 @@ FROM node:22-alpine AS node
 FROM makeplane/plane-frontend:${PLANE_VERSION} AS web-img
 FROM makeplane/plane-backend:${PLANE_VERSION} AS backend-img
 FROM makeplane/plane-space:${PLANE_VERSION} AS space-img
-FROM makeplane/plane-live:${PLANE_VERSION} AS live-img
 FROM makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
 
 # **************************************************
@@ -32,9 +31,6 @@ COPY --from=node /usr/local/bin /usr/local/bin
 
 COPY --from=web-img /usr/share/nginx/html /app/web
 COPY --from=space-img /app /app/space
-COPY --from=live-img /app /app/live
-
-RUN rm -rf /app/space/apps/space/.next/cache
 
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
 COPY dist/Caddyfile /app/proxy/Caddyfile

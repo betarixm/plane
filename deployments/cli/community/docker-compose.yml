@@ -81,16 +81,6 @@ services:
       - worker
       - web
 
-  live:
-    image: makeplane/plane-live:${APP_RELEASE:-stable}
-    deploy:
-      replicas: ${LIVE_REPLICAS:-1}
-      restart_policy:
-        condition: any
-    depends_on:
-      - api
-      - web
-
   api:
     image: makeplane/plane-backend:${APP_RELEASE:-stable}
     command: ./bin/docker-entrypoint-api.sh
@@ -227,7 +217,6 @@ services:
       - web
       - api
       - space
-      - live
 
 volumes:
   pgdata:

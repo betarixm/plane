@@ -8,7 +8,7 @@
 import ipaddress
 import logging
 import os
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 # Third party imports
 import dj_database_url
@@ -371,15 +371,6 @@ SPACE_BASE_PATH = os.environ.get("SPACE_BASE_PATH", "/spaces/")
 APP_BASE_URL = os.environ.get("APP_BASE_URL", None)
 if APP_BASE_URL and not is_valid_url(APP_BASE_URL):
     APP_BASE_URL = None
-APP_BASE_PATH = os.environ.get("APP_BASE_PATH", "/")
-
-# Live Base URL
-LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL", None)
-if LIVE_BASE_URL and not is_valid_url(LIVE_BASE_URL):
-    LIVE_BASE_URL = None
-LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live/")
-
-LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
 
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")
