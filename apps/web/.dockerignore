@@ -1,5 +1,4 @@
 node_modules
-.next
 .react-router
 .vite
 .turbo
@@ -8,4 +7,3 @@ dist
 *.log
 .env*
 !.env.example
-

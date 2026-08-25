@@ -13,20 +13,18 @@ import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import highlight from "highlight.js/lib/core";
 
 function parseNodes(nodes: any[], className: string[] = []): { text: string; classes: string[] }[] {
-  return nodes
-    .map((node) => {
-      const classes = [...className, ...(node.properties ? node.properties.className : [])];
+  return nodes.flatMap((node) => {
+    const classes = [...className, ...(node.properties ? node.properties.className : [])];
 
-      if (node.children) {
-        return parseNodes(node.children, classes);
-      }
+    if (node.children) {
+      return parseNodes(node.children, classes);
+    }
 
-      return {
-        text: node.value,
-        classes,
-      };
-    })
-    .flat();
+    return {
+      text: node.value,
+      classes,
+    };
+  });
 }
 
 function getHighlightNodes(result: any) {
@@ -122,7 +120,6 @@ export function LowlightPlugin({
             newNodes.length !== oldNodes.length ||
             // OR transaction has changes that completely encapsulate a node
             // (for example, a transaction that affects the entire document).
-            // Such transactions can happen during collab syncing via y-prosemirror, for example.
             transaction.steps.some(
               (step) =>
                 // @ts-expect-error type error

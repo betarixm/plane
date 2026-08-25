@@ -34,12 +34,12 @@ Install the [OxLint extension](https://marketplace.visualstudio.com/items?itemNa
 
 The config applies to all TypeScript and JavaScript files across:
 
-- `apps/web`, `apps/space`, `apps/live`
+- `apps/web`, `apps/space`
 - All packages in `packages/`
 
 **Ignored paths:**
 
-- `node_modules/`, `dist/`, `build/`, `.next/`, `.turbo/`
+- `node_modules/`, `dist/`, `build/`, `.turbo/`
 - Config files (`*.config.{js,mjs,cjs,ts}`)
 - Public folders, coverage, storybook-static
 
