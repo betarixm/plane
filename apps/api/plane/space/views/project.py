@@ -29,13 +29,16 @@ class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
 class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, anchor):
-        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").values_list
+    def get(self, request, slug):
         projects = (
-            Project.objects.filter(workspace=deploy_board.workspace)
+            Project.objects.filter(workspace__slug=slug)
             .annotate(
                 is_public=Exists(
-                    DeployBoard.objects.filter(anchor=anchor, project_id=OuterRef("pk"), entity_name="project")
+                    DeployBoard.objects.filter(
+                        workspace__slug=slug,
+                        project_id=OuterRef("pk"),
+                        entity_name="project",
+                    )
                 )
             )
             .filter(is_public=True)
@@ -79,13 +82,17 @@ class ProjectMembersEndpoint(BaseAPIView):
         # deliberately retained across a source reconnect, so filtering only
         # on ProjectMember.is_active can otherwise expose a user from an old
         # installation generation until reconciliation catches up.
-        members = active_project_members().filter(
-            project=deploy_board.project,
-            workspace=deploy_board.workspace,
-        ).values(
-            "id",
-            "member",
-            "member__display_name",
-            "member__avatar",
+        members = (
+            active_project_members()
+            .filter(
+                project=deploy_board.project,
+                workspace=deploy_board.workspace,
+            )
+            .values(
+                "id",
+                "member",
+                "member__display_name",
+                "member__avatar",
+            )
         )
         return Response(members, status=status.HTTP_200_OK)
