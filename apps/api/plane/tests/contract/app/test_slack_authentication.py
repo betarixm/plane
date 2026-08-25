@@ -513,6 +513,10 @@ def _stale_slack_project_roster(workspace, instance):
     return installation, project, stale_user
 
 
+@override_settings(
+    APP_BASE_URL="https://app.example.com",
+    WEB_URL="https://api.example.com",
+)
 @patch("plane.authentication.views.slack.get_slack_credentials", return_value=SLACK_CREDENTIALS)
 @patch("plane.authentication.views.slack.SlackClient", FakeSlackClient)
 @patch("plane.authentication.views.slack._validate_openid_id_token")

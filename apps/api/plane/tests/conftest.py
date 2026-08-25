@@ -46,7 +46,6 @@ def api_token(db, create_user):
     token = APIToken.objects.create(
         user=create_user,
         label="Test API Token",
-        token="test-api-token-12345",
     )
     return token
 

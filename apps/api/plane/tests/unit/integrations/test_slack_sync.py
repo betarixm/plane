@@ -684,8 +684,15 @@ def test_transient_reconcile_failure_keeps_existing_identity_source_live(
 ):
     mock_reconcile.side_effect = SlackClientError("Slack temporarily unavailable")
 
-    with pytest.raises(Retry):
-        reconcile_slack_installation.run(str(installation.id))
+    with patch.object(
+        reconcile_slack_installation,
+        "retry",
+        side_effect=Retry(),
+    ) as mock_retry:
+        with pytest.raises(Retry):
+            reconcile_slack_installation.run(str(installation.id))
+
+    mock_retry.assert_called_once()
 
     installation.refresh_from_db()
     assert installation.status == IdentitySource.Status.ACTIVE
@@ -1124,7 +1131,7 @@ def test_reconnect_snapshot_absence_records_the_current_generation(installation)
 def test_installation_encrypts_bot_token(installation):
     installation.refresh_from_db()
     assert installation.encrypted_access_token != "xoxb-secret"
-    assert installation.bot_token == "xoxb-secret"
+    assert installation.access_token == "xoxb-secret"
 
 
 @pytest.mark.django_db

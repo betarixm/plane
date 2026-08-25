@@ -79,11 +79,20 @@ class TestIssueNotificationContract:
         return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/"
 
     @pytest.mark.django_db
-    def test_create_issue_triggers_notification(self, api_key_client, workspace, project):
+    def test_create_issue_triggers_notification(
+        self,
+        api_key_client,
+        workspace,
+        project,
+        django_capture_on_commit_callbacks,
+    ):
         """Creating a work item via the external API dispatches a notifying activity."""
         url = self.get_list_url(workspace.slug, project.id)
 
-        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+        with (
+            patch("plane.api.views.issue.issue_activity") as mock_issue_activity,
+            django_capture_on_commit_callbacks(execute=True),
+        ):
             response = api_key_client.post(url, {"name": "New Issue"}, format="json")
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -95,11 +104,21 @@ class TestIssueNotificationContract:
         assert kwargs["notification"] is True
 
     @pytest.mark.django_db
-    def test_update_issue_triggers_notification(self, api_key_client, workspace, project, create_issue):
+    def test_update_issue_triggers_notification(
+        self,
+        api_key_client,
+        workspace,
+        project,
+        create_issue,
+        django_capture_on_commit_callbacks,
+    ):
         """Updating a work item via the external API dispatches a notifying activity."""
         url = self.get_detail_url(workspace.slug, project.id, create_issue.id)
 
-        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+        with (
+            patch("plane.api.views.issue.issue_activity") as mock_issue_activity,
+            django_capture_on_commit_callbacks(execute=True),
+        ):
             response = api_key_client.patch(url, {"name": "Renamed Issue"}, format="json")
 
         assert response.status_code == status.HTTP_200_OK
@@ -112,7 +131,15 @@ class TestIssueNotificationContract:
         assert kwargs["notification"] is True
 
     @pytest.mark.django_db
-    def test_assign_issue_triggers_notification(self, api_key_client, workspace, project, create_issue, assignee_user):
+    def test_assign_issue_triggers_notification(
+        self,
+        api_key_client,
+        workspace,
+        project,
+        create_issue,
+        assignee_user,
+        django_capture_on_commit_callbacks,
+    ):
         """Assigning a work item via the external API dispatches a notifying activity."""
         ProjectMember.objects.create(
             project=project,
@@ -122,7 +149,10 @@ class TestIssueNotificationContract:
         )
         url = self.get_detail_url(workspace.slug, project.id, create_issue.id)
 
-        with patch("plane.api.views.issue.issue_activity") as mock_issue_activity:
+        with (
+            patch("plane.api.views.issue.issue_activity") as mock_issue_activity,
+            django_capture_on_commit_callbacks(execute=True),
+        ):
             response = api_key_client.patch(url, {"assignees": [str(assignee_user.id)]}, format="json")
 
         assert response.status_code == status.HTTP_200_OK
