@@ -18,7 +18,7 @@ import { AppError } from "@/lib/errors";
 import { getPageService } from "@/services/page/handler";
 // type
 import type { FetchPayloadWithContext, StorePayloadWithContext } from "@/types";
-import { ForceCloseReason, CloseCode } from "@/types/admin-commands";
+import { ForceCloseReason, CloseCode } from "@/types/server-commands";
 import { broadcastError } from "@/utils/broadcast-error";
 // force close utility
 import { forceCloseDocumentAcrossServers } from "./force-close-handler";

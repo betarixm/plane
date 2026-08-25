@@ -7,11 +7,11 @@
 import type { Connection, Extension, Hocuspocus, onConfigurePayload } from "@hocuspocus/server";
 import { logger } from "@plane/logger";
 import { Redis } from "@/extensions/redis";
-import { AdminCommand, CloseCode, getForceCloseMessage, isForceCloseCommand } from "@/types/admin-commands";
-import type { ForceCloseReason, ClientForceCloseMessage, ForceCloseCommandData } from "@/types/admin-commands";
+import { ServerCommand, CloseCode, getForceCloseMessage, isForceCloseCommand } from "@/types/server-commands";
+import type { ForceCloseReason, ClientForceCloseMessage, ForceCloseCommandData } from "@/types/server-commands";
 
 /**
- * Extension to handle force close commands from other servers via Redis admin channel
+ * Extension to handle force close commands from other servers via Redis server channel
  */
 export class ForceCloseHandler implements Extension {
   name = "ForceCloseHandler";
@@ -25,8 +25,8 @@ export class ForceCloseHandler implements Extension {
       return;
     }
 
-    // Register handler for force_close admin command
-    redisExt.onAdminCommand<ForceCloseCommandData>(AdminCommand.FORCE_CLOSE, async (data) => {
+    // Register handler for force_close server command
+    redisExt.onServerCommand<ForceCloseCommandData>(ServerCommand.FORCE_CLOSE, async (data) => {
       // Type guard for safety
       if (!isForceCloseCommand(data)) {
         logger.error("[FORCE_CLOSE_HANDLER] Received invalid force close command");
@@ -90,7 +90,7 @@ export class ForceCloseHandler implements Extension {
 
 /**
  * Force close all connections to a document across all servers and unload it from memory.
- * Used for critical errors or admin operations.
+ * Used for critical errors or server operations.
  *
  * @param instance - The Hocuspocus server instance
  * @param pageId - The document ID to force close
@@ -159,7 +159,7 @@ export const forceCloseDocumentAcrossServers = async (
 
   if (redisExt) {
     const commandData: ForceCloseCommandData = {
-      command: AdminCommand.FORCE_CLOSE,
+      command: ServerCommand.FORCE_CLOSE,
       docId: pageId,
       reason,
       code,
@@ -167,7 +167,7 @@ export const forceCloseDocumentAcrossServers = async (
       timestamp: new Date().toISOString(),
     };
 
-    const receivers = await redisExt.publishAdminCommand(commandData);
+    const receivers = await redisExt.publishServerCommand(commandData);
     logger.info(`[FORCE_CLOSE] Notified ${receivers} other server(s)`);
   } else {
     logger.warn("[FORCE_CLOSE] Redis extension not found, cannot notify other servers");

@@ -10,8 +10,8 @@ import type { onConfigurePayload } from "@hocuspocus/server";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 import { redisManager } from "@/redis";
-import { AdminCommand } from "@/types/admin-commands";
-import type { AdminCommandData, AdminCommandHandler } from "@/types/admin-commands";
+import { ServerCommand } from "@/types/server-commands";
+import type { ServerCommandData, ServerCommandHandler } from "@/types/server-commands";
 
 const getRedisClient = () => {
   const redisClient = redisManager.getClient();
@@ -22,8 +22,8 @@ const getRedisClient = () => {
 };
 
 export class Redis extends HocuspocusRedis {
-  private adminHandlers = new Map<AdminCommand, AdminCommandHandler>();
-  private readonly ADMIN_CHANNEL = "hocuspocus:admin";
+  private serverHandlers = new Map<ServerCommand, ServerCommandHandler>();
+  private readonly SERVER_CHANNEL = "hocuspocus:server";
 
   constructor() {
     super({ redis: getRedisClient() });
@@ -32,89 +32,89 @@ export class Redis extends HocuspocusRedis {
   async onConfigure(payload: onConfigurePayload) {
     await super.onConfigure(payload);
 
-    // Subscribe to admin channel
+    // Subscribe to server channel
     await new Promise<void>((resolve, reject) => {
-      this.sub.subscribe(this.ADMIN_CHANNEL, (error: Error) => {
+      this.sub.subscribe(this.SERVER_CHANNEL, (error: Error) => {
         if (error) {
-          logger.error(`[Redis] Failed to subscribe to admin channel:`, error);
+          logger.error(`[Redis] Failed to subscribe to server channel:`, error);
           reject(error);
         } else {
-          logger.info(`[Redis] Subscribed to admin channel: ${this.ADMIN_CHANNEL}`);
+          logger.info(`[Redis] Subscribed to server channel: ${this.SERVER_CHANNEL}`);
           resolve();
         }
       });
     });
 
-    // Listen for admin messages
-    this.sub.on("message", this.handleAdminMessage);
-    logger.info(`[Redis] Attached admin message listener`);
+    // Listen for server messages
+    this.sub.on("message", this.handleServerMessage);
+    logger.info(`[Redis] Attached server message listener`);
   }
 
-  private handleAdminMessage = async (channel: string, message: string) => {
-    if (channel !== this.ADMIN_CHANNEL) return;
+  private handleServerMessage = async (channel: string, message: string) => {
+    if (channel !== this.SERVER_CHANNEL) return;
 
     try {
-      const data = JSON.parse(message) as AdminCommandData;
+      const data = JSON.parse(message) as ServerCommandData;
 
       // Validate command
-      if (!data.command || !Object.values(AdminCommand).includes(data.command as AdminCommand)) {
-        logger.warn(`[Redis] Invalid admin command received: ${data.command}`);
+      if (!data.command || !Object.values(ServerCommand).includes(data.command as ServerCommand)) {
+        logger.warn(`[Redis] Invalid server command received: ${data.command}`);
         return;
       }
 
-      const handler = this.adminHandlers.get(data.command);
+      const handler = this.serverHandlers.get(data.command);
 
       if (handler) {
         await handler(data);
       } else {
-        logger.warn(`[Redis] No handler registered for admin command: ${data.command}`);
+        logger.warn(`[Redis] No handler registered for server command: ${data.command}`);
       }
     } catch (error) {
-      logger.error("[Redis] Error handling admin message:", error);
+      logger.error("[Redis] Error handling server message:", error);
     }
   };
 
   /**
-   * Register handler for an admin command
+   * Register a handler for a server command.
    */
-  public onAdminCommand<T extends AdminCommandData = AdminCommandData>(
-    command: AdminCommand,
-    handler: AdminCommandHandler<T>
+  public onServerCommand<T extends ServerCommandData = ServerCommandData>(
+    command: ServerCommand,
+    handler: ServerCommandHandler<T>
   ) {
-    this.adminHandlers.set(command, handler as AdminCommandHandler);
-    logger.info(`[Redis] Registered admin command: ${command}`);
+    this.serverHandlers.set(command, handler as ServerCommandHandler);
+    logger.info(`[Redis] Registered server command: ${command}`);
   }
 
   /**
-   * Publish admin command to global channel
+   * Publish server command to global channel
    */
-  public async publishAdminCommand<T extends AdminCommandData>(data: T): Promise<number> {
+  public async publishServerCommand<T extends ServerCommandData>(data: T): Promise<number> {
     // Validate command data
-    if (!data.command || !Object.values(AdminCommand).includes(data.command)) {
-      throw new AppError(`Invalid admin command: ${data.command}`);
+    if (!data.command || !Object.values(ServerCommand).includes(data.command)) {
+      throw new AppError(`Invalid server command: ${data.command}`);
     }
 
     const message = JSON.stringify(data);
-    const receivers = await this.pub.publish(this.ADMIN_CHANNEL, message);
+    const receivers = await this.pub.publish(this.SERVER_CHANNEL, message);
 
     logger.info(`[Redis] Published "${data.command}" command, received by ${receivers} server(s)`);
     return receivers;
   }
 
   async onDestroy() {
-    // Unsubscribe from admin channel
+    // Unsubscribe from server channel
     await new Promise<void>((resolve) => {
-      this.sub.unsubscribe(this.ADMIN_CHANNEL, (error: Error) => {
+      this.sub.unsubscribe(this.SERVER_CHANNEL, (error: Error) => {
         if (error) {
-          logger.error(`[Redis] Error unsubscribing from admin channel:`, error);
+          logger.error(`[Redis] Error unsubscribing from server channel:`, error);
         }
         resolve();
       });
     });
 
     // Remove the message listener to prevent memory leaks
-    this.sub.removeListener("message", this.handleAdminMessage);
-    logger.info(`[Redis] Removed admin message listener`);
+    this.sub.removeListener("message", this.handleServerMessage);
+    logger.info(`[Redis] Removed server message listener`);
 
     await super.onDestroy();
   }

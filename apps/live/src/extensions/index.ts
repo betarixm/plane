@@ -6,9 +6,11 @@
 
 import { Database } from "./database";
 import { ForceCloseHandler } from "./force-close-handler";
+import { LiveAuthorizationSweeper } from "./live-authorization-sweeper";
 import { Logger } from "./logger";
 import { Redis } from "./redis";
 import { TitleSyncExtension } from "./title-sync";
+import { UserRevocationHandler } from "./user-revocation-handler";
 
 export const getExtensions = () => [
   new Logger(),
@@ -16,4 +18,6 @@ export const getExtensions = () => [
   new Redis(),
   new TitleSyncExtension(),
   new ForceCloseHandler(), // Must be after Redis to receive broadcasts
+  new UserRevocationHandler(), // Must be after Redis to receive broadcasts
+  new LiveAuthorizationSweeper(), // Revalidate passive/read-only sockets without relying on inbound messages
 ];

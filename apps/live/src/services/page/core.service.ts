@@ -8,6 +8,7 @@ import { logger } from "@plane/logger";
 import type { TDocumentPayload, TPage } from "@plane/types";
 // services
 import { AppError } from "@/lib/errors";
+import { LIVE_AUTHORIZATION_REQUEST_TIMEOUT_MS } from "@/lib/live-authorization-constants";
 import { APIService } from "../api.service";
 
 export type TUserMention = {
@@ -18,10 +19,6 @@ export type TUserMention = {
 
 export abstract class PageCoreService extends APIService {
   protected abstract basePath: string;
-
-  constructor() {
-    super();
-  }
 
   async fetchDetails(pageId: string): Promise<TPage> {
     try {
@@ -34,6 +31,27 @@ export abstract class PageCoreService extends APIService {
         context: { operation: "fetchDetails", pageId },
       });
       logger.error("Failed to fetch page details", appError);
+      throw appError;
+    }
+  }
+
+  async checkLiveEditAccess(pageId: string): Promise<void> {
+    try {
+      const response = await this.get(`${this.basePath}/pages/${pageId}/live-edit-access/`, {
+        headers: this.getHeader(),
+        timeout: LIVE_AUTHORIZATION_REQUEST_TIMEOUT_MS,
+      });
+      if (response.status !== 204) {
+        throw new AppError("Unexpected Live authorization response", {
+          code: "LIVE_AUTHORIZATION_INVALID_RESPONSE",
+          statusCode: response.status,
+        });
+      }
+    } catch (error) {
+      const appError = new AppError(error, {
+        context: { operation: "checkLiveEditAccess", pageId },
+      });
+      logger.error("Live page edit authorization failed", appError);
       throw appError;
     }
   }

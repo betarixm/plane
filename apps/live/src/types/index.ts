@@ -32,4 +32,7 @@ export type HocusPocusServerContext = {
   documentType: TDocumentTypes;
   workspaceSlug: string | null;
   userId: string;
+  authenticatedAt?: number;
+  authorizationValidatedAt?: number;
+  authorizationValidationPromise?: Promise<void>;
 };
