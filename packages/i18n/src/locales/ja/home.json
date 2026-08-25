@@ -8,11 +8,6 @@
         "description": "Planeのほとんどはプロジェクトから始まります。",
         "cta": "始める"
       },
-      "invite_team": {
-        "title": "チームを招待",
-        "description": "同僚と一緒に構築、デプロイ、管理しましょう。",
-        "cta": "招待する"
-      },
       "configure_workspace": {
         "title": "ワークスペースを設定する。",
         "description": "機能のオン/オフを切り替えたり、さらに詳細な設定を行ったりできます。",

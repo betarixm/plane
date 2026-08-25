@@ -7,7 +7,6 @@
     "not_enabled": "{name}はこのワークスペースで有効になっていません。",
     "not_configured": "未設定",
     "disconnect_personal_account": "個人{providerName}アカウントを切断",
-    "not_configured_message_admin": "{name}インテグレーションが設定されていません。インスタンス管理者に設定を依頼してください。",
     "not_configured_message_support": "{name}インテグレーションが設定されていません。サポートに設定を依頼してください。",
     "external_api_unreachable": "外部APIにアクセスできません。後でもう一度お試しください。",
     "error_fetching_supported_integrations": "サポートされているインテグレーションを取得できません。後でもう一度お試しください。",
@@ -129,51 +128,6 @@
     "webhook_secret_error": "Webhookシークレットは必須です",
     "connect_app": "アプリを接続"
   },
-  "slack_integration": {
-    "name": "Slack",
-    "description": "SlackワークスペースをPlaneと接続します。",
-    "connect_personal_account": "個人Slackアカウントを接続します。",
-    "personal_account_connected": "あなたの個人{providerName}アカウントがPlaneに接続されました。",
-    "link_personal_account": "あなたの個人{providerName}アカウントをPlaneにリンクします。",
-    "connected_slack_workspaces": "接続済みSlackワークスペース",
-    "connected_on": "{date}に接続",
-    "disconnect_workspace": "{name}ワークスペースを切断",
-    "alerts": {
-      "dm_alerts": {
-        "title": "重要な更新、リマインダー、あなた専用のアラートについて、SlackのDMで通知を受け取ります。"
-      }
-    },
-    "project_updates": {
-      "title": "プロジェクトアップデート",
-      "description": "プロジェクトのアップデート通知を設定します",
-      "add_new_project_update": "新しいプロジェクトアップデート通知を追加",
-      "project_updates_empty_state": "Slackチャンネルに接続されたプロジェクトがここに表示されます。",
-      "project_updates_form": {
-        "title": "プロジェクトアップデートを設定",
-        "description": "作業項目が作成されたときにSlackでプロジェクトアップデート通知を受け取る",
-        "failed_to_load_channels": "Slackからチャンネルを読み込めませんでした",
-        "project_dropdown": {
-          "placeholder": "プロジェクトを選択",
-          "label": "Planeプロジェクト",
-          "no_projects": "利用可能なプロジェクトがありません"
-        },
-        "channel_dropdown": {
-          "label": "Slackチャンネル",
-          "placeholder": "チャンネルを選択",
-          "no_channels": "利用可能なチャンネルがありません"
-        },
-        "all_projects_connected": "すべてのプロジェクトはすでにSlackチャンネルに接続されています。",
-        "all_channels_connected": "すべてのSlackチャンネルはすでにプロジェクトに接続されています。",
-        "project_connection_success": "プロジェクト接続が正常に作成されました",
-        "project_connection_updated": "プロジェクト接続が正常に更新されました",
-        "project_connection_deleted": "プロジェクト接続が正常に削除されました",
-        "failed_delete_project_connection": "プロジェクト接続の削除に失敗しました",
-        "failed_create_project_connection": "プロジェクト接続の作成に失敗しました",
-        "failed_upserting_project_connection": "プロジェクト接続の更新に失敗しました",
-        "failed_loading_project_connections": "プロジェクト接続を読み込めませんでした。ネットワークの問題または統合の問題が原因かもしれません。"
-      }
-    }
-  },
   "sentry_integration": {
     "name": "Sentry",
     "description": "SentryワークスペースをPlaneに接続します。",
@@ -197,72 +151,6 @@
   "bitbucket_dc_integration": {
     "name": "Bitbucket Data Center",
     "description": "Bitbucket Data CenterのリポジトリをPlaneと連携・同期します。"
-  },
-  "oauth_bridge_integration": {
-    "name": "OAuth Bridge",
-    "description": "外部IdPトークンをAPI アクセス用に検証します。",
-    "header_description": "IdP（Azure AD、Oktaなど）から発行されたOIDC/JWTトークンをPlane APIアクセス用に検証します。",
-    "connected": "接続済み",
-    "connect": "接続",
-    "uninstall": "アンインストール",
-    "uninstalling": "アンインストール中...",
-    "install_success": "OAuth Bridgeが正常にインストールされました。",
-    "install_error": "OAuth Bridgeのインストールに失敗しました。",
-    "uninstall_success": "OAuth Bridgeがアンインストールされました。",
-    "uninstall_error": "OAuth Bridgeのアンインストールに失敗しました。",
-    "token_providers": "トークンプロバイダー",
-    "token_providers_description": "JWTがAPI資格情報として受け入れられる外部IdPを設定します。",
-    "add_provider": "プロバイダーを追加",
-    "edit_provider": "プロバイダーを編集",
-    "enabled": "有効",
-    "disabled": "無効",
-    "test": "テスト",
-    "no_providers_title": "プロバイダーが設定されていません。",
-    "no_providers_description": "外部トークン認証を有効にするにはIdPを追加してください。",
-    "provider_updated": "プロバイダーが更新されました。",
-    "provider_added": "プロバイダーが追加されました。",
-    "provider_save_error": "プロバイダーの保存に失敗しました。",
-    "provider_deleted": "プロバイダーが削除されました。",
-    "provider_delete_error": "プロバイダーの削除に失敗しました。",
-    "provider_update_error": "プロバイダーの更新に失敗しました。",
-    "jwks_reachable": "JWKS到達可能",
-    "jwks_unreachable": "JWKS到達不可",
-    "jwks_test_error": "設定されたURLからJWKSを取得できませんでした。",
-    "provider_form": {
-      "name_label": "名前",
-      "name_placeholder": "例: Azure AD Production",
-      "name_description": "このIDプロバイダーの表示名",
-      "name_required": "名前は必須です。",
-      "issuer_label": "発行者",
-      "issuer_placeholder": "https://login.microsoftonline.com/tenant-id/v2.0",
-      "issuer_description": "JWTで期待されるissクレームの値",
-      "issuer_required": "発行者は必須です。",
-      "jwks_url_label": "JWKS URL",
-      "jwks_url_placeholder": "https://login.microsoftonline.com/tenant-id/discovery/v2.0/keys",
-      "jwks_url_description": "プロバイダーのJSON Web Key Setを提供するHTTPSエンドポイント",
-      "jwks_url_required": "JWKS URLは必須です。",
-      "jwks_url_https": "JWKS URLはHTTPSを使用する必要があります。",
-      "audience_label": "オーディエンス",
-      "audience_placeholder": "api://my-app-id",
-      "audience_description": "JWTで期待されるaudクレーム（カンマ区切り）。",
-      "user_claims_label": "ユーザークレーム",
-      "user_claims_placeholder": "email",
-      "user_claims_description": "ユーザーのメールアドレスを含むJWTクレーム",
-      "user_claims_required": "ユーザークレームは必須です。",
-      "allowed_algorithms_label": "許可された署名アルゴリズム",
-      "allowed_algorithms_description": "JWT署名検証に使用される非対称アルゴリズム",
-      "allowed_algorithms_required": "少なくとも1つのアルゴリズムが必要です。",
-      "select_algorithms": "アルゴリズムを選択",
-      "jwks_cache_ttl_label": "JWKSキャッシュTTL（秒）",
-      "jwks_cache_ttl_description": "プロバイダーのJWKSキーをキャッシュする期間（最小60秒、デフォルト24時間）",
-      "jwks_cache_ttl_min": "キャッシュTTLは60秒以上である必要があります。",
-      "rate_limit_label": "レート制限",
-      "rate_limit_placeholder": "120/minute",
-      "rate_limit_description": "リクエスト制限（例: 120/minute）。デフォルトのレート制限を使用する場合は空欄にしてください。",
-      "enable_provider": "このプロバイダーを有効にする",
-      "saving": "保存中...",
-      "update": "更新"
-    }
   },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",

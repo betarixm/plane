@@ -360,7 +360,6 @@
     }
   },
   "project_members": {
-    "full_name": "Повне ім'я",
     "display_name": "Відображуване ім'я",
     "email": "Електронна пошта",
     "joining_date": "Дата приєднання",

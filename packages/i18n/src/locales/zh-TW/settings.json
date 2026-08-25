@@ -1,70 +1,16 @@
 {
   "account_settings": {
-    "profile": {
-      "change_email_modal": {
-        "title": "變更電子郵件",
-        "description": "請輸入新的電子郵件地址以接收驗證連結。",
-        "toasts": {
-          "success_title": "成功！",
-          "success_message": "電子郵件已更新，請重新登入。"
-        },
-        "form": {
-          "email": {
-            "label": "新電子郵件",
-            "placeholder": "請輸入電子郵件",
-            "errors": {
-              "required": "電子郵件為必填",
-              "invalid": "電子郵件格式無效",
-              "exists": "電子郵件已存在，請使用其他信箱。",
-              "validation_failed": "電子郵件驗證失敗，請再試一次。"
-            }
-          },
-          "code": {
-            "label": "驗證碼",
-            "placeholder": "123456",
-            "helper_text": "驗證碼已傳送到你的新電子郵件。",
-            "errors": {
-              "required": "驗證碼為必填",
-              "invalid": "驗證碼無效，請再試一次。"
-            }
-          }
-        },
-        "actions": {
-          "continue": "繼續",
-          "confirm": "確認",
-          "cancel": "取消"
-        },
-        "states": {
-          "sending": "傳送中…"
-        }
-      }
-    },
     "preferences": {
       "heading": "偏好設定",
       "description": "以您工作的方式自訂您的應用程式體驗"
     },
     "notifications": {
       "heading": "電子郵件通知",
-      "description": "隨時掌握您訂閱的工作事項。啟用此功能以接收通知。",
-      "select_default_view": "選擇預設檢視",
-      "compact": "緊湊",
-      "full": "全螢幕"
-    },
-    "security": {
-      "heading": "安全性"
+      "description": "隨時掌握您訂閱的工作事項。啟用此功能以接收通知。"
     },
     "api_tokens": {
       "title": "個人存取權杖",
       "description": "產生安全的 API 權杖，以將您的資料與外部系統和應用程式整合。"
-    },
-    "activity": {
-      "heading": "活動",
-      "description": "追蹤您在所有專案和工作事項中的近期操作和變更。"
-    },
-    "connections": {
-      "title": "連接",
-      "heading": "連接",
-      "description": "管理您的工作區連接設定。"
     }
   },
   "profile": {
@@ -98,12 +44,9 @@
     },
     "actions": {
       "profile": "個人資料",
-      "security": "安全性",
-      "activity": "活動",
       "preferences": "偏好設定",
       "notifications": "通知",
-      "api-tokens": "個人存取權杖",
-      "connections": "連接"
+      "api-tokens": "個人存取權杖"
     },
     "tabs": {
       "summary": "摘要",

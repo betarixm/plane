@@ -108,8 +108,7 @@
       "nav_project_overview": "Zur Projektübersicht"
     },
     "account_actions": {
-      "sign_out": "Abmelden",
-      "workspace_invites": "Arbeitsbereich-Einladungen"
+      "sign_out": "Abmelden"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "App-Seitenleiste umschalten",

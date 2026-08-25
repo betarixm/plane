@@ -108,8 +108,7 @@
       "nav_project_overview": "Vai alla panoramica del progetto"
     },
     "account_actions": {
-      "sign_out": "Esci",
-      "workspace_invites": "Inviti allo spazio di lavoro"
+      "sign_out": "Esci"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "Alterna la barra laterale dell'app",

@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Участники",
-        "add_member": "Добавить участника",
-        "pending_invites": "Ожидающие приглашения",
-        "invitations_sent_successfully": "Приглашения отправлены",
-        "leave_confirmation": "Подтвердите выход из пространства. Доступ будет утрачен. Это действие нельзя отменить.",
         "details": {
-          "full_name": "Полное имя",
           "display_name": "Отображаемое имя",
           "email_address": "Email",
           "account_type": "Тип аккаунта",
           "authentication": "Аутентификация",
           "joining_date": "Дата присоединения"
-        },
-        "modal": {
-          "title": "Пригласить участников",
-          "description": "Пригласите коллег в рабочее пространство.",
-          "button": "Отправить приглашения",
-          "button_loading": "Отправка...",
-          "placeholder": "name@company.com",
-          "errors": {
-            "required": "Введите email адрес, чтобы пригласить участников",
-            "invalid": "Неверный email"
-          }
         }
       },
       "billing_and_plans": {

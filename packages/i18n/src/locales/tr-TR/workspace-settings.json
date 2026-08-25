@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Üyeler",
-        "add_member": "Üye ekle",
-        "pending_invites": "Bekleyen davetler",
-        "invitations_sent_successfully": "Davetler başarıyla gönderildi",
-        "leave_confirmation": "Çalışma alanından ayrılmak istediğinizden emin misiniz? Artık bu çalışma alanına erişiminiz olmayacak. Bu işlem geri alınamaz.",
         "details": {
-          "full_name": "Tam ad",
           "display_name": "Görünen ad",
           "email_address": "E-posta adresi",
           "account_type": "Hesap türü",
           "authentication": "Kimlik Doğrulama",
           "joining_date": "Katılma tarihi"
-        },
-        "modal": {
-          "title": "İşbirliği yapmaları için kişileri davet edin",
-          "description": "Kişileri çalışma alanınızda işbirliği yapmaları için davet edin.",
-          "button": "Davetleri gönder",
-          "button_loading": "Davetler gönderiliyor",
-          "placeholder": "isim@firma.com",
-          "errors": {
-            "required": "Davet etmek için bir e-posta adresine ihtiyacımız var.",
-            "invalid": "E-posta geçersiz"
-          }
         }
       },
       "billing_and_plans": {

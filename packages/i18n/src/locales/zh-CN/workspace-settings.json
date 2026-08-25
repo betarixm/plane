@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "成员",
-        "add_member": "添加成员",
-        "pending_invites": "待处理邀请",
-        "invitations_sent_successfully": "邀请发送成功",
-        "leave_confirmation": "您确定要离开工作区吗？您将无法再访问此工作区。此操作无法撤消。",
         "details": {
-          "full_name": "全名",
           "display_name": "显示名称",
           "email_address": "电子邮件地址",
           "account_type": "账户类型",
           "authentication": "身份验证",
           "joining_date": "加入日期"
-        },
-        "modal": {
-          "title": "邀请人员协作",
-          "description": "邀请人员在您的工作区中协作。",
-          "button": "发送邀请",
-          "button_loading": "正在发送邀请",
-          "placeholder": "name@company.com",
-          "errors": {
-            "required": "我们需要一个电子邮件地址来邀请他们。",
-            "invalid": "电子邮件无效"
-          }
         }
       },
       "billing_and_plans": {

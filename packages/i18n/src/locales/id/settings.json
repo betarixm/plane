@@ -1,70 +1,16 @@
 {
   "account_settings": {
-    "profile": {
-      "change_email_modal": {
-        "title": "Ubah email",
-        "description": "Masukkan alamat email baru untuk menerima tautan verifikasi.",
-        "toasts": {
-          "success_title": "Berhasil!",
-          "success_message": "Email berhasil diperbarui. Silakan masuk kembali."
-        },
-        "form": {
-          "email": {
-            "label": "Email baru",
-            "placeholder": "Masukkan email Anda",
-            "errors": {
-              "required": "Email wajib diisi",
-              "invalid": "Email tidak valid",
-              "exists": "Email sudah ada. Gunakan yang lain.",
-              "validation_failed": "Validasi email gagal. Coba lagi."
-            }
-          },
-          "code": {
-            "label": "Kode unik",
-            "placeholder": "123456",
-            "helper_text": "Kode verifikasi dikirim ke email baru Anda.",
-            "errors": {
-              "required": "Kode unik wajib diisi",
-              "invalid": "Kode verifikasi tidak valid. Coba lagi."
-            }
-          }
-        },
-        "actions": {
-          "continue": "Lanjutkan",
-          "confirm": "Konfirmasi",
-          "cancel": "Batal"
-        },
-        "states": {
-          "sending": "Mengirim…"
-        }
-      }
-    },
     "preferences": {
       "heading": "Preferensi",
       "description": "Sesuaikan pengalaman aplikasi Anda dengan cara kerja Anda"
     },
     "notifications": {
       "heading": "Notifikasi email",
-      "description": "Tetap terupdate tentang item kerja yang Anda langgani. Aktifkan ini untuk mendapatkan notifikasi.",
-      "select_default_view": "Pilih tampilan default",
-      "compact": "Ringkas",
-      "full": "Layar penuh"
-    },
-    "security": {
-      "heading": "Keamanan"
+      "description": "Tetap terupdate tentang item kerja yang Anda langgani. Aktifkan ini untuk mendapatkan notifikasi."
     },
     "api_tokens": {
       "title": "Token Akses Personal",
       "description": "Hasilkan token API yang aman untuk mengintegrasikan data Anda dengan sistem dan aplikasi eksternal."
-    },
-    "activity": {
-      "heading": "Aktivitas",
-      "description": "Lacak tindakan dan perubahan terkini Anda di semua proyek dan item kerja."
-    },
-    "connections": {
-      "title": "Koneksi",
-      "heading": "Koneksi",
-      "description": "Kelola pengaturan koneksi ruang kerja Anda."
     }
   },
   "profile": {
@@ -98,12 +44,9 @@
     },
     "actions": {
       "profile": "Profil",
-      "security": "Keamanan",
-      "activity": "Aktivitas",
       "preferences": "Preferensi",
       "notifications": "Notifikasi",
-      "api-tokens": "Token Akses Personal",
-      "connections": "Koneksi"
+      "api-tokens": "Token Akses Personal"
     },
     "tabs": {
       "summary": "Ringkasan",

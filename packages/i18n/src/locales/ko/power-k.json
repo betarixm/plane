@@ -108,8 +108,7 @@
       "nav_project_overview": "프로젝트 개요로 이동"
     },
     "account_actions": {
-      "sign_out": "로그아웃",
-      "workspace_invites": "작업 공간 초대"
+      "sign_out": "로그아웃"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "앱 사이드바 전환",

@@ -108,8 +108,7 @@
       "nav_project_overview": "Prejsť na prehľad projektu"
     },
     "account_actions": {
-      "sign_out": "Odhlásiť sa",
-      "workspace_invites": "Pozvánky do pracovného priestoru"
+      "sign_out": "Odhlásiť sa"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "Prepnúť bočný panel aplikácie",

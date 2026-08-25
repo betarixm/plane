@@ -8,11 +8,6 @@
         "description": "La maggior parte delle cose inizia con un progetto in Plane.",
         "cta": "Inizia"
       },
-      "invite_team": {
-        "title": "Invita il tuo team",
-        "description": "Collabora, lancia e gestisci insieme ai colleghi.",
-        "cta": "Invitali"
-      },
       "configure_workspace": {
         "title": "Configura il tuo spazio di lavoro.",
         "description": "Attiva o disattiva le funzionalità o personalizza ulteriormente.",

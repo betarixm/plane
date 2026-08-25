@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Członkowie",
-        "add_member": "Dodaj członka",
-        "pending_invites": "Oczekujące zaproszenia",
-        "invitations_sent_successfully": "Zaproszenia wysłano pomyślnie",
-        "leave_confirmation": "Czy na pewno chcesz opuścić przestrzeń? Stracisz dostęp. Ta akcja jest nieodwracalna.",
         "details": {
-          "full_name": "Imię i nazwisko",
           "display_name": "Nazwa wyświetlana",
           "email_address": "Adres e-mail",
           "account_type": "Typ konta",
           "authentication": "Uwierzytelnianie",
           "joining_date": "Data dołączenia"
-        },
-        "modal": {
-          "title": "Zaproś współpracowników",
-          "description": "Zaproś osoby do współpracy.",
-          "button": "Wyślij zaproszenia",
-          "button_loading": "Wysyłanie zaproszeń",
-          "placeholder": "imię@firma.pl",
-          "errors": {
-            "required": "Wymagany jest adres e-mail.",
-            "invalid": "E-mail jest nieprawidłowy"
-          }
         }
       },
       "billing_and_plans": {

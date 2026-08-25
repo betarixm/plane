@@ -360,7 +360,6 @@
     }
   },
   "project_members": {
-    "full_name": "全名",
     "display_name": "顯示名稱",
     "email": "電子郵件",
     "joining_date": "加入日期",

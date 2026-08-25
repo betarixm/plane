@@ -360,7 +360,6 @@
     }
   },
   "project_members": {
-    "full_name": "氏名",
     "display_name": "表示名",
     "email": "メールアドレス",
     "joining_date": "参加日",

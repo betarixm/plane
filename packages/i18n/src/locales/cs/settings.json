@@ -1,70 +1,16 @@
 {
   "account_settings": {
-    "profile": {
-      "change_email_modal": {
-        "title": "Změnit e-mail",
-        "description": "Zadejte novou e-mailovou adresu a obdržíte ověřovací odkaz.",
-        "toasts": {
-          "success_title": "Úspěch!",
-          "success_message": "E-mail byl úspěšně aktualizován. Přihlaste se znovu."
-        },
-        "form": {
-          "email": {
-            "label": "Nový e-mail",
-            "placeholder": "Zadejte svůj e-mail",
-            "errors": {
-              "required": "E-mail je povinný",
-              "invalid": "E-mail je neplatný",
-              "exists": "E-mail již existuje. Použijte jiný.",
-              "validation_failed": "Ověření e-mailu se nezdařilo. Zkuste to znovu."
-            }
-          },
-          "code": {
-            "label": "Jedinečný kód",
-            "placeholder": "123456",
-            "helper_text": "Ověřovací kód byl odeslán na váš nový e-mail.",
-            "errors": {
-              "required": "Jedinečný kód je povinný",
-              "invalid": "Neplatný ověřovací kód. Zkuste to znovu."
-            }
-          }
-        },
-        "actions": {
-          "continue": "Pokračovat",
-          "confirm": "Potvrdit",
-          "cancel": "Zrušit"
-        },
-        "states": {
-          "sending": "Odesílání…"
-        }
-      }
-    },
     "preferences": {
       "heading": "Předvolby",
       "description": "Přizpůsobte si prostředí aplikace podle toho, jak pracujete"
     },
     "notifications": {
       "heading": "E-mailová oznámení",
-      "description": "Zůstaňte v obraze u pracovních položek, které odebíráte. Aktivujte toto pro zasílání oznámení.",
-      "select_default_view": "Vybrat výchozí zobrazení",
-      "compact": "Kompaktní",
-      "full": "Celá obrazovka"
-    },
-    "security": {
-      "heading": "Zabezpečení"
+      "description": "Zůstaňte v obraze u pracovních položek, které odebíráte. Aktivujte toto pro zasílání oznámení."
     },
     "api_tokens": {
       "title": "Osobní přístupové tokeny",
       "description": "Generujte bezpečné API tokeny pro integraci vašich dat s externími systémy a aplikacemi."
-    },
-    "activity": {
-      "heading": "Aktivita",
-      "description": "Sledujte vaše nedávné akce a změny napříč všemi projekty a pracovními položkami."
-    },
-    "connections": {
-      "title": "Spojení",
-      "heading": "Spojení",
-      "description": "Spravujte nastavení spojení vašeho pracovního prostoru."
     }
   },
   "profile": {
@@ -98,12 +44,9 @@
     },
     "actions": {
       "profile": "Profil",
-      "security": "Zabezpečení",
-      "activity": "Aktivita",
       "preferences": "Předvolby",
       "notifications": "Oznámení",
-      "api-tokens": "Osobní přístupové tokeny",
-      "connections": "Spojení"
+      "api-tokens": "Osobní přístupové tokeny"
     },
     "tabs": {
       "summary": "Shrnutí",

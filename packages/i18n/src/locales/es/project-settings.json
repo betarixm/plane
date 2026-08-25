@@ -29,11 +29,6 @@
       "guest_super_permissions": {
         "title": "Otorgar acceso de visualización a todos los elementos de trabajo para usuarios invitados:",
         "sub_heading": "Esto permitirá a los invitados tener acceso de visualización a todos los elementos de trabajo del proyecto."
-      },
-      "invite_members": {
-        "title": "Invitar miembros",
-        "sub_heading": "Invita miembros para trabajar en tu proyecto.",
-        "select_co_worker": "Seleccionar compañero de trabajo"
       }
     },
     "states": {

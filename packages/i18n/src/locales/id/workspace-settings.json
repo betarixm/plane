@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Anggota",
-        "add_member": "Tambah anggota",
-        "pending_invites": "Undangan yang tertunda",
-        "invitations_sent_successfully": "Undangan berhasil dikirim",
-        "leave_confirmation": "Apakah Anda yakin ingin meninggalkan ruang kerja? Anda tidak akan lagi memiliki akses ke ruang kerja ini. Tindakan ini tidak dapat dibatalkan.",
         "details": {
-          "full_name": "Nama lengkap",
           "display_name": "Nama tampilan",
           "email_address": "Alamat email",
           "account_type": "Tipe akun",
           "authentication": "Autentikasi",
           "joining_date": "Tanggal bergabung"
-        },
-        "modal": {
-          "title": "Undang orang untuk berkolaborasi",
-          "description": "Undang orang untuk berkolaborasi di ruang kerja Anda.",
-          "button": "Kirim undangan",
-          "button_loading": "Mengirim undangan",
-          "placeholder": "name@company.com",
-          "errors": {
-            "required": "Kami perlu alamat email untuk mengundang mereka.",
-            "invalid": "Email tidak valid"
-          }
         }
       },
       "billing_and_plans": {

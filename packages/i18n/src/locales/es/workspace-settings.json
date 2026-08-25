@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Miembros",
-        "add_member": "Agregar miembro",
-        "pending_invites": "Invitaciones pendientes",
-        "invitations_sent_successfully": "Invitaciones enviadas exitosamente",
-        "leave_confirmation": "¿Estás seguro de que quieres abandonar el espacio de trabajo? Ya no tendrás acceso a este espacio de trabajo. Esta acción no se puede deshacer.",
         "details": {
-          "full_name": "Nombre completo",
           "display_name": "Nombre para mostrar",
           "email_address": "Dirección de correo electrónico",
           "account_type": "Tipo de cuenta",
           "authentication": "Autenticación",
           "joining_date": "Fecha de incorporación"
-        },
-        "modal": {
-          "title": "Invitar personas a colaborar",
-          "description": "Invita personas a colaborar en tu espacio de trabajo.",
-          "button": "Enviar invitaciones",
-          "button_loading": "Enviando invitaciones",
-          "placeholder": "nombre@empresa.com",
-          "errors": {
-            "required": "Necesitamos una dirección de correo electrónico para invitarlos.",
-            "invalid": "El correo electrónico no es válido"
-          }
         }
       },
       "billing_and_plans": {

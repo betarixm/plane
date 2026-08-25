@@ -8,11 +8,6 @@
         "description": "在Plane中，大多数事情都从项目开始。",
         "cta": "开始使用"
       },
-      "invite_team": {
-        "title": "邀请您的团队",
-        "description": "与同事一起构建、发布和管理。",
-        "cta": "邀请他们加入"
-      },
       "configure_workspace": {
         "title": "设置您的工作区",
         "description": "开启或关闭功能，或进行更多设置。",

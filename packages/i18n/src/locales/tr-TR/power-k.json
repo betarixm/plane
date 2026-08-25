@@ -108,8 +108,7 @@
       "nav_project_overview": "Proje genel bakışına git"
     },
     "account_actions": {
-      "sign_out": "Çıkış yap",
-      "workspace_invites": "Çalışma alanı davetleri"
+      "sign_out": "Çıkış yap"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "Uygulama kenar çubuğunu aç/kapat",

@@ -1,70 +1,16 @@
 {
   "account_settings": {
-    "profile": {
-      "change_email_modal": {
-        "title": "E-postayı değiştir",
-        "description": "Doğrulama bağlantısı almak için yeni bir e-posta adresi girin.",
-        "toasts": {
-          "success_title": "Başarılı!",
-          "success_message": "E-posta başarıyla güncellendi. Lütfen tekrar giriş yapın."
-        },
-        "form": {
-          "email": {
-            "label": "Yeni e-posta",
-            "placeholder": "E-postanızı girin",
-            "errors": {
-              "required": "E-posta zorunludur",
-              "invalid": "E-posta geçersiz",
-              "exists": "E-posta zaten mevcut. Başka bir tane kullanın.",
-              "validation_failed": "E-posta doğrulaması başarısız oldu. Lütfen tekrar deneyin."
-            }
-          },
-          "code": {
-            "label": "Benzersiz kod",
-            "placeholder": "123456",
-            "helper_text": "Doğrulama kodu yeni e-postanıza gönderildi.",
-            "errors": {
-              "required": "Benzersiz kod zorunludur",
-              "invalid": "Geçersiz doğrulama kodu. Lütfen tekrar deneyin."
-            }
-          }
-        },
-        "actions": {
-          "continue": "Devam et",
-          "confirm": "Onayla",
-          "cancel": "İptal et"
-        },
-        "states": {
-          "sending": "Gönderiliyor…"
-        }
-      }
-    },
     "preferences": {
       "heading": "Tercihler",
       "description": "Uygulama deneyiminizi çalışma şeklinize göre özelleştirin"
     },
     "notifications": {
       "heading": "E-posta bildirimleri",
-      "description": "Abone olduğunuz İş öğelerinden haberdar olun. Bildirim almak için bunu etkinleştirin.",
-      "select_default_view": "Varsayılan görünümü seç",
-      "compact": "Kompakt",
-      "full": "Tam ekran"
-    },
-    "security": {
-      "heading": "Güvenlik"
+      "description": "Abone olduğunuz İş öğelerinden haberdar olun. Bildirim almak için bunu etkinleştirin."
     },
     "api_tokens": {
       "title": "Kişisel Erişim Tokenları",
       "description": "Verilerinizi harici sistemler ve uygulamalarla entegre etmek için güvenli API tokenları oluşturun."
-    },
-    "activity": {
-      "heading": "Aktivite",
-      "description": "Tüm projeler ve iş öğeleri genelinde son eylemlerinizi ve değişikliklerinizi izleyin."
-    },
-    "connections": {
-      "title": "Bağlantılar",
-      "heading": "Bağlantılar",
-      "description": "Çalışma alanı bağlantı ayarlarınızı yönetin."
     }
   },
   "profile": {
@@ -98,12 +44,9 @@
     },
     "actions": {
       "profile": "Profil",
-      "security": "Güvenlik",
-      "activity": "Aktivite",
       "preferences": "Tercihler",
       "notifications": "Bildirimler",
-      "api-tokens": "Kişisel Erişim Tokenları",
-      "connections": "Bağlantılar"
+      "api-tokens": "Kişisel Erişim Tokenları"
     },
     "tabs": {
       "summary": "Özet",

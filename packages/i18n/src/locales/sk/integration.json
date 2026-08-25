@@ -7,7 +7,6 @@
     "not_enabled": "{name} nie je povolené pre tento vorkspejs.",
     "not_configured": "Nenakonfigurované",
     "disconnect_personal_account": "Odpojiť osobný {providerName} účet",
-    "not_configured_message_admin": "Integrácia {name} nie je nakonfigurovaná. Kontaktujte správcu vašej inštancie pre konfiguráciu.",
     "not_configured_message_support": "Integrácia {name} nie je nakonfigurovaná. Kontaktujte podporu pre konfiguráciu.",
     "external_api_unreachable": "Nie je možné pristupovať k externej API. Skúste to prosím neskôr.",
     "error_fetching_supported_integrations": "Nie je možné načítať podporované integrácie. Skúste to prosím neskôr.",
@@ -129,51 +128,6 @@
     "webhook_secret_error": "Webhook secret je povinný",
     "connect_app": "Pripojiť aplikáciu"
   },
-  "slack_integration": {
-    "name": "Slack",
-    "description": "Pripojte váš Slack vorkspejs s Plane.",
-    "connect_personal_account": "Pripojte váš osobný Slack účet s Plane.",
-    "personal_account_connected": "Váš osobný {providerName} účet je teraz pripojený k Plane.",
-    "link_personal_account": "Prepojte váš osobný {providerName} účet s Plane.",
-    "connected_slack_workspaces": "Pripojené Slack vorkspejsy",
-    "connected_on": "Pripojené {date}",
-    "disconnect_workspace": "Odpojiť {name} vorkspejs",
-    "alerts": {
-      "dm_alerts": {
-        "title": "Dostávajte upozornenia v súkromných správach Slack pre dôležité aktualizácie, pripomenutia a upozornenia len pre vás."
-      }
-    },
-    "project_updates": {
-      "title": "Aktualizácie Projektu",
-      "description": "Nakonfigurujte notifikácie o aktualizáciách projektov pre vaše projekty",
-      "add_new_project_update": "Pridať novú notifikáciu o aktualizáciách projektu",
-      "project_updates_empty_state": "Projekty pripojené s kanálmi Slack sa zobrazia tu.",
-      "project_updates_form": {
-        "title": "Konfigurovať Aktualizácie Projektu",
-        "description": "Dostávajte notifikácie o aktualizáciách projektu v Slack, keď sa vytvoria pracovné položky",
-        "failed_to_load_channels": "Nepodarilo sa načítať kanály zo Slack",
-        "project_dropdown": {
-          "placeholder": "Vyberte projekt",
-          "label": "Plane Projekt",
-          "no_projects": "Žiadne dostupné projekty"
-        },
-        "channel_dropdown": {
-          "label": "Slack Kanál",
-          "placeholder": "Vyberte kanál",
-          "no_channels": "Žiadne dostupné kanály"
-        },
-        "all_projects_connected": "Všetky projekty sú už pripojené ku kanálom Slack.",
-        "all_channels_connected": "Všetky kanály Slack sú už pripojené k projektom.",
-        "project_connection_success": "Pripojenie projektu úspešne vytvorené",
-        "project_connection_updated": "Pripojenie projektu úspešne aktualizované",
-        "project_connection_deleted": "Pripojenie projektu úspešne odstránené",
-        "failed_delete_project_connection": "Nepodarilo sa odstrániť pripojenie projektu",
-        "failed_create_project_connection": "Nepodarilo sa vytvoriť pripojenie projektu",
-        "failed_upserting_project_connection": "Nepodarilo sa aktualizovať pripojenie projektu",
-        "failed_loading_project_connections": "Nepodarilo sa načítať vaše pripojenia projektu. Môže to byť spôsobené problémom so sieťou alebo problémom s integráciou."
-      }
-    }
-  },
   "sentry_integration": {
     "name": "Sentry",
     "description": "Pripojte váš Sentry pracovný priestor s Plane.",
@@ -197,72 +151,6 @@
   "bitbucket_dc_integration": {
     "name": "Bitbucket Data Center",
     "description": "Prepojte a synchronizujte svoje repozitáre Bitbucket Data Center s Plane."
-  },
-  "oauth_bridge_integration": {
-    "name": "OAuth Bridge",
-    "description": "Overenie tokenov externých IdP pre prístup k API.",
-    "header_description": "Overujte externe vydané OIDC/JWT tokeny z vášho IdP (Azure AD, Okta atď.) pre prístup k API Plane.",
-    "connected": "Pripojené",
-    "connect": "Pripojiť",
-    "uninstall": "Odinštalovať",
-    "uninstalling": "Odinštalovanie...",
-    "install_success": "OAuth Bridge úspešne nainštalovaný.",
-    "install_error": "Nepodarilo sa nainštalovať OAuth Bridge.",
-    "uninstall_success": "OAuth Bridge odinštalovaný.",
-    "uninstall_error": "Nepodarilo sa odinštalovať OAuth Bridge.",
-    "token_providers": "Poskytovatelia tokenov",
-    "token_providers_description": "Nakonfigurujte externých IdP, ktorých JWT sú akceptované ako API prihlasovacie údaje.",
-    "add_provider": "Pridať poskytovateľa",
-    "edit_provider": "Upraviť poskytovateľa",
-    "enabled": "Povolené",
-    "disabled": "Zakázané",
-    "test": "Test",
-    "no_providers_title": "Žiadni poskytovatelia nie sú nakonfigurovaní.",
-    "no_providers_description": "Pridajte IdP na povolenie overovania externými tokenmi.",
-    "provider_updated": "Poskytovateľ aktualizovaný.",
-    "provider_added": "Poskytovateľ pridaný.",
-    "provider_save_error": "Nepodarilo sa uložiť poskytovateľa.",
-    "provider_deleted": "Poskytovateľ zmazaný.",
-    "provider_delete_error": "Nepodarilo sa zmazať poskytovateľa.",
-    "provider_update_error": "Nepodarilo sa aktualizovať poskytovateľa.",
-    "jwks_reachable": "JWKS dostupný",
-    "jwks_unreachable": "JWKS nedostupný",
-    "jwks_test_error": "Nepodarilo sa získať JWKS z nakonfigurovanej URL.",
-    "provider_form": {
-      "name_label": "Názov",
-      "name_placeholder": "napr. Azure AD Production",
-      "name_description": "Čitateľný popisok pre tohto poskytovateľa identity",
-      "name_required": "Názov je povinný.",
-      "issuer_label": "Vydavateľ",
-      "issuer_placeholder": "https://login.microsoftonline.com/tenant-id/v2.0",
-      "issuer_description": "Očakávaná hodnota claim iss v JWT",
-      "issuer_required": "Vydavateľ je povinný.",
-      "jwks_url_label": "URL JWKS",
-      "jwks_url_placeholder": "https://login.microsoftonline.com/tenant-id/discovery/v2.0/keys",
-      "jwks_url_description": "HTTPS endpoint poskytujúci JSON Web Key Set poskytovateľa",
-      "jwks_url_required": "URL JWKS je povinná.",
-      "jwks_url_https": "URL JWKS musí používať HTTPS.",
-      "audience_label": "Publikum",
-      "audience_placeholder": "api://my-app-id",
-      "audience_description": "Očakávané claim(y) aud v JWT, oddelené čiarkami.",
-      "user_claims_label": "Claim používateľa",
-      "user_claims_placeholder": "email",
-      "user_claims_description": "JWT claim obsahujúci e-mailovú adresu používateľa",
-      "user_claims_required": "Claim používateľa je povinný.",
-      "allowed_algorithms_label": "Povolené podpisové algoritmy",
-      "allowed_algorithms_description": "Asymetrické algoritmy pre overenie podpisu JWT",
-      "allowed_algorithms_required": "Je vyžadovaný aspoň jeden algoritmus.",
-      "select_algorithms": "Vyberte algoritmy",
-      "jwks_cache_ttl_label": "TTL vyrovnávacej pamäte JWKS (sekundy)",
-      "jwks_cache_ttl_description": "Doba ukladania kľúčov JWKS poskytovateľa do vyrovnávacej pamäte (minimum 60s, predvolene 24 hodín)",
-      "jwks_cache_ttl_min": "TTL vyrovnávacej pamäte musí byť aspoň 60 sekúnd.",
-      "rate_limit_label": "Limit požiadaviek",
-      "rate_limit_placeholder": "120/minute",
-      "rate_limit_description": "Obmedzenie požiadaviek ako počet/obdobie (napr. 120/minute). Ponechajte prázdne pre predvolený limit.",
-      "enable_provider": "Povoliť tohto poskytovateľa",
-      "saving": "Ukladanie...",
-      "update": "Aktualizovať"
-    }
   },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",

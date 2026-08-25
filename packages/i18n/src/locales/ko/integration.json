@@ -7,7 +7,6 @@
     "not_enabled": "{name}은(는) 이 워크스페이스에 대해 활성화되지 않았습니다.",
     "not_configured": "구성되지 않음",
     "disconnect_personal_account": "개인 {providerName} 계정 연결 해제",
-    "not_configured_message_admin": "{name} 인테그레이션이 구성되지 않았습니다. 인스턴스 관리자에게 문의하여 구성하세요.",
     "not_configured_message_support": "{name} 인테그레이션이 구성되지 않았습니다. 지원팀에 문의하여 구성하세요.",
     "external_api_unreachable": "외부 API에 접근할 수 없습니다. 나중에 다시 시도하세요.",
     "error_fetching_supported_integrations": "지원되는 인테그레이션을 가져올 수 없습니다. 나중에 다시 시도하세요.",
@@ -129,51 +128,6 @@
     "webhook_secret_error": "Webhook 시크릿은 필수입니다",
     "connect_app": "앱 연결"
   },
-  "slack_integration": {
-    "name": "슬랙",
-    "description": "슬랙 워크스페이스를 플레인과 연결하세요.",
-    "connect_personal_account": "개인 슬랙 계정을 플레인과 연결하세요.",
-    "personal_account_connected": "귀하의 개인 {providerName} 계정이 이제 플레인에 연결되었습니다.",
-    "link_personal_account": "개인 {providerName} 계정을 플레인에 연결하세요.",
-    "connected_slack_workspaces": "연결된 슬랙 워크스페이스",
-    "connected_on": "{date}에 연결됨",
-    "disconnect_workspace": "{name} 워크스페이스 연결 해제",
-    "alerts": {
-      "dm_alerts": {
-        "title": "중요한 업데이트, 리마인더, 알림을 슬랙 다이렉트 메시지로 받아보세요."
-      }
-    },
-    "project_updates": {
-      "title": "프로젝트 업데이트",
-      "description": "프로젝트의 업데이트 알림을 구성하세요",
-      "add_new_project_update": "새 프로젝트 업데이트 알림 추가",
-      "project_updates_empty_state": "슬랙 채널과 연결된 프로젝트가 여기에 표시됩니다.",
-      "project_updates_form": {
-        "title": "프로젝트 업데이트 구성",
-        "description": "작업 항목이 생성될 때 슬랙에서 프로젝트 업데이트 알림 받기",
-        "failed_to_load_channels": "슬랙에서 채널을 로드하지 못했습니다",
-        "project_dropdown": {
-          "placeholder": "프로젝트 선택",
-          "label": "플레인 프로젝트",
-          "no_projects": "사용 가능한 프로젝트가 없습니다"
-        },
-        "channel_dropdown": {
-          "label": "슬랙 채널",
-          "placeholder": "채널 선택",
-          "no_channels": "사용 가능한 채널이 없습니다"
-        },
-        "all_projects_connected": "모든 프로젝트가 이미 슬랙 채널에 연결되어 있습니다.",
-        "all_channels_connected": "모든 슬랙 채널이 이미 프로젝트에 연결되어 있습니다.",
-        "project_connection_success": "프로젝트 연결이 성공적으로 생성되었습니다",
-        "project_connection_updated": "프로젝트 연결이 성공적으로 업데이트되었습니다",
-        "project_connection_deleted": "프로젝트 연결이 성공적으로 삭제되었습니다",
-        "failed_delete_project_connection": "프로젝트 연결 삭제에 실패했습니다",
-        "failed_create_project_connection": "프로젝트 연결 생성에 실패했습니다",
-        "failed_upserting_project_connection": "프로젝트 연결 업데이트에 실패했습니다",
-        "failed_loading_project_connections": "프로젝트 연결을 로드할 수 없습니다. 네트워크 문제나 통합 문제 때문일 수 있습니다."
-      }
-    }
-  },
   "sentry_integration": {
     "name": "Sentry",
     "description": "Sentry 작업 공간을 Plane에 연결하세요.",
@@ -197,72 +151,6 @@
   "bitbucket_dc_integration": {
     "name": "Bitbucket Data Center",
     "description": "Bitbucket Data Center 리포지토리를 Plane과 연결하고 동기화하세요."
-  },
-  "oauth_bridge_integration": {
-    "name": "OAuth Bridge",
-    "description": "API 접근을 위해 외부 IdP 토큰을 검증합니다.",
-    "header_description": "IdP(Azure AD, Okta 등)에서 발급된 OIDC/JWT 토큰을 Plane API 접근용으로 검증합니다.",
-    "connected": "연결됨",
-    "connect": "연결",
-    "uninstall": "제거",
-    "uninstalling": "제거 중...",
-    "install_success": "OAuth Bridge가 성공적으로 설치되었습니다.",
-    "install_error": "OAuth Bridge 설치에 실패했습니다.",
-    "uninstall_success": "OAuth Bridge가 제거되었습니다.",
-    "uninstall_error": "OAuth Bridge 제거에 실패했습니다.",
-    "token_providers": "토큰 공급자",
-    "token_providers_description": "JWT가 API 자격 증명으로 허용되는 외부 IdP를 구성합니다.",
-    "add_provider": "공급자 추가",
-    "edit_provider": "공급자 편집",
-    "enabled": "활성화됨",
-    "disabled": "비활성화됨",
-    "test": "테스트",
-    "no_providers_title": "구성된 공급자가 없습니다.",
-    "no_providers_description": "외부 토큰 인증을 활성화하려면 IdP를 추가하세요.",
-    "provider_updated": "공급자가 업데이트되었습니다.",
-    "provider_added": "공급자가 추가되었습니다.",
-    "provider_save_error": "공급자 저장에 실패했습니다.",
-    "provider_deleted": "공급자가 삭제되었습니다.",
-    "provider_delete_error": "공급자 삭제에 실패했습니다.",
-    "provider_update_error": "공급자 업데이트에 실패했습니다.",
-    "jwks_reachable": "JWKS 접근 가능",
-    "jwks_unreachable": "JWKS 접근 불가",
-    "jwks_test_error": "구성된 URL에서 JWKS를 가져올 수 없습니다.",
-    "provider_form": {
-      "name_label": "이름",
-      "name_placeholder": "예: Azure AD Production",
-      "name_description": "이 ID 공급자의 표시 이름",
-      "name_required": "이름은 필수입니다.",
-      "issuer_label": "발급자",
-      "issuer_placeholder": "https://login.microsoftonline.com/tenant-id/v2.0",
-      "issuer_description": "JWT에서 예상되는 iss 클레임 값",
-      "issuer_required": "발급자는 필수입니다.",
-      "jwks_url_label": "JWKS URL",
-      "jwks_url_placeholder": "https://login.microsoftonline.com/tenant-id/discovery/v2.0/keys",
-      "jwks_url_description": "공급자의 JSON Web Key Set을 제공하는 HTTPS 엔드포인트",
-      "jwks_url_required": "JWKS URL은 필수입니다.",
-      "jwks_url_https": "JWKS URL은 HTTPS를 사용해야 합니다.",
-      "audience_label": "대상",
-      "audience_placeholder": "api://my-app-id",
-      "audience_description": "JWT에서 예상되는 aud 클레임(쉼표로 구분).",
-      "user_claims_label": "사용자 클레임",
-      "user_claims_placeholder": "email",
-      "user_claims_description": "사용자의 이메일 주소가 포함된 JWT 클레임",
-      "user_claims_required": "사용자 클레임은 필수입니다.",
-      "allowed_algorithms_label": "허용된 서명 알고리즘",
-      "allowed_algorithms_description": "JWT 서명 검증에 사용되는 비대칭 알고리즘",
-      "allowed_algorithms_required": "최소 하나의 알고리즘이 필요합니다.",
-      "select_algorithms": "알고리즘 선택",
-      "jwks_cache_ttl_label": "JWKS 캐시 TTL(초)",
-      "jwks_cache_ttl_description": "공급자의 JWKS 키를 캐시하는 기간(최소 60초, 기본 24시간)",
-      "jwks_cache_ttl_min": "캐시 TTL은 최소 60초 이상이어야 합니다.",
-      "rate_limit_label": "속도 제한",
-      "rate_limit_placeholder": "120/minute",
-      "rate_limit_description": "요청 제한(예: 120/minute). 기본 속도 제한을 사용하려면 비워두세요.",
-      "enable_provider": "이 공급자 활성화",
-      "saving": "저장 중...",
-      "update": "업데이트"
-    }
   },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",

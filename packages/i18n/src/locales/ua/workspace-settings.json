@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Учасники",
-        "add_member": "Додати учасника",
-        "pending_invites": "Очікувані запрошення",
-        "invitations_sent_successfully": "Запрошення успішно надіслано",
-        "leave_confirmation": "Справді вийти з цього простору? Ви втратите доступ. Дія незворотна.",
         "details": {
-          "full_name": "Повне ім'я",
           "display_name": "Відображуване ім'я",
           "email_address": "Електронна пошта",
           "account_type": "Тип облікового запису",
           "authentication": "Автентифікація",
           "joining_date": "Дата приєднання"
-        },
-        "modal": {
-          "title": "Запросити колег",
-          "description": "Запросіть людей для співпраці.",
-          "button": "Надіслати запрошення",
-          "button_loading": "Надсилання запрошень",
-          "placeholder": "ім'я@компанія.ua",
-          "errors": {
-            "required": "Потрібно вказати адресу електронної пошти.",
-            "invalid": "Неправильна адреса електронної пошти"
-          }
         }
       },
       "billing_and_plans": {

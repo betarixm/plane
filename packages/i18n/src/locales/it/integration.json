@@ -7,7 +7,6 @@
     "not_enabled": "{name} non è abilitato per questo workspace.",
     "not_configured": "Non configurato",
     "disconnect_personal_account": "Disconnetti account {providerName} personale",
-    "not_configured_message_admin": "{name} integrazione non è configurata. Per favore contatta il tuo amministratore di istanza per configurarla.",
     "not_configured_message_support": "{name} integrazione non è configurata. Per favore contatta il supporto per configurarla.",
     "external_api_unreachable": "Non è possibile accedere all'API esterna. Per favore riprova più tardi.",
     "error_fetching_supported_integrations": "Non è possibile ottenere integrazioni supportate. Per favore riprova più tardi.",
@@ -129,51 +128,6 @@
     "webhook_secret_error": "Il webhook secret è richiesto",
     "connect_app": "Connetti App"
   },
-  "slack_integration": {
-    "name": "Slack",
-    "description": "Connetti il tuo workspace Slack con Plane.",
-    "connect_personal_account": "Connetti il tuo account Slack personale con Plane.",
-    "personal_account_connected": "Il tuo account {providerName} personale è ora connesso a Plane.",
-    "link_personal_account": "Collega il tuo account {providerName} personale a Plane.",
-    "connected_slack_workspaces": "Spazi di lavoro Slack connessi",
-    "connected_on": "Connesso su {date}",
-    "disconnect_workspace": "Disconnetti {name} workspace",
-    "alerts": {
-      "dm_alerts": {
-        "title": "Ricevi notifiche nei messaggi diretti di Slack per aggiornamenti importanti, promemoria e avvisi solo per te."
-      }
-    },
-    "project_updates": {
-      "title": "Aggiornamenti Progetto",
-      "description": "Configura notifiche di aggiornamenti di progetto per i tuoi progetti",
-      "add_new_project_update": "Aggiungi nuova notifica di aggiornamenti di progetto",
-      "project_updates_empty_state": "I progetti connessi ai canali Slack appariranno qui.",
-      "project_updates_form": {
-        "title": "Configura Aggiornamenti Progetto",
-        "description": "Ricevi notifiche di aggiornamenti di progetto in Slack quando vengono creati elementi di lavoro",
-        "failed_to_load_channels": "Impossibile caricare i canali da Slack",
-        "project_dropdown": {
-          "placeholder": "Seleziona un progetto",
-          "label": "Progetto Plane",
-          "no_projects": "Nessun progetto disponibile"
-        },
-        "channel_dropdown": {
-          "label": "Canale Slack",
-          "placeholder": "Seleziona un canale",
-          "no_channels": "Nessun canale disponibile"
-        },
-        "all_projects_connected": "Tutti i progetti sono già connessi a canali Slack.",
-        "all_channels_connected": "Tutti i canali Slack sono già connessi a progetti.",
-        "project_connection_success": "Connessione progetto creata con successo",
-        "project_connection_updated": "Connessione progetto aggiornata con successo",
-        "project_connection_deleted": "Connessione progetto eliminata con successo",
-        "failed_delete_project_connection": "Impossibile eliminare la connessione progetto",
-        "failed_create_project_connection": "Impossibile creare la connessione progetto",
-        "failed_upserting_project_connection": "Impossibile aggiornare la connessione progetto",
-        "failed_loading_project_connections": "Non è stato possibile caricare le tue connessioni progetto. Questo potrebbe essere dovuto a un problema di rete o un problema con l'integrazione."
-      }
-    }
-  },
   "sentry_integration": {
     "name": "Sentry",
     "description": "Connetti il tuo spazio di lavoro Sentry con Plane.",
@@ -197,72 +151,6 @@
   "bitbucket_dc_integration": {
     "name": "Bitbucket Data Center",
     "description": "Connetti e sincronizza i tuoi repository Bitbucket Data Center con Plane."
-  },
-  "oauth_bridge_integration": {
-    "name": "OAuth Bridge",
-    "description": "Convalida i token IdP esterni per l'accesso API.",
-    "header_description": "Convalida i token OIDC/JWT emessi esternamente dal tuo IdP (Azure AD, Okta, ecc.) per l'accesso all'API di Plane.",
-    "connected": "Connesso",
-    "connect": "Connetti",
-    "uninstall": "Disinstalla",
-    "uninstalling": "Disinstallazione...",
-    "install_success": "OAuth Bridge installato con successo.",
-    "install_error": "Installazione di OAuth Bridge non riuscita.",
-    "uninstall_success": "OAuth Bridge disinstallato.",
-    "uninstall_error": "Disinstallazione di OAuth Bridge non riuscita.",
-    "token_providers": "Provider di token",
-    "token_providers_description": "Configura gli IdP esterni i cui JWT sono accettati come credenziali API.",
-    "add_provider": "Aggiungi provider",
-    "edit_provider": "Modifica provider",
-    "enabled": "Abilitato",
-    "disabled": "Disabilitato",
-    "test": "Test",
-    "no_providers_title": "Nessun provider configurato.",
-    "no_providers_description": "Aggiungi un IdP per abilitare l'autenticazione con token esterni.",
-    "provider_updated": "Provider aggiornato.",
-    "provider_added": "Provider aggiunto.",
-    "provider_save_error": "Salvataggio del provider non riuscito.",
-    "provider_deleted": "Provider eliminato.",
-    "provider_delete_error": "Eliminazione del provider non riuscita.",
-    "provider_update_error": "Aggiornamento del provider non riuscito.",
-    "jwks_reachable": "JWKS raggiungibile",
-    "jwks_unreachable": "JWKS non raggiungibile",
-    "jwks_test_error": "Impossibile recuperare il JWKS dall'URL configurato.",
-    "provider_form": {
-      "name_label": "Nome",
-      "name_placeholder": "es. Azure AD Production",
-      "name_description": "Etichetta leggibile per questo provider di identità",
-      "name_required": "Il nome è obbligatorio.",
-      "issuer_label": "Emittente",
-      "issuer_placeholder": "https://login.microsoftonline.com/tenant-id/v2.0",
-      "issuer_description": "Valore atteso del claim iss nel JWT",
-      "issuer_required": "L'emittente è obbligatorio.",
-      "jwks_url_label": "URL JWKS",
-      "jwks_url_placeholder": "https://login.microsoftonline.com/tenant-id/discovery/v2.0/keys",
-      "jwks_url_description": "Endpoint HTTPS che fornisce il JSON Web Key Set del provider",
-      "jwks_url_required": "L'URL JWKS è obbligatorio.",
-      "jwks_url_https": "L'URL JWKS deve utilizzare HTTPS.",
-      "audience_label": "Pubblico",
-      "audience_placeholder": "api://my-app-id",
-      "audience_description": "Claim aud attesi nel JWT, separati da virgole.",
-      "user_claims_label": "Claim utente",
-      "user_claims_placeholder": "email",
-      "user_claims_description": "Claim JWT contenente l'indirizzo email dell'utente",
-      "user_claims_required": "Il claim utente è obbligatorio.",
-      "allowed_algorithms_label": "Algoritmi di firma consentiti",
-      "allowed_algorithms_description": "Algoritmi asimmetrici accettati per la verifica della firma JWT",
-      "allowed_algorithms_required": "È richiesto almeno un algoritmo.",
-      "select_algorithms": "Seleziona algoritmi",
-      "jwks_cache_ttl_label": "TTL cache JWKS (secondi)",
-      "jwks_cache_ttl_description": "Durata della cache delle chiavi JWKS del provider (minimo 60s, predefinito 24 ore)",
-      "jwks_cache_ttl_min": "Il TTL della cache deve essere di almeno 60 secondi.",
-      "rate_limit_label": "Limite di frequenza",
-      "rate_limit_placeholder": "120/minute",
-      "rate_limit_description": "Limitazione delle richieste come quantità/periodo (es. 120/minute). Lasciare vuoto per il limite predefinito.",
-      "enable_provider": "Abilita questo provider",
-      "saving": "Salvataggio...",
-      "update": "Aggiorna"
-    }
   },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",

@@ -7,7 +7,6 @@
     "not_enabled": "{name} nu este activat pentru acest workspace.",
     "not_configured": "Neconfigurat",
     "disconnect_personal_account": "Deconectează contul personal {providerName}",
-    "not_configured_message_admin": "Integrarea {name} nu este configurată. Te rugăm să contactezi administratorul instanței pentru a o configura.",
     "not_configured_message_support": "Integrarea {name} nu este configurată. Te rugăm să contactezi suportul pentru a o configura.",
     "external_api_unreachable": "Nu se poate accesa API-ul extern. Te rugăm să încerci din nou mai târziu.",
     "error_fetching_supported_integrations": "Nu se pot prelua integrările suportate. Te rugăm să încerci din nou mai târziu.",
@@ -129,51 +128,6 @@
     "webhook_secret_error": "Webhook secret este obligatoriu",
     "connect_app": "Conectează App"
   },
-  "slack_integration": {
-    "name": "Slack",
-    "description": "Conectează workspace-ul tău Slack cu Plane.",
-    "connect_personal_account": "Conectează contul tău personal Slack cu Plane.",
-    "personal_account_connected": "Contul tău personal {providerName} este acum conectat la Plane.",
-    "link_personal_account": "Leagă contul tău personal {providerName} de Plane.",
-    "connected_slack_workspaces": "Workspace-uri Slack conectate",
-    "connected_on": "Conectat pe {date}",
-    "disconnect_workspace": "Deconectează workspace-ul {name}",
-    "alerts": {
-      "dm_alerts": {
-        "title": "Primește notificări în mesajele directe Slack pentru actualizări importante, memento-uri și alerte doar pentru tine."
-      }
-    },
-    "project_updates": {
-      "title": "Actualizări Proiect",
-      "description": "Configurează notificări de actualizări ale proiectelor pentru proiectele tale",
-      "add_new_project_update": "Adaugă o nouă notificare de actualizări proiect",
-      "project_updates_empty_state": "Proiectele conectate cu Canale Slack vor apărea aici.",
-      "project_updates_form": {
-        "title": "Configurează Actualizări Proiect",
-        "description": "Primește notificări de actualizări proiect în Slack când sunt create elemente de lucru",
-        "failed_to_load_channels": "Nu s-au putut încărca canalele din Slack",
-        "project_dropdown": {
-          "placeholder": "Selectează un proiect",
-          "label": "Proiect Plane",
-          "no_projects": "Nu există proiecte disponibile"
-        },
-        "channel_dropdown": {
-          "label": "Canal Slack",
-          "placeholder": "Selectează un canal",
-          "no_channels": "Nu există canale disponibile"
-        },
-        "all_projects_connected": "Toate proiectele sunt deja conectate la canale Slack.",
-        "all_channels_connected": "Toate canalele Slack sunt deja conectate la proiecte.",
-        "project_connection_success": "Conexiunea proiectului a fost creată cu succes",
-        "project_connection_updated": "Conexiunea proiectului a fost actualizată cu succes",
-        "project_connection_deleted": "Conexiunea proiectului a fost ștearsă cu succes",
-        "failed_delete_project_connection": "Nu s-a putut șterge conexiunea proiectului",
-        "failed_create_project_connection": "Nu s-a putut crea conexiunea proiectului",
-        "failed_upserting_project_connection": "Nu s-a putut actualiza conexiunea proiectului",
-        "failed_loading_project_connections": "Nu am putut încărca conexiunile proiectelor tale. Acest lucru ar putea fi din cauza unei probleme de rețea sau a unei probleme cu integrarea."
-      }
-    }
-  },
   "sentry_integration": {
     "name": "Sentry",
     "description": "Conectează spațiul tău de lucru Sentry cu Plane.",
@@ -197,72 +151,6 @@
   "bitbucket_dc_integration": {
     "name": "Bitbucket Data Center",
     "description": "Conectează și sincronizează depozitele tale Bitbucket Data Center cu Plane."
-  },
-  "oauth_bridge_integration": {
-    "name": "OAuth Bridge",
-    "description": "Validează tokenurile IdP externe pentru accesul la API.",
-    "header_description": "Validați tokenurile OIDC/JWT emise extern de IdP-ul dvs. (Azure AD, Okta etc.) pentru accesul la API-ul Plane.",
-    "connected": "Conectat",
-    "connect": "Conectare",
-    "uninstall": "Dezinstalare",
-    "uninstalling": "Se dezinstalează...",
-    "install_success": "OAuth Bridge instalat cu succes.",
-    "install_error": "Instalarea OAuth Bridge a eșuat.",
-    "uninstall_success": "OAuth Bridge dezinstalat.",
-    "uninstall_error": "Dezinstalarea OAuth Bridge a eșuat.",
-    "token_providers": "Furnizori de tokenuri",
-    "token_providers_description": "Configurați IdP-urile externe ale căror JWT-uri sunt acceptate ca credențiale API.",
-    "add_provider": "Adăugare furnizor",
-    "edit_provider": "Editare furnizor",
-    "enabled": "Activat",
-    "disabled": "Dezactivat",
-    "test": "Test",
-    "no_providers_title": "Niciun furnizor configurat.",
-    "no_providers_description": "Adăugați un IdP pentru a activa autentificarea cu tokenuri externe.",
-    "provider_updated": "Furnizor actualizat.",
-    "provider_added": "Furnizor adăugat.",
-    "provider_save_error": "Salvarea furnizorului a eșuat.",
-    "provider_deleted": "Furnizor șters.",
-    "provider_delete_error": "Ștergerea furnizorului a eșuat.",
-    "provider_update_error": "Actualizarea furnizorului a eșuat.",
-    "jwks_reachable": "JWKS accesibil",
-    "jwks_unreachable": "JWKS inaccesibil",
-    "jwks_test_error": "Nu s-a putut obține JWKS de la URL-ul configurat.",
-    "provider_form": {
-      "name_label": "Nume",
-      "name_placeholder": "ex. Azure AD Production",
-      "name_description": "Etichetă lizibilă pentru acest furnizor de identitate",
-      "name_required": "Numele este obligatoriu.",
-      "issuer_label": "Emitent",
-      "issuer_placeholder": "https://login.microsoftonline.com/tenant-id/v2.0",
-      "issuer_description": "Valoarea așteptată a claim-ului iss din JWT",
-      "issuer_required": "Emitentul este obligatoriu.",
-      "jwks_url_label": "URL JWKS",
-      "jwks_url_placeholder": "https://login.microsoftonline.com/tenant-id/discovery/v2.0/keys",
-      "jwks_url_description": "Endpoint HTTPS care furnizează JSON Web Key Set-ul furnizorului",
-      "jwks_url_required": "URL-ul JWKS este obligatoriu.",
-      "jwks_url_https": "URL-ul JWKS trebuie să folosească HTTPS.",
-      "audience_label": "Audiență",
-      "audience_placeholder": "api://my-app-id",
-      "audience_description": "Claim-urile aud așteptate din JWT, separate prin virgulă.",
-      "user_claims_label": "Claim utilizator",
-      "user_claims_placeholder": "email",
-      "user_claims_description": "Claim JWT care conține adresa de email a utilizatorului",
-      "user_claims_required": "Claim-ul utilizator este obligatoriu.",
-      "allowed_algorithms_label": "Algoritmi de semnare permiși",
-      "allowed_algorithms_description": "Algoritmi asimetrici acceptați pentru verificarea semnăturii JWT",
-      "allowed_algorithms_required": "Este necesar cel puțin un algoritm.",
-      "select_algorithms": "Selectați algoritmi",
-      "jwks_cache_ttl_label": "TTL cache JWKS (secunde)",
-      "jwks_cache_ttl_description": "Durata stocării în cache a cheilor JWKS ale furnizorului (minim 60s, implicit 24 ore)",
-      "jwks_cache_ttl_min": "TTL-ul cache-ului trebuie să fie de cel puțin 60 secunde.",
-      "rate_limit_label": "Limită de rată",
-      "rate_limit_placeholder": "120/minute",
-      "rate_limit_description": "Limitare cereri ca număr/perioadă (ex. 120/minute). Lăsați gol pentru limita implicită.",
-      "enable_provider": "Activează acest furnizor",
-      "saving": "Se salvează...",
-      "update": "Actualizare"
-    }
   },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",

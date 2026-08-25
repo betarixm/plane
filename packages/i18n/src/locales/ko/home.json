@@ -8,11 +8,6 @@
         "description": "Plane에서 대부분의 작업은 프로젝트로 시작됩니다.",
         "cta": "시작하기"
       },
-      "invite_team": {
-        "title": "팀 초대",
-        "description": "동료와 함께 빌드, 배포 및 관리하세요.",
-        "cta": "초대하기"
-      },
       "configure_workspace": {
         "title": "작업 공간 설정",
         "description": "기능을 켜거나 끄거나 그 이상을 수행하세요.",

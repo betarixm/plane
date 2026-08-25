@@ -360,7 +360,6 @@
     }
   },
   "project_members": {
-    "full_name": "Nombre completo",
     "display_name": "Nombre para mostrar",
     "email": "Correo electrónico",
     "joining_date": "Fecha de ingreso",

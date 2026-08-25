@@ -108,8 +108,7 @@
       "nav_project_overview": "前往專案概覽"
     },
     "account_actions": {
-      "sign_out": "登出",
-      "workspace_invites": "工作區邀請"
+      "sign_out": "登出"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "切換應用程式側邊欄",

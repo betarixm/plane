@@ -8,11 +8,6 @@
         "description": "Väčšina vecí začína projektom v Plane.",
         "cta": "Začať"
       },
-      "invite_team": {
-        "title": "Pozvať tím",
-        "description": "Spolupracujte s kolegami na tvorbe, dodávkach a správe.",
-        "cta": "Pozvať ich"
-      },
       "configure_workspace": {
         "title": "Nastavte si svoj pracovný priestor.",
         "description": "Aktivujte alebo deaktivujte funkcie alebo choďte ďalej.",

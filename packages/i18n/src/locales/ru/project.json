@@ -360,7 +360,6 @@
     }
   },
   "project_members": {
-    "full_name": "Полное имя",
     "display_name": "Отображаемое имя",
     "email": "Email",
     "joining_date": "Дата присоединения",

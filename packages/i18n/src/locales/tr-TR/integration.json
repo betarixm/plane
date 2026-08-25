@@ -7,7 +7,6 @@
     "not_enabled": "{name} bu workspace için etkinleştirilmemiş.",
     "not_configured": "Yapılandırılmamış",
     "disconnect_personal_account": "Kişisel {providerName} hesabını bağlantıdan kes",
-    "not_configured_message_admin": "{name} entegrasyonu yapılandırılmamış. Lütfen yapılandırmak için instance admininizle iletişime geçin.",
     "not_configured_message_support": "{name} entegrasyonu yapılandırılmamış. Lütfen yapılandırmak için destekle iletişime geçin.",
     "external_api_unreachable": "Harici API'ye erişilemiyor. Lütfen daha sonra tekrar deneyin.",
     "error_fetching_supported_integrations": "Desteklenen entegrasyonlar getirilemedi. Lütfen daha sonra tekrar deneyin.",
@@ -129,51 +128,6 @@
     "webhook_secret_error": "Webhook gizli anahtarı gereklidir",
     "connect_app": "Uygulamayı Bağla"
   },
-  "slack_integration": {
-    "name": "Slack",
-    "description": "Slack workspacenizi Plane ile bağlayın.",
-    "connect_personal_account": "Kişisel Slack hesabınızı Plane ile bağlayın.",
-    "personal_account_connected": "Kişisel {providerName} hesabınız artık Plane'e bağlı.",
-    "link_personal_account": "Kişisel {providerName} hesabınızı Plane'e bağlayın.",
-    "connected_slack_workspaces": "Bağlı Slack workspaceleri",
-    "connected_on": "{date} tarihinde bağlandı",
-    "disconnect_workspace": "{name} workspaceini bağlantıdan kes",
-    "alerts": {
-      "dm_alerts": {
-        "title": "Önemli güncellemeler, hatırlatmalar ve sadece size özel uyarılar için Slack direkt mesajlarında bildirim alın."
-      }
-    },
-    "project_updates": {
-      "title": "Proje Güncellemeleri",
-      "description": "Projeleriniz için proje güncelleme bildirimlerini yapılandırın",
-      "add_new_project_update": "Yeni proje güncelleme bildirimi ekle",
-      "project_updates_empty_state": "Slack Kanallarına bağlı projeler burada görünecek.",
-      "project_updates_form": {
-        "title": "Proje Güncellemelerini Yapılandır",
-        "description": "İş öğeleri oluşturulduğunda Slack'te proje güncelleme bildirimleri alın",
-        "failed_to_load_channels": "Slack'ten kanallar yüklenemedi",
-        "project_dropdown": {
-          "placeholder": "Bir proje seçin",
-          "label": "Plane Projesi",
-          "no_projects": "Kullanılabilir proje yok"
-        },
-        "channel_dropdown": {
-          "label": "Slack Kanalı",
-          "placeholder": "Bir kanal seçin",
-          "no_channels": "Kullanılabilir kanal yok"
-        },
-        "all_projects_connected": "Tüm projeler zaten Slack kanallarına bağlı.",
-        "all_channels_connected": "Tüm Slack kanalları zaten projelere bağlı.",
-        "project_connection_success": "Proje bağlantısı başarıyla oluşturuldu",
-        "project_connection_updated": "Proje bağlantısı başarıyla güncellendi",
-        "project_connection_deleted": "Proje bağlantısı başarıyla silindi",
-        "failed_delete_project_connection": "Proje bağlantısı silinemedi",
-        "failed_create_project_connection": "Proje bağlantısı oluşturulamadı",
-        "failed_upserting_project_connection": "Proje bağlantısı güncellenemedi",
-        "failed_loading_project_connections": "Proje bağlantılarınızı yükleyemedik. Bu, bir ağ sorunu veya entegrasyonla ilgili bir sorundan kaynaklanıyor olabilir."
-      }
-    }
-  },
   "sentry_integration": {
     "name": "Sentry",
     "description": "Sentry çalışma alanınızı Plane ile bağlayın.",
@@ -197,72 +151,6 @@
   "bitbucket_dc_integration": {
     "name": "Bitbucket Data Center",
     "description": "Bitbucket Data Center depolarınızı Plane ile bağlayın ve senkronize edin."
-  },
-  "oauth_bridge_integration": {
-    "name": "OAuth Bridge",
-    "description": "API erişimi için harici IdP tokenlarını doğrulayın.",
-    "header_description": "IdP'nizden (Azure AD, Okta vb.) harici olarak verilen OIDC/JWT tokenlarını Plane API erişimi için doğrulayın.",
-    "connected": "Bağlı",
-    "connect": "Bağlan",
-    "uninstall": "Kaldır",
-    "uninstalling": "Kaldırılıyor...",
-    "install_success": "OAuth Bridge başarıyla kuruldu.",
-    "install_error": "OAuth Bridge kurulamadı.",
-    "uninstall_success": "OAuth Bridge kaldırıldı.",
-    "uninstall_error": "OAuth Bridge kaldırılamadı.",
-    "token_providers": "Token Sağlayıcıları",
-    "token_providers_description": "JWT'leri API kimlik bilgileri olarak kabul edilen harici IdP'leri yapılandırın.",
-    "add_provider": "Sağlayıcı ekle",
-    "edit_provider": "Sağlayıcıyı düzenle",
-    "enabled": "Etkin",
-    "disabled": "Devre dışı",
-    "test": "Test",
-    "no_providers_title": "Yapılandırılmış sağlayıcı yok.",
-    "no_providers_description": "Harici token kimlik doğrulamasını etkinleştirmek için bir IdP ekleyin.",
-    "provider_updated": "Sağlayıcı güncellendi.",
-    "provider_added": "Sağlayıcı eklendi.",
-    "provider_save_error": "Sağlayıcı kaydedilemedi.",
-    "provider_deleted": "Sağlayıcı silindi.",
-    "provider_delete_error": "Sağlayıcı silinemedi.",
-    "provider_update_error": "Sağlayıcı güncellenemedi.",
-    "jwks_reachable": "JWKS erişilebilir",
-    "jwks_unreachable": "JWKS erişilemez",
-    "jwks_test_error": "Yapılandırılmış URL'den JWKS alınamadı.",
-    "provider_form": {
-      "name_label": "Ad",
-      "name_placeholder": "ör. Azure AD Production",
-      "name_description": "Bu kimlik sağlayıcısı için okunabilir etiket",
-      "name_required": "Ad gereklidir.",
-      "issuer_label": "Yayıncı",
-      "issuer_placeholder": "https://login.microsoftonline.com/tenant-id/v2.0",
-      "issuer_description": "JWT'deki beklenen iss claim değeri",
-      "issuer_required": "Yayıncı gereklidir.",
-      "jwks_url_label": "JWKS URL",
-      "jwks_url_placeholder": "https://login.microsoftonline.com/tenant-id/discovery/v2.0/keys",
-      "jwks_url_description": "Sağlayıcının JSON Web Key Set'ini sunan HTTPS uç noktası",
-      "jwks_url_required": "JWKS URL gereklidir.",
-      "jwks_url_https": "JWKS URL HTTPS kullanmalıdır.",
-      "audience_label": "Hedef Kitle",
-      "audience_placeholder": "api://my-app-id",
-      "audience_description": "JWT'deki beklenen aud claim'leri, virgülle ayrılmış.",
-      "user_claims_label": "Kullanıcı claim'i",
-      "user_claims_placeholder": "email",
-      "user_claims_description": "Kullanıcının e-posta adresini içeren JWT claim'i",
-      "user_claims_required": "Kullanıcı claim'i gereklidir.",
-      "allowed_algorithms_label": "İzin verilen imza algoritmaları",
-      "allowed_algorithms_description": "JWT imza doğrulaması için kabul edilen asimetrik algoritmalar",
-      "allowed_algorithms_required": "En az bir algoritma gereklidir.",
-      "select_algorithms": "Algoritma seçin",
-      "jwks_cache_ttl_label": "JWKS önbellek TTL (saniye)",
-      "jwks_cache_ttl_description": "Sağlayıcının JWKS anahtarlarının önbellekte tutulma süresi (minimum 60s, varsayılan 24 saat)",
-      "jwks_cache_ttl_min": "Önbellek TTL en az 60 saniye olmalıdır.",
-      "rate_limit_label": "Hız limiti",
-      "rate_limit_placeholder": "120/minute",
-      "rate_limit_description": "İstek sınırlaması sayı/dönem olarak (ör. 120/minute). Varsayılan hız limiti için boş bırakın.",
-      "enable_provider": "Bu sağlayıcıyı etkinleştir",
-      "saving": "Kaydediliyor...",
-      "update": "Güncelle"
-    }
   },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",

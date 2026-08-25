@@ -108,8 +108,7 @@
       "nav_project_overview": "Ir para visão geral do projeto"
     },
     "account_actions": {
-      "sign_out": "Sair",
-      "workspace_invites": "Convites do espaço de trabalho"
+      "sign_out": "Sair"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "Alternar barra lateral do aplicativo",

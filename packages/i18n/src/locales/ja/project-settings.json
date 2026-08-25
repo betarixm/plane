@@ -29,11 +29,6 @@
       "guest_super_permissions": {
         "title": "ゲストユーザーにすべての作業項目の閲覧権限を付与:",
         "sub_heading": "これにより、ゲストはプロジェクトのすべての作業項目を閲覧できるようになります。"
-      },
-      "invite_members": {
-        "title": "メンバーを招待",
-        "sub_heading": "プロジェクトに参加するメンバーを招待します。",
-        "select_co_worker": "共同作業者を選択"
       }
     },
     "states": {

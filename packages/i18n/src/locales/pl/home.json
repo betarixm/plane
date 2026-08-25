@@ -8,11 +8,6 @@
         "description": "Większość rzeczy zaczyna się od projektu w Plane.",
         "cta": "Zacznij"
       },
-      "invite_team": {
-        "title": "Zaproś zespół",
-        "description": "Współpracuj z kolegami, twórz, dostarczaj i zarządzaj.",
-        "cta": "Zaproś ich"
-      },
       "configure_workspace": {
         "title": "Skonfiguruj swoją przestrzeń roboczą.",
         "description": "Włącz lub wyłącz funkcje albo idź dalej.",

@@ -8,11 +8,6 @@
         "description": "A maioria das coisas começa com um projeto no Plane.",
         "cta": "Começar"
       },
-      "invite_team": {
-        "title": "Convide sua equipe",
-        "description": "Construa, entregue e gerencie com colegas de trabalho.",
-        "cta": "Convidar"
-      },
       "configure_workspace": {
         "title": "Configure seu espaço de trabalho.",
         "description": "Ative ou desative recursos ou vá além disso.",

@@ -1,70 +1,16 @@
 {
   "account_settings": {
-    "profile": {
-      "change_email_modal": {
-        "title": "メールアドレスを変更",
-        "description": "確認リンクを受け取るには、新しいメールアドレスを入力してください。",
-        "toasts": {
-          "success_title": "成功",
-          "success_message": "メールアドレスを更新しました。再度サインインしてください。"
-        },
-        "form": {
-          "email": {
-            "label": "新しいメールアドレス",
-            "placeholder": "メールアドレスを入力",
-            "errors": {
-              "required": "メールアドレスは必須です",
-              "invalid": "メールアドレスが無効です",
-              "exists": "メールアドレスは既に存在します。別のものを使用してください。",
-              "validation_failed": "メールアドレスの確認に失敗しました。もう一度お試しください。"
-            }
-          },
-          "code": {
-            "label": "認証コード",
-            "placeholder": "123456",
-            "helper_text": "認証コードを新しいメールに送信しました。",
-            "errors": {
-              "required": "認証コードは必須です",
-              "invalid": "認証コードが無効です。もう一度お試しください。"
-            }
-          }
-        },
-        "actions": {
-          "continue": "続行",
-          "confirm": "確認",
-          "cancel": "キャンセル"
-        },
-        "states": {
-          "sending": "送信中…"
-        }
-      }
-    },
     "preferences": {
       "heading": "環境設定",
       "description": "あなたの働き方に合わせてアプリの体験をカスタマイズします"
     },
     "notifications": {
       "heading": "メール通知",
-      "description": "購読している作業項目の最新情報を受け取ります。通知を受け取るには有効にしてください。",
-      "select_default_view": "デフォルト表示を選択",
-      "compact": "コンパクト",
-      "full": "全画面"
-    },
-    "security": {
-      "heading": "セキュリティ"
+      "description": "購読している作業項目の最新情報を受け取ります。通知を受け取るには有効にしてください。"
     },
     "api_tokens": {
       "title": "個人アクセストークン",
       "description": "外部システムやアプリケーションとデータを統合するための安全なAPIトークンを生成します。"
-    },
-    "activity": {
-      "heading": "アクティビティ",
-      "description": "すべてのプロジェクトと作業項目にわたる最近のアクションと変更を追跡します。"
-    },
-    "connections": {
-      "title": "接続",
-      "heading": "接続",
-      "description": "ワークスペースの接続設定を管理します。"
     }
   },
   "profile": {
@@ -98,12 +44,9 @@
     },
     "actions": {
       "profile": "プロフィール",
-      "security": "セキュリティ",
-      "activity": "アクティビティ",
       "preferences": "環境設定",
       "notifications": "通知",
-      "api-tokens": "個人アクセストークン",
-      "connections": "接続"
+      "api-tokens": "個人アクセストークン"
     },
     "tabs": {
       "summary": "サマリー",

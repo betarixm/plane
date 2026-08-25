@@ -108,8 +108,7 @@
       "nav_project_overview": "Перейти до огляду проєкту"
     },
     "account_actions": {
-      "sign_out": "Вийти",
-      "workspace_invites": "Запрошення до робочого простору"
+      "sign_out": "Вийти"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "Перемкнути бічну панель застосунку",

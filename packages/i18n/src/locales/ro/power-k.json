@@ -108,8 +108,7 @@
       "nav_project_overview": "Mergi la prezentarea generală a proiectului"
     },
     "account_actions": {
-      "sign_out": "Deconectează-te",
-      "workspace_invites": "Invitații la spațiul de lucru"
+      "sign_out": "Deconectează-te"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "Comută bara laterală a aplicației",

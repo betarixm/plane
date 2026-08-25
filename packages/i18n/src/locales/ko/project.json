@@ -360,7 +360,6 @@
     }
   },
   "project_members": {
-    "full_name": "성명",
     "display_name": "표시 이름",
     "email": "이메일",
     "joining_date": "가입일",

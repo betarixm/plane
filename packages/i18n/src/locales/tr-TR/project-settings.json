@@ -29,11 +29,6 @@
       "guest_super_permissions": {
         "title": "Misafir kullanıcılara tüm iş öğelerini görüntüleme izni ver:",
         "sub_heading": "Bu, misafirlerin tüm proje iş öğelerini görüntülemesine izin verecektir."
-      },
-      "invite_members": {
-        "title": "Üyeleri davet et",
-        "sub_heading": "Projenizde çalışmaları için üyeleri davet edin.",
-        "select_co_worker": "İş arkadaşı seç"
       }
     },
     "states": {

@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Membres",
-        "add_member": "Ajouter un membre",
-        "pending_invites": "Invitations en attente",
-        "invitations_sent_successfully": "Invitations envoyées avec succès",
-        "leave_confirmation": "Êtes-vous sûr de vouloir quitter l’espace de travail ? Vous n’aurez plus accès à cet espace de travail. Cette action ne peut pas être annulée.",
         "details": {
-          "full_name": "Nom complet",
           "display_name": "Nom d’affichage",
           "email_address": "Adresse e-mail",
           "account_type": "Type de compte",
           "authentication": "Authentification",
           "joining_date": "Date d’adhésion"
-        },
-        "modal": {
-          "title": "Inviter des personnes à collaborer",
-          "description": "Invitez des personnes à collaborer sur votre espace de travail.",
-          "button": "Envoyer les invitations",
-          "button_loading": "Envoi des invitations",
-          "placeholder": "nom@entreprise.com",
-          "errors": {
-            "required": "Nous avons besoin d’une adresse e-mail pour les inviter.",
-            "invalid": "L’e-mail est invalide"
-          }
         }
       },
       "billing_and_plans": {

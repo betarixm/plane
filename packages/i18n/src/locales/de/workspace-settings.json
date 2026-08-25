@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Mitglieder",
-        "add_member": "Mitglied hinzufügen",
-        "pending_invites": "Ausstehende Einladungen",
-        "invitations_sent_successfully": "Einladungen erfolgreich versendet",
-        "leave_confirmation": "Möchten Sie diesen Arbeitsbereich wirklich verlassen? Sie verlieren den Zugriff. Diese Aktion ist nicht umkehrbar.",
         "details": {
-          "full_name": "Vollständiger Name",
           "display_name": "Anzeigename",
           "email_address": "E-Mail-Adresse",
           "account_type": "Kontotyp",
           "authentication": "Authentifizierung",
           "joining_date": "Beitrittsdatum"
-        },
-        "modal": {
-          "title": "Mitarbeiter einladen",
-          "description": "Laden Sie Personen zur Zusammenarbeit ein.",
-          "button": "Einladungen senden",
-          "button_loading": "Einladungen werden gesendet",
-          "placeholder": "name@unternehmen.de",
-          "errors": {
-            "required": "Eine E-Mail-Adresse ist erforderlich.",
-            "invalid": "E-Mail ist ungültig"
-          }
         }
       },
       "billing_and_plans": {

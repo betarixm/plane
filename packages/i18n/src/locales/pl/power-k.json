@@ -108,8 +108,7 @@
       "nav_project_overview": "Przejdź do przeglądu projektu"
     },
     "account_actions": {
-      "sign_out": "Wyloguj się",
-      "workspace_invites": "Zaproszenia do przestrzeni roboczej"
+      "sign_out": "Wyloguj się"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "Przełącz pasek boczny aplikacji",

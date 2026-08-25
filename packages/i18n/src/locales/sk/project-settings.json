@@ -29,11 +29,6 @@
       "guest_super_permissions": {
         "title": "Udeľovať hosťom prístup ku všetkým položkám:",
         "sub_heading": "Hostia uvidia všetky položky v projekte."
-      },
-      "invite_members": {
-        "title": "Pozvať členov",
-        "sub_heading": "Pozvite členov do projektu.",
-        "select_co_worker": "Vybrať spolupracovníka"
       }
     },
     "states": {

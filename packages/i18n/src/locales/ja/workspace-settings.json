@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "メンバー",
-        "add_member": "メンバーを追加",
-        "pending_invites": "保留中の招待",
-        "invitations_sent_successfully": "招待が正常に送信されました",
-        "leave_confirmation": "ワークスペースから退出してもよろしいですか？このワークスペースにアクセスできなくなります。この操作は取り消せません。",
         "details": {
-          "full_name": "フルネーム",
           "display_name": "表示名",
           "email_address": "メールアドレス",
           "account_type": "アカウントタイプ",
           "authentication": "認証",
           "joining_date": "参加日"
-        },
-        "modal": {
-          "title": "共同作業者を招待",
-          "description": "ワークスペースに共同作業者を招待します。",
-          "button": "招待を送信",
-          "button_loading": "招待を送信中",
-          "placeholder": "name@company.com",
-          "errors": {
-            "required": "招待するにはメールアドレスが必要です。",
-            "invalid": "メールアドレスが無効です"
-          }
         }
       },
       "billing_and_plans": {

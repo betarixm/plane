@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "멤버",
-        "add_member": "멤버 추가",
-        "pending_invites": "보류 중인 초대",
-        "invitations_sent_successfully": "초대가 성공적으로 전송되었습니다",
-        "leave_confirmation": "작업 공간을 떠나시겠습니까? 더 이상 이 작업 공간에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
         "details": {
-          "full_name": "전체 이름",
           "display_name": "표시 이름",
           "email_address": "이메일 주소",
           "account_type": "계정 유형",
           "authentication": "인증",
           "joining_date": "가입 날짜"
-        },
-        "modal": {
-          "title": "사람들을 초대하여 협업하세요",
-          "description": "작업 공간에서 협업할 사람들을 초대하세요.",
-          "button": "초대 전송",
-          "button_loading": "초대 전송 중",
-          "placeholder": "name@company.com",
-          "errors": {
-            "required": "초대하려면 이메일 주소가 필요합니다.",
-            "invalid": "이메일이 유효하지 않습니다"
-          }
         }
       },
       "billing_and_plans": {

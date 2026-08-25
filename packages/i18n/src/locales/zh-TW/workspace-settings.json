@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "成員",
-        "add_member": "新增成員",
-        "pending_invites": "待處理的邀請",
-        "invitations_sent_successfully": "邀請傳送成功",
-        "leave_confirmation": "您確定要離開工作區嗎？您將無法再存取此工作區。此操作無法復原。",
         "details": {
-          "full_name": "全名",
           "display_name": "顯示名稱",
           "email_address": "電子郵件地址",
           "account_type": "帳號類型",
           "authentication": "驗證",
           "joining_date": "加入日期"
-        },
-        "modal": {
-          "title": "邀請人員協作",
-          "description": "邀請人員加入您的工作區進行協作。",
-          "button": "傳送邀請",
-          "button_loading": "傳送邀請中",
-          "placeholder": "name@company.com",
-          "errors": {
-            "required": "我們需要電子郵件地址才能邀請他們。",
-            "invalid": "電子郵件無效"
-          }
         }
       },
       "billing_and_plans": {

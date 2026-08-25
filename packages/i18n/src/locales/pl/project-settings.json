@@ -29,11 +29,6 @@
       "guest_super_permissions": {
         "title": "Nadaj gościom dostęp do wszystkich elementów:",
         "sub_heading": "Goście zobaczą wszystkie elementy w projekcie."
-      },
-      "invite_members": {
-        "title": "Zaproś członków",
-        "sub_heading": "Zaproś członków do projektu.",
-        "select_co_worker": "Wybierz współpracownika"
       }
     },
     "states": {

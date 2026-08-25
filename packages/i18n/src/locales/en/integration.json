@@ -7,7 +7,6 @@
     "not_enabled": "{name} is not enabled for this workspace.",
     "not_configured": "Not configured",
     "disconnect_personal_account": "Disconnect personal {providerName} account",
-    "not_configured_message_admin": "{name} integration is not configured. Please contact your instance admin to configure it.",
     "not_configured_message_support": "{name} integration is not configured. Please contact support to configure it.",
     "external_api_unreachable": "Not able to access the external API. Please try again later.",
     "error_fetching_supported_integrations": "Not able to fetch supported integrations. Please try again later.",
@@ -129,51 +128,6 @@
     "webhook_secret_error": "Webhook secret is required",
     "connect_app": "Connect App"
   },
-  "slack_integration": {
-    "name": "Slack",
-    "description": "Connect your Slack workspace with Plane.",
-    "connect_personal_account": "Connect your personal Slack account with Plane.",
-    "personal_account_connected": "Your personal {providerName} account is now connected to Plane.",
-    "link_personal_account": "Link your personal {providerName} account to Plane.",
-    "connected_slack_workspaces": "Connected Slack workspaces",
-    "connected_on": "Connected on {date}",
-    "disconnect_workspace": "Disconnect {name} workspace",
-    "alerts": {
-      "dm_alerts": {
-        "title": "Get notified in Slack DMs for important updates, reminders, and alerts just for you."
-      }
-    },
-    "project_updates": {
-      "title": "Project Notifications",
-      "description": "Configure Slack channels for project notifications",
-      "add_new_project_update": "Add new project notifications",
-      "project_updates_empty_state": "Projects connected with Slack Channels will appear here.",
-      "project_updates_form": {
-        "title": "Configure Slack Channel",
-        "description": "Receive project notifications in selected Slack channel when work item is created",
-        "failed_to_load_channels": "Failed to load channels from Slack",
-        "project_dropdown": {
-          "placeholder": "Select a project",
-          "label": "Plane Project",
-          "no_projects": "No projects available"
-        },
-        "channel_dropdown": {
-          "label": "Slack Channel",
-          "placeholder": "Select a channel",
-          "no_channels": "No channels available"
-        },
-        "all_projects_connected": "All projects are already connected to Slack channels.",
-        "all_channels_connected": "All Slack channels are already connected to projects.",
-        "project_connection_success": "Project connection created successfully",
-        "project_connection_updated": "Project connection updated successfully",
-        "project_connection_deleted": "Project connection deleted successfully",
-        "failed_delete_project_connection": "Failed to delete project connection",
-        "failed_create_project_connection": "Failed to create project connection",
-        "failed_upserting_project_connection": "Failed to upsert project connection",
-        "failed_loading_project_connections": "We couldn't load your project connections. This could be due to a network issue or a problem with the integration."
-      }
-    }
-  },
   "sentry_integration": {
     "name": "Sentry",
     "description": "Connect your Sentry workspace with Plane.",
@@ -197,72 +151,6 @@
   "bitbucket_dc_integration": {
     "name": "Bitbucket Data Center",
     "description": "Connect and sync your Bitbucket Data Center repositories with Plane."
-  },
-  "oauth_bridge_integration": {
-    "name": "OAuth Bridge",
-    "description": "Validate external IdP tokens for API access.",
-    "header_description": "Validate externally-issued OIDC/JWT tokens from your IdP (Azure AD, Okta, etc.) for Plane API access.",
-    "connected": "Connected",
-    "connect": "Connect",
-    "uninstall": "Uninstall",
-    "uninstalling": "Uninstalling...",
-    "install_success": "OAuth Bridge installed successfully.",
-    "install_error": "Failed to install OAuth Bridge.",
-    "uninstall_success": "OAuth Bridge uninstalled.",
-    "uninstall_error": "Failed to uninstall OAuth Bridge.",
-    "token_providers": "Token Providers",
-    "token_providers_description": "Configure external IdPs whose JWTs are accepted as API credentials.",
-    "add_provider": "Add provider",
-    "edit_provider": "Edit Provider",
-    "enabled": "Enabled",
-    "disabled": "Disabled",
-    "test": "Test",
-    "no_providers_title": "No providers configured.",
-    "no_providers_description": "Add an IdP to enable external token authentication.",
-    "provider_updated": "Provider updated.",
-    "provider_added": "Provider added.",
-    "provider_save_error": "Failed to save provider.",
-    "provider_deleted": "Provider deleted.",
-    "provider_delete_error": "Failed to delete provider.",
-    "provider_update_error": "Failed to update provider.",
-    "jwks_reachable": "JWKS Reachable",
-    "jwks_unreachable": "JWKS Unreachable",
-    "jwks_test_error": "Could not fetch JWKS from the configured URL.",
-    "provider_form": {
-      "name_label": "Name",
-      "name_placeholder": "e.g. Azure AD Production",
-      "name_description": "Human-readable label for this identity provider",
-      "name_required": "Name is required.",
-      "issuer_label": "Issuer",
-      "issuer_placeholder": "https://login.microsoftonline.com/tenant-id/v2.0",
-      "issuer_description": "Expected iss claim value in the JWT",
-      "issuer_required": "Issuer is required.",
-      "jwks_url_label": "JWKS URL",
-      "jwks_url_placeholder": "https://login.microsoftonline.com/tenant-id/discovery/v2.0/keys",
-      "jwks_url_description": "HTTPS endpoint serving the provider's JSON Web Key Set",
-      "jwks_url_required": "JWKS URL is required.",
-      "jwks_url_https": "JWKS URL must use HTTPS.",
-      "audience_label": "Audience",
-      "audience_placeholder": "api://my-app-id",
-      "audience_description": "Expected aud claim(s) in the JWT, comma-separated.",
-      "user_claims_label": "User claims",
-      "user_claims_placeholder": "email, preferred_username, upn",
-      "user_claims_description": "Comma-separated JWT claims to match against the Plane email (first match wins)",
-      "user_claims_required": "At least one user claim is required.",
-      "allowed_algorithms_label": "Allowed signing algorithms",
-      "allowed_algorithms_description": "Asymmetric algorithms accepted for JWT signature verification",
-      "allowed_algorithms_required": "At least one algorithm is required.",
-      "select_algorithms": "Select algorithms",
-      "jwks_cache_ttl_label": "JWKS cache TTL (seconds)",
-      "jwks_cache_ttl_description": "How long to cache the provider's JWKS keys (minimum 60s, default 24 hours)",
-      "jwks_cache_ttl_min": "Cache TTL must be at least 60 seconds.",
-      "rate_limit_label": "Rate limit",
-      "rate_limit_placeholder": "120/minute",
-      "rate_limit_description": "Request throttle as count/period (e.g. 120/minute). Leave blank for the default rate limit.",
-      "enable_provider": "Enable this provider",
-      "saving": "Saving...",
-      "update": "Update"
-    }
   },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",

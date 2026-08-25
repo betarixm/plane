@@ -108,8 +108,7 @@
       "nav_project_overview": "Đi đến tổng quan dự án"
     },
     "account_actions": {
-      "sign_out": "Đăng xuất",
-      "workspace_invites": "Lời mời không gian làm việc"
+      "sign_out": "Đăng xuất"
     },
     "miscellaneous_actions": {
       "toggle_app_sidebar": "Bật/tắt thanh bên ứng dụng",

@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Membri",
-        "add_member": "Adaugă membru",
-        "pending_invites": "Invitații în așteptare",
-        "invitations_sent_successfully": "Invitațiile au fost trimise cu succes",
-        "leave_confirmation": "Ești sigur că vrei să părăsești spațiul de lucru? Nu vei mai avea acces la acest spațiu. Această acțiune este ireversibilă.",
         "details": {
-          "full_name": "Nume complet",
           "display_name": "Nume afișat",
           "email_address": "Adresă de email",
           "account_type": "Tip cont",
           "authentication": "Autentificare",
           "joining_date": "Data înscrierii"
-        },
-        "modal": {
-          "title": "Invită persoane cu care să colaborezi",
-          "description": "Invită persoane cu care să colaborezi în spațiul tău de lucru.",
-          "button": "Trimite invitațiile",
-          "button_loading": "Se trimit invitațiile",
-          "placeholder": "nume@companie.ro",
-          "errors": {
-            "required": "Avem nevoie de o adresă de email pentru a trimite invitația.",
-            "invalid": "Adresa de email este invalidă"
-          }
         }
       },
       "billing_and_plans": {

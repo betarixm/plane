@@ -6,7 +6,6 @@
 
 export const NAMESPACES = [
   "accessibility",
-  "auth",
   "automation",
   "common",
   "cycle",
@@ -25,7 +24,6 @@ export const NAMESPACES = [
   "settings",
   "stickies",
   "template",
-  "tour",
   "update",
   "wiki",
   "work-item",

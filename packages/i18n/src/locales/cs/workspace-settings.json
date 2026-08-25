@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Členové",
-        "add_member": "Přidat člena",
-        "pending_invites": "Čekající pozvánky",
-        "invitations_sent_successfully": "Pozvánky úspěšně odeslány",
-        "leave_confirmation": "Opravdu chcete opustit prostor? Ztratíte přístup. Akce je nevratná.",
         "details": {
-          "full_name": "Celé jméno",
           "display_name": "Zobrazované jméno",
           "email_address": "E-mailová adresa",
           "account_type": "Typ účtu",
           "authentication": "Ověřování",
           "joining_date": "Datum připojení"
-        },
-        "modal": {
-          "title": "Pozvat spolupracovníky",
-          "description": "Pozvěte lidi ke spolupráci.",
-          "button": "Odeslat pozvánky",
-          "button_loading": "Odesílání pozvánek",
-          "placeholder": "jmeno@spolecnost.cz",
-          "errors": {
-            "required": "Vyžaduje se e-mailová adresa.",
-            "invalid": "E-mail je neplatný"
-          }
         }
       },
       "billing_and_plans": {

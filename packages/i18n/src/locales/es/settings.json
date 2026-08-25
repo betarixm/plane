@@ -1,70 +1,16 @@
 {
   "account_settings": {
-    "profile": {
-      "change_email_modal": {
-        "title": "Cambiar correo electrónico",
-        "description": "Introduce una nueva dirección de correo electrónico para recibir un enlace de verificación.",
-        "toasts": {
-          "success_title": "¡Éxito!",
-          "success_message": "Correo electrónico actualizado correctamente. Inicia sesión de nuevo."
-        },
-        "form": {
-          "email": {
-            "label": "Nuevo correo electrónico",
-            "placeholder": "Introduce tu correo electrónico",
-            "errors": {
-              "required": "El correo electrónico es obligatorio",
-              "invalid": "El correo electrónico no es válido",
-              "exists": "El correo electrónico ya existe. Usa uno diferente.",
-              "validation_failed": "La validación del correo electrónico falló. Inténtalo de nuevo."
-            }
-          },
-          "code": {
-            "label": "Código único",
-            "placeholder": "123456",
-            "helper_text": "Código de verificación enviado a tu nuevo correo electrónico.",
-            "errors": {
-              "required": "El código único es obligatorio",
-              "invalid": "Código de verificación inválido. Inténtalo de nuevo."
-            }
-          }
-        },
-        "actions": {
-          "continue": "Continuar",
-          "confirm": "Confirmar",
-          "cancel": "Cancelar"
-        },
-        "states": {
-          "sending": "Enviando…"
-        }
-      }
-    },
     "preferences": {
       "heading": "Preferencias",
       "description": "Personaliza tu experiencia de la aplicación según tu forma de trabajar"
     },
     "notifications": {
       "heading": "Notificaciones por correo electrónico",
-      "description": "Mantente al tanto de los elementos de trabajo a los que estás suscrito. Activa esto para recibir notificaciones.",
-      "select_default_view": "Seleccionar vista predeterminada",
-      "compact": "Compacto",
-      "full": "Pantalla completa"
-    },
-    "security": {
-      "heading": "Seguridad"
+      "description": "Mantente al tanto de los elementos de trabajo a los que estás suscrito. Activa esto para recibir notificaciones."
     },
     "api_tokens": {
       "title": "Tokens de acceso personal",
       "description": "Genera tokens de API seguros para integrar tus datos con sistemas y aplicaciones externas."
-    },
-    "activity": {
-      "heading": "Actividad",
-      "description": "Realiza un seguimiento de tus acciones y cambios recientes en todos los proyectos y elementos de trabajo."
-    },
-    "connections": {
-      "title": "Conexiones",
-      "heading": "Conexiones",
-      "description": "Administra la configuración de conexiones de tu espacio de trabajo."
     }
   },
   "profile": {
@@ -98,12 +44,9 @@
     },
     "actions": {
       "profile": "Perfil",
-      "security": "Seguridad",
-      "activity": "Actividad",
       "preferences": "Preferencias",
       "notifications": "Notificaciones",
-      "api-tokens": "Tokens de acceso personal",
-      "connections": "Conexiones"
+      "api-tokens": "Tokens de acceso personal"
     },
     "tabs": {
       "summary": "Resumen",

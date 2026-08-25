@@ -41,28 +41,12 @@
       },
       "members": {
         "title": "Members",
-        "add_member": "Add member",
-        "pending_invites": "Pending invites",
-        "invitations_sent_successfully": "Invitations sent successfully",
-        "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
         "details": {
-          "full_name": "Full name",
           "display_name": "Display name",
           "email_address": "Email address",
           "account_type": "Account type",
           "authentication": "Authentication",
           "joining_date": "Joining date"
-        },
-        "modal": {
-          "title": "Invite people to collaborate",
-          "description": "Invite people to collaborate on your workspace.",
-          "button": "Send invitations",
-          "button_loading": "Sending invitations",
-          "placeholder": "name@company.com",
-          "errors": {
-            "required": "We need an email address to invite them.",
-            "invalid": "Email is invalid"
-          }
         }
       },
       "billing_and_plans": {

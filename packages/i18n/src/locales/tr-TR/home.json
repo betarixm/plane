@@ -8,11 +8,6 @@
         "description": "Çoğu şey Plane'de bir projeyle başlar.",
         "cta": "Başla"
       },
-      "invite_team": {
-        "title": "Ekibinizi davet edin",
-        "description": "Ekip arkadaşlarınızla birlikte inşa edin, gönderin ve yönetin.",
-        "cta": "Davet et"
-      },
       "configure_workspace": {
         "title": "Çalışma alanınızı ayarlayın.",
         "description": "Özellikleri açıp kapatın veya daha fazlasını yapın.",
